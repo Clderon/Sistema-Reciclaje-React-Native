@@ -1,5 +1,11 @@
 # OSX
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Xcode
 build/
@@ -19,6 +25,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+*.xcworkspace
 
 # Android/IntelliJ
 build/
@@ -30,11 +37,16 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+*.apk
+*.aab
 
 # node.js
 node_modules/
 npm-debug.log
 yarn-error.log
+.pnp
+.pnp.js
+# Nota: package-lock.json y yarn.lock se incluyen para reproducibilidad
 
 # fastlane
 **/fastlane/report.xml
@@ -47,13 +59,62 @@ yarn-error.log
 
 # CocoaPods
 /ios/Pods/
+/ios/Podfile.lock
 
 # Expo
 .expo/
+.expo-shared/
 dist/
 web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
 
 # Environment
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Debugging
+*.log
+*.log.*
+
+# Tailwind CSS / NativeWind
+# (No genera archivos adicionales, pero por si acaso)
+*.css.map
+
+# Metro bundler
+.metro-health-check*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript (si se usa en el futuro)
+*.tsbuildinfo
 

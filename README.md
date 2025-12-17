@@ -27,7 +27,12 @@ Sistema-Reciclaje-React/
 npm install
 ```
 
-2. Inicia el proyecto:
+2. Exponer el puerto para poder utilizar Expo Go
+
+```bash
+npx expo start -c --tunnel
+```
+3. Inicia el proyecto:
 ```bash
 npm start
 ```
