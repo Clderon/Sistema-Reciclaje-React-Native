@@ -43,7 +43,7 @@ export const CATEGORIES = [
 export const COLORS = {
   // Fondos
   targetFondo: '#eedfc0',
-  target: '#f8f7e3',
+  target: '#FBF7EB',
   fondoFallback: '#4a7c3f',
   
   // Botones
@@ -63,9 +63,9 @@ export const COLORS = {
   avatarBrown: '#a67c52',
   
   // Barra de progreso
-  progressStart: '#2a774d',
-  progressMid: '#4d944e',
-  progressEnd: '#98c371',
+  progressStart: '#C2F07C',
+  progressMid: '#91D433',
+  progressEnd: '#6EBF29',
   progressBg: '#d4bc98',
   
   // Color tipos de reciclaje

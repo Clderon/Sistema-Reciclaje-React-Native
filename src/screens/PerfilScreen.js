@@ -9,7 +9,6 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
-import Button from '../components/Button';
 import { COLORS } from '../utils/constants';
 
 const PerfilScreen = () => {
@@ -23,35 +22,34 @@ const PerfilScreen = () => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          decelerationRate={0.75}
+          bounces={false}
         >
           <View style={styles.perfilCard}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>Mi Mochila de Explorador</Text>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Mi Mochila de Explorador</Text>
+              </View>
             </View>
 
             {/* Profile Section */}
             <View style={styles.section}>
-              <ImageBackground
+              <Image
                 source={require('../assets/images/fondo_.webp')}
                 style={styles.backgroundSection}
                 resizeMode="cover"
-              >
-                {/* Name Card */}
-                <View style={styles.nameCard}>
-                  <View style={styles.nameCardInner}>
-                    <Text style={styles.name}>Explorador Juan</Text>
-                    <Text style={styles.level}>Nivel: Hormiga</Text>
-                  </View>
-                </View>
-
-                {/* Avatar and Badge */}
+              />
+              
+              {/* Contenedor de información (avatar y nombre) */}
+              <View style={styles.info}>
+                {/* Avatar y badge */}
                 <View style={styles.avatarWrapper}>
                   <View style={styles.avatarContainer}>
                     <Image
                       source={require('../assets/images/avatar.webp')}
                       style={styles.avatar}
-                      resizeMode="contain"
+                      resizeMode="cover"
                     />
                   </View>
                   <View style={styles.badge}>
@@ -59,66 +57,81 @@ const PerfilScreen = () => {
                   </View>
                 </View>
 
-                {/* Stats */}
-                <View style={styles.stats}>
-                  <View style={styles.stat}>
-                    <View style={styles.statOuter}>
-                      <View style={styles.statInner}>
-                        <Text style={styles.statLabel}>
-                          Puntos Totales{'\n'}
-                        </Text>
-                        <Text style={styles.statValue}>150</Text>
-                      </View>
-                    </View>
+                {/* Tarjeta de nombre y nivel */}
+                <View style={styles.nameCard}>
+                  <View style={styles.nameCardInner}>
+                    <Text style={styles.name}>Explorador Juan</Text>
+                    <Text style={styles.level}>Nivel: Hormiga</Text>
                   </View>
+                </View>
+              </View>
 
-                  <View style={styles.stat}>
-                    <View style={styles.statOuter}>
-                      <View style={styles.statInner}>
-                        <Text style={styles.statLabel}>
-                          Kilos{'\n'}Reciclados
-                        </Text>
-                        <Text style={styles.statValue}>52.3</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.stat}>
-                    <View style={styles.statOuter}>
-                      <View style={styles.statInner}>
-                        <Text style={styles.statLabel}>
-                          Misiones{'\n'}
-                        </Text>
-                        <Text style={styles.statValue}>8</Text>
-                      </View>
+              {/* Estadísticas */}
+              <View style={styles.stats}>
+                <View style={styles.stat}>
+                  <View style={styles.statOuter}>
+                    <View style={styles.statInner}>
+                      <Text style={styles.statLabel}>
+                        Puntos Totales{'\n'}
+                      </Text>
+                      <Text style={styles.statValue}>150</Text>
                     </View>
                   </View>
                 </View>
-              </ImageBackground>
+
+                <View style={styles.stat}>
+                  <View style={styles.statOuter}>
+                    <View style={styles.statInner}>
+                      <Text style={styles.statLabel}>
+                        Kilos{'\n'}
+                        Reciclados
+                      </Text>
+                      <Text style={styles.statValue}>52.3</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.stat}>
+                  <View style={styles.statOuter}>
+                    <View style={styles.statInner}>
+                      <Text style={styles.statLabel}>
+                        Misiones{'\n'}
+                      </Text>
+                      <Text style={styles.statValue}>8</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
             </View>
 
             {/* Badges Section */}
             <View style={styles.badges}>
               <Text style={styles.badgesTitle}>Mis insignias</Text>
               <View style={styles.badgesList}>
-                <Image
-                  source={require('../assets/images/insignia.webp')}
-                  style={styles.badgeItem}
-                  resizeMode="contain"
-                />
-                <Image
-                  source={require('../assets/images/insignia.webp')}
-                  style={styles.badgeItem}
-                  resizeMode="contain"
-                />
-                <Image
-                  source={require('../assets/images/insignia.webp')}
-                  style={styles.badgeItem}
-                  resizeMode="contain"
-                />
+                <View style={styles.badgeItemWrapper}>
+                  <Image
+                    source={require('../assets/images/insignia.webp')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                </View>
+                <View style={styles.badgeItemWrapper}>
+                  <Image
+                    source={require('../assets/images/insignia.webp')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                </View>
+                <View style={styles.badgeItemWrapper}>
+                  <Image
+                    source={require('../assets/images/insignia.webp')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                </View>
                 <Image
                   source={require('../assets/images/mas_insignia.webp')}
-                  style={styles.badgeItem}
+                  style={[styles.badgeItem, styles.badgeItemMore]}
                   resizeMode="contain"
                 />
               </View>
@@ -126,21 +139,25 @@ const PerfilScreen = () => {
 
             {/* Actions */}
             <View style={styles.actions}>
-              <Button
-                title="Editar Mi Perfil"
-                onPress={() => console.log('Edit profile')}
-                variant="primary"
-              />
               <TouchableOpacity
-                style={styles.settingsButton}
+                style={styles.buttonEdit}
+                onPress={() => console.log('Edit profile')}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.buttonText}>Editar Mi Perfil</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonSettings}
                 onPress={() => console.log('Settings')}
                 activeOpacity={0.7}
               >
-                <Image
-                  source={require('../assets/images/configuracion.webp')}
-                  style={styles.settingsIcon}
-                  resizeMode="contain"
-                />
+                <View style={styles.buttonIcon}>
+                  <Image
+                    source={require('../assets/images/configuracion.webp')}
+                    style={styles.buttonImg}
+                    resizeMode="cover"
+                  />
+                </View>
               </TouchableOpacity>
             </View>
           </View>
@@ -161,181 +178,305 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 20,
+    paddingTop: 40,
     paddingBottom: 120,
     paddingHorizontal: '5%',
     alignItems: 'center',
   },
   perfilCard: {
     backgroundColor: COLORS.target,
+    borderRadius: 10, // 1rem
     borderWidth: 3,
-    borderColor: COLORS.textBorde,
-    borderRadius: 20,
+    borderColor: COLORS.textContenido, // var(--colorTextContenido) en CSS original
     overflow: 'hidden',
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 400, // 40rem
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 24,
+    shadowRadius: 16,
     elevation: 5,
   },
   header: {
     backgroundColor: COLORS.targetFondo,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    borderTopLeftRadius: 10, // 1rem 1rem 0 0
+    borderTopRightRadius: 10,
+    height: 64, // 6.4rem
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  titleContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: '900',
     color: COLORS.textContenido,
+    textAlign: 'center',
+    fontSize: 20, // 2rem
+    fontWeight: '700',
+    paddingHorizontal: 10, // 1rem
+    includeFontPadding: false,
   },
   section: {
+    width: '100%',
+    height: 223, // 22.3rem
     position: 'relative',
+    marginBottom: 10, // 1rem
   },
   backgroundSection: {
-    padding: 20,
-    minHeight: 300,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '110%',
+    zIndex: 1,
   },
-  nameCard: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  nameCardInner: {
-    backgroundColor: COLORS.target,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 15,
-    borderWidth: 3,
-    borderColor: COLORS.textBorde,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: COLORS.textBorde,
-    textAlign: 'center',
-    marginBottom: 5,
-  },
-  level: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.textContenido,
-    textAlign: 'center',
+  info: {
+    width: 359, // 35.9rem
+    height: 134, // 13.4rem
+    position: 'absolute',
+    top: 5, // 0.5rem
+    alignSelf: 'center',
+    zIndex: 2,
   },
   avatarWrapper: {
+    width: 124, // 12.4rem
+    height: 134, // 13.4rem
+    position: 'absolute',
+    left: 0,
+    top: 0,
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
   },
   avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    backgroundColor: COLORS.textContenido, // var(--colorTextContenido)
+    borderRadius: 59, // 50%
+    borderWidth: 1,
+    borderColor: COLORS.textContenido,
+    padding: 3,
     overflow: 'hidden',
-    borderWidth: 4,
-    borderColor: COLORS.textBorde,
-    backgroundColor: '#fff',
-    marginBottom: 10,
+    width: 118, // 11.8rem
+    height: 118, // 11.8rem
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatar: {
     width: '100%',
     height: '100%',
   },
   badge: {
-    backgroundColor: COLORS.button,
-    paddingVertical: 8,
-    paddingHorizontal: 25,
-    borderRadius: 20,
+    marginTop: -10, // -1rem
+    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
+    borderRadius: 30, // 3rem
     borderWidth: 3,
-    borderColor: COLORS.textBorde,
+    borderColor: COLORS.textContenido,
+    paddingVertical: 4, // 0.4rem
+    paddingHorizontal: 29, // 2.9rem
+    zIndex: 2,
   },
   badgeText: {
+    fontWeight: '700',
+    fontSize: 14, // 1.4rem
     color: COLORS.textWhite,
-    fontSize: 18,
-    fontWeight: '900',
+    includeFontPadding: false,
+  },
+  nameCard: {
+    width: 219, // 21.9rem
+    height: 78, // 7.8rem
+    position: 'absolute',
+    left: 105, // 10.5rem
+    top: 17, // 1.7rem
+    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
+    borderRadius: 10, // 1rem
+    borderWidth: 1,
+    borderColor: COLORS.textContenido,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nameCardInner: {
+    backgroundColor: COLORS.targetFondo,
+    borderRadius: 10, // 1rem
+    borderWidth: 2,
+    borderColor: COLORS.textContenido,
+    paddingVertical: 10, // 1rem
+    paddingHorizontal: 9, // 0.9rem
+    width: 210, // 21rem
+    height: '90%',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  name: {
+    fontWeight: '700',
+    fontSize: 16, // 1.6rem
+    color: COLORS.textContenido,
+    textAlign: 'right',
+    width: '100%',
+    includeFontPadding: false,
+  },
+  level: {
+    fontWeight: '500',
+    fontSize: 14, // 1.4rem
+    color: COLORS.textContenido,
+    textAlign: 'right',
+    width: '100%',
+    includeFontPadding: false,
   },
   stats: {
+    paddingHorizontal: 10, // 1rem
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    gap: 5, // 0.5rem
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 80, // 8rem
+    position: 'absolute',
+    left: 0,
+    bottom: -10, // -10px
+    zIndex: 2,
+    backgroundColor: 'red',
   },
   stat: {
     flex: 1,
-    alignItems: 'center',
-    marginHorizontal: 5,
+    minWidth: 0,
   },
   statOuter: {
-    backgroundColor: COLORS.target,
-    borderRadius: 15,
-    borderWidth: 3,
-    borderColor: COLORS.textBorde,
-    padding: 2,
-    width: '100%',
+    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
+    borderRadius: 10, // 1rem
+    borderWidth: 1,
+    borderColor: COLORS.textContenido,
+    padding: 5, // 0.5rem
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'blue',
   },
   statInner: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 10, // 1rem
+    borderWidth: 2,
+    borderColor: COLORS.textContenido,
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'green',
   },
   statLabel: {
-    fontSize: 12,
-    fontWeight: '700',
     color: COLORS.textContenido,
     textAlign: 'center',
-    marginBottom: 8,
+    fontSize: 11, // 1.1rem
+    fontWeight: '800',
+    lineHeight: 11, // 1.1
+    width: '100%',
+    includeFontPadding: false,
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: COLORS.textBorde,
+    color: COLORS.textContenido,
+    textAlign: 'center',
+    fontSize: 16, // 1.6rem
+    letterSpacing: 1,
+    fontWeight: '800',
+    width: '100%',
+    includeFontPadding: false,
   },
   badges: {
-    padding: 20,
-    backgroundColor: COLORS.targetFondo,
+    width: '90%',
+    marginTop: 15, // 1.5rem
+    alignItems: 'center',
+    gap: 12, // 1.2rem
   },
   badgesTitle: {
-    fontSize: 20,
-    fontWeight: '900',
+    fontWeight: '700',
+    fontSize: 18, // 1.8rem
     color: COLORS.textContenido,
-    marginBottom: 15,
-    textAlign: 'center',
+    paddingLeft: 10, // 1rem
+    alignSelf: 'center',
+    includeFontPadding: false,
   },
   badgesList: {
+    backgroundColor: COLORS.targetFondo,
+    borderRadius: 10, // 1rem
+    padding: 10, // 1rem
     flexDirection: 'row',
+    gap: 10, // 1rem
+    alignItems: 'center',
+    justifyContent: 'space-around',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 15,
+    width: '100%',
+    minHeight: 100, // 10rem
+  },
+  badgeItemWrapper: {
+    width: 79, // 7.9rem
+    height: 79, // 7.9rem
+    flexShrink: 0,
   },
   badgeItem: {
-    width: 60,
-    height: 60,
+    width: 79, // 7.9rem
+    height: 79, // 7.9rem
+  },
+  badgeItemMore: {
+    // Para mas_insignia.webp
   },
   actions: {
+    padding: 10, // 1rem
     flexDirection: 'row',
-    padding: 20,
-    gap: 15,
+    gap: 15, // 1.5rem
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: 74, // 7.4rem
   },
-  settingsButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  buttonEdit: {
     backgroundColor: COLORS.targetFondo,
-    borderWidth: 3,
-    borderColor: COLORS.textBorde,
+    borderRadius: 10, // 1rem
+    borderWidth: 2,
+    borderColor: COLORS.textContenido,
+    paddingVertical: 10, // 1rem
+    paddingHorizontal: 20, // 2rem
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  settingsIcon: {
-    width: 35,
-    height: 35,
+  buttonText: {
+    color: COLORS.textContenido,
+    fontWeight: '700',
+    fontSize: 20, // 2rem
+    includeFontPadding: false,
+  },
+  buttonSettings: {
+    flexShrink: 0,
+    width: 58, // 5.8rem
+    height: '100%',
+    backgroundColor: COLORS.targetFondo,
+    borderRadius: 10, // 1rem
+    borderWidth: 2,
+    borderColor: COLORS.textContenido,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -11 },
+    shadowOpacity: 0.1,
+    shadowRadius: 0.5,
+    elevation: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    width: 30, // 3rem
+    height: 30, // 3rem
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonImg: {
+    width: '100%',
+    height: '100%',
   },
 });
 

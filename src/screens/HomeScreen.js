@@ -96,6 +96,8 @@ const HomeScreen = () => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          decelerationRate={0.75}
+          bounces={false}
         >
           {/* Header */}
           <View style={styles.header}>

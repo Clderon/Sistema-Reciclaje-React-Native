@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     maxWidth: 375,
-    gap: 10,
+    gap: 20,
   },
   category: {
     width: 90,
@@ -115,12 +115,13 @@ const styles = StyleSheet.create({
     height: 50,
   },
   categoryLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     color: '#e9f5e6',
     textAlign: 'center',
     lineHeight: 11,
     includeFontPadding: false,
+    marginTop: 4,
   },
 });
 

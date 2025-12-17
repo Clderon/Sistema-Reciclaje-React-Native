@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import RankingCard from '../components/RankingCard';
 import CardInfo from '../components/CardInfo';
@@ -28,7 +29,6 @@ const LogrosScreen = () => {
   };
 
   const currentRanking = activeTab === 'estudiantes' ? RANKING_DATA.estudiantes : RANKING_DATA.salones;
-  const currentUser = { name: 'Tu', position: 14, avatar: require('../assets/images/hormiga.webp') };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,7 +50,7 @@ const LogrosScreen = () => {
             {/* Tabs */}
             <View style={styles.tabs}>
               <TouchableOpacity
-                style={[styles.tab, activeTab === 'estudiantes' && styles.tabActive]}
+                style={[styles.tab, styles.tabFirst, activeTab === 'estudiantes' && styles.tabActive]}
                 onPress={() => setActiveTab('estudiantes')}
                 activeOpacity={0.7}
               >
@@ -64,7 +64,7 @@ const LogrosScreen = () => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.tab, activeTab === 'salones' && styles.tabActive]}
+                style={[styles.tab, styles.tabLast, activeTab === 'salones' && styles.tabActive]}
                 onPress={() => setActiveTab('salones')}
                 activeOpacity={0.7}
               >
@@ -78,12 +78,12 @@ const LogrosScreen = () => {
 
             {/* Ranking Content */}
             <View style={styles.content}>
-              <RankingCard rankingData={currentRanking} onPositionPress={handlePositionPress} />
-
-              {/* Progress Bar */}
-              <View style={styles.progress}>
-                <Text style={styles.progressText}>Faltan {activeTab === 'estudiantes' ? 120 : 320} para subir</Text>
-              </View>
+              <RankingCard 
+                rankingData={currentRanking} 
+                onPositionPress={handlePositionPress}
+                progressText={`Faltan ${activeTab === 'estudiantes' ? 120 : 320} para subir`}
+                progressValue={50}
+              />
 
               {/* Rivals Section */}
               <View style={styles.rivals}>
@@ -93,19 +93,35 @@ const LogrosScreen = () => {
                 <View style={styles.rivalsList}>
                   <View style={styles.rival}>
                     <View style={[styles.rivalAvatar, styles.rivalAvatarGray]}>
-                      <Text style={styles.rivalAvatarText}>4</Text>
+                      <Image
+                        source={require('../assets/images/elefante.webp')}
+                        style={styles.rivalAvatarImg}
+                        resizeMode="cover"
+                      />
                     </View>
-                    <Text style={styles.rivalName}>4. {activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A'}</Text>
+                    <Text style={styles.rivalName}>
+                      4. {activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A'}
+                    </Text>
                   </View>
                   <View style={[styles.rival, styles.rivalCurrent]}>
                     <View style={[styles.rivalAvatar, styles.rivalAvatarGreen]}>
-                      <Text style={styles.rivalAvatarText}>14</Text>
+                      <Image
+                        source={require('../assets/images/hormiga.webp')}
+                        style={styles.rivalAvatarImg}
+                        resizeMode="cover"
+                      />
                     </View>
-                    <Text style={styles.rivalName}>14. Tu{activeTab === 'salones' ? ' Salón' : ''}</Text>
+                    <Text style={styles.rivalName}>
+                      14. Tu{activeTab === 'salones' ? ' Salón' : ''}
+                    </Text>
                   </View>
                   <View style={styles.rival}>
                     <View style={[styles.rivalAvatar, styles.rivalAvatarBrown]}>
-                      <Text style={styles.rivalAvatarText}>15</Text>
+                      <Image
+                        source={require('../assets/images/mono.webp')}
+                        style={styles.rivalAvatarImg}
+                        resizeMode="cover"
+                      />
                     </View>
                     <Text style={styles.rivalName}>
                       15. {activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C'}
@@ -139,33 +155,35 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 40,
+    paddingTop: 70, // Similar a HomeScreen
     paddingBottom: 120,
-    paddingHorizontal: '5%',
+    width: '90%',
+    alignSelf: 'center',
     alignItems: 'center',
   },
   rankingCard: {
     backgroundColor: COLORS.target,
     borderWidth: 3,
     borderColor: COLORS.textBorde,
-    borderRadius: 20,
+    borderRadius: 20, // 2rem
     overflow: 'hidden',
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 400, // 40rem
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 24,
     elevation: 5,
+    marginTop: 40, // 4rem
   },
   header: {
     backgroundColor: COLORS.targetFondo,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 10, // 1rem
+    paddingHorizontal: 20, // 2rem
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: 24, // 2.4rem
     fontWeight: '900',
     color: COLORS.textContenido,
   },
@@ -176,11 +194,28 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    fontSize: 14, // 1.4rem
+    paddingVertical: 10, // 1rem
+    paddingHorizontal: 15, // 1.5rem
     backgroundColor: COLORS.target,
     borderRightWidth: 3,
     borderRightColor: COLORS.textBorde,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabFirst: {
+    borderRightWidth: 3,
+    borderBottomWidth: 3,
+    borderBottomColor: COLORS.textBorde,
+    borderBottomRightRadius: 10, 
+  },
+  tabLast: {
+    borderRightWidth: 0,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.textBorde,
+    borderBottomWidth: 3,
+    borderBottomColor: COLORS.textBorde,
+    borderBottomLeftRadius: 10, // 1rem
   },
   tabActive: {
     backgroundColor: COLORS.button,
@@ -195,73 +230,76 @@ const styles = StyleSheet.create({
     color: COLORS.textWhite,
   },
   content: {
-    padding: 20,
-  },
-  progress: {
-    marginVertical: 15,
-    alignItems: 'center',
-  },
-  progressText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: COLORS.textContenido,
+    // El contenido está dentro del rankingCard
+    padding: 10,
   },
   rivals: {
-    marginTop: 20,
+    paddingHorizontal: 20, // 2rem
+    paddingBottom: 20, // 2rem
+    backgroundColor: COLORS.target,
   },
   rivalsTitle: {
-    fontSize: 18,
+    fontSize: 20, // 2rem
     fontWeight: '900',
-    color: COLORS.textBorde,
-    marginBottom: 15,
+    color: COLORS.textContenido,
     textAlign: 'center',
+    marginBottom: 15, // 1.5rem
   },
   rivalsList: {
-    gap: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 15, // 1.5rem
   },
   rival: {
-    flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
+    padding: 10, // 1rem
     backgroundColor: COLORS.targetFondo,
+    borderWidth: 2,
+    borderColor: COLORS.textBorde,
+    borderRadius: 10, // 1rem
+    minWidth: 90, // 9rem
+    height: 110, // 11rem
   },
   rivalCurrent: {
-    backgroundColor: COLORS.button + '40',
-    borderWidth: 2,
     borderColor: COLORS.button,
+    borderWidth: 3,
+    shadowColor: COLORS.button,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
   rivalAvatar: {
-    width: 60,
-    height: 60,
+    width: 60, // 6rem
+    height: 60, // 6rem
     borderRadius: 30,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 15,
+    marginBottom: 8, // 0.8rem
     borderWidth: 3,
   },
   rivalAvatarGray: {
-    backgroundColor: COLORS.avatarGray,
-    borderColor: COLORS.avatarGrayBorder,
+    backgroundColor: COLORS.avatarGray || '#929aa0',
+    borderColor: COLORS.avatarGrayBorder || '#6d7479',
   },
   rivalAvatarGreen: {
-    backgroundColor: COLORS.avatarGreen,
+    backgroundColor: COLORS.buttonDegradado || '#7bc224',
     borderColor: COLORS.button,
   },
   rivalAvatarBrown: {
-    backgroundColor: COLORS.avatarBrown,
+    backgroundColor: COLORS.avatarBrown || '#d27c2f',
     borderColor: COLORS.textBorde,
   },
-  rivalAvatarText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '900',
+  rivalAvatarImg: {
+    width: '100%',
+    height: '100%',
   },
   rivalName: {
-    fontSize: 16,
+    fontSize: 12, // 1.2rem
     fontWeight: '700',
-    color: COLORS.textBorde,
-    flex: 1,
+    color: COLORS.textContenido,
+    textAlign: 'center',
   },
 });
 
