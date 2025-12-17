@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS } from '../utils/constants';
 
 const Counter = ({ value, onIncrement, onDecrement, min = 1, max = 99 }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.counter}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => value > min && onDecrement()}
@@ -29,24 +28,23 @@ const Counter = ({ value, onIncrement, onDecrement, min = 1, max = 99 }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  counter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.targetFondo,
-    width: '100%',
+    backgroundColor: '#eedfc0',
     gap: 10,
-    paddingVertical: 0,
+    width: '100%',
   },
   button: {
     width: 50,
     height: 50,
-    borderRadius: 8,
-    backgroundColor: COLORS.target,
-    borderWidth: 3,
-    borderColor: COLORS.textBorde,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f8f7e3',
+    borderWidth: 3,
+    borderColor: '#1d420f',
+    borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -56,15 +54,17 @@ const styles = StyleSheet.create({
   buttonIcon: {
     fontSize: 24,
     fontWeight: '900',
-    color: COLORS.textContenido,
+    color: '#513015',
     lineHeight: 24,
+    includeFontPadding: false,
   },
   value: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.textContenido,
+    color: '#513015',
     flex: 1,
     textAlign: 'center',
+    includeFontPadding: false,
   },
 });
 

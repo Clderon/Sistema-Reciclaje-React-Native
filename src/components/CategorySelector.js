@@ -1,11 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
-import { CATEGORIES, COLORS } from '../utils/constants';
-
-const { width } = Dimensions.get('window');
+import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
+import { CATEGORIES } from '../utils/constants';
 
 const CategorySelector = ({ selectedCategory, onSelectCategory }) => {
-  // Grid de 3 columnas - colores de cada categoría
   const categoryColors = [
     '#3299e3', // Papel/Cartón
     '#4dc269', // Plástico
@@ -15,69 +12,74 @@ const CategorySelector = ({ selectedCategory, onSelectCategory }) => {
     '#9471e5', // Otros
   ];
 
-  const categoryWidth = (width * 0.9 - 60) / 3; // 3 columnas con gap
-
   return (
     <View style={styles.container}>
-      {CATEGORIES.map((category, index) => {
-        const isActive = selectedCategory === category.id;
-        return (
-          <TouchableOpacity
-            key={category.id}
-            style={[
-              styles.categoryButton,
-              { width: categoryWidth, backgroundColor: categoryColors[index] },
-              isActive && styles.categoryButtonActive,
-            ]}
-            onPress={() => onSelectCategory(category.id)}
-            activeOpacity={0.95}
-          >
-            {/* Fondo de lianas */}
-            <ImageBackground
-              source={require('../assets/images/fondo-item-hd.webp')}
-              style={styles.categoryBg}
-              resizeMode="contain"
-            />
-            
-            {/* Contenido */}
-            <View style={styles.categoryContent}>
-              <View style={styles.categoryIcon}>
-                <Image
-                  source={category.icon}
-                  style={styles.categoryImage}
-                  resizeMode="contain"
-                />
+      <View style={styles.categories}>
+        {CATEGORIES.map((category, index) => {
+          const isActive = selectedCategory === category.id;
+          return (
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.category,
+                {
+                  backgroundColor: categoryColors[index],
+                  borderWidth: isActive ? 3 : 2,
+                },
+                isActive && styles.categoryActive,
+              ]}
+              onPress={() => onSelectCategory(category.id)}
+              activeOpacity={0.95}
+            >
+              <ImageBackground
+                source={require('../assets/images/fondo-item-hd.webp')}
+                style={styles.categoryBg}
+                resizeMode="contain"
+              />
+              
+              <View style={styles.categoryContent}>
+                <View style={styles.categoryIcon}>
+                  <Image
+                    source={category.icon}
+                    style={styles.categoryImg}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={styles.categoryLabel}>{category.name}</Text>
               </View>
-              <Text style={styles.categoryLabel}>{category.name}</Text>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    maxWidth: 375,
     gap: 10,
-    paddingHorizontal: '5%',
-    marginTop: 10,
-    width: '100%',
   },
-  categoryButton: {
-    height: 100,
+  category: {
+    width: 90,
+    height: 90,
     borderRadius: 15,
-    borderWidth: 2,
-    borderColor: COLORS.textBorde,
+    borderColor: '#1d420f',
     overflow: 'hidden',
     position: 'relative',
   },
-  categoryButtonActive: {
-    borderWidth: 3,
-    shadowColor: COLORS.button,
+  categoryActive: {
+    shadowColor: '#46a330',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   },
   categoryBg: {
     position: 'absolute',
-    top: -51,
+    top: -25,
     left: 0,
     right: 0,
     bottom: 0,
@@ -98,25 +100,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 8,
     paddingHorizontal: 5,
+    position: 'relative',
     zIndex: 1,
   },
   categoryIcon: {
     width: 45,
     height: 45,
-    marginBottom: 3,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 3,
   },
-  categoryImage: {
+  categoryImg: {
     width: 50,
     height: 50,
   },
   categoryLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.textWhite,
+    color: '#e9f5e6',
     textAlign: 'center',
     lineHeight: 11,
+    includeFontPadding: false,
   },
 });
 

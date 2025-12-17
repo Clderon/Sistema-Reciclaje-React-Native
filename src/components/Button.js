@@ -1,23 +1,27 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ImageBackground, View } from 'react-native';
-import { COLORS } from '../utils/constants';
+import { TouchableOpacity, Text, ImageBackground, View, StyleSheet } from 'react-native';
 
 const Button = ({ title, onPress, variant = 'primary' }) => {
+  const isPrimary = variant === 'primary';
+  
   return (
     <TouchableOpacity
-      style={[styles.button, styles[variant]]}
+      style={[
+        styles.button,
+        isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
+      ]}
       onPress={onPress}
       activeOpacity={0.8}
     >
       <View style={styles.buttonContent}>
-        {variant === 'primary' && (
+        {isPrimary && (
           <ImageBackground
             source={require('../assets/images/upscalemedia-transformed.webp')}
-            style={styles.vines}
+            style={styles.buttonVines}
             resizeMode="cover"
           />
         )}
-        <Text style={[styles.text, styles[`text${variant.charAt(0).toUpperCase() + variant.slice(1)}`]]}>
+        <Text style={[styles.buttonText, isPrimary ? styles.buttonTextPrimary : styles.buttonTextSecondary]}>
           {title}
         </Text>
       </View>
@@ -31,8 +35,15 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 15,
     borderWidth: 3.5,
-    borderColor: COLORS.textBorde,
-    overflow: 'hidden',
+    borderColor: '#1d420f',
+    overflow: 'visible',
+    position: 'relative',
+  },
+  buttonPrimary: {
+    backgroundColor: '#46a330',
+  },
+  buttonSecondary: {
+    backgroundColor: '#f8f7e3',
   },
   buttonContent: {
     flex: 1,
@@ -40,20 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
-  primary: {
-    backgroundColor: COLORS.button,
-    // Gradient effect simulation
-    shadowColor: COLORS.shadowButton || 'rgba(70, 163, 48, 0.3)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  secondary: {
-    backgroundColor: COLORS.target,
-    borderColor: COLORS.textBorde,
-  },
-  vines: {
+  buttonVines: {
     position: 'absolute',
     top: -14,
     left: 0,
@@ -62,19 +60,20 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 2,
   },
-  text: {
+  buttonText: {
     fontSize: 18,
     fontWeight: '900',
+    lineHeight: 18,
     position: 'relative',
     zIndex: 3,
+    includeFontPadding: false,
   },
-  textPrimary: {
-    color: COLORS.textWhite,
+  buttonTextPrimary: {
+    color: '#e9f5e6',
   },
-  textSecondary: {
-    color: COLORS.textContenido,
+  buttonTextSecondary: {
+    color: '#513015',
   },
 });
 
 export default Button;
-

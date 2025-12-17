@@ -2,25 +2,73 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   ImageBackground,
   SafeAreaView,
+  StyleSheet,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import CategorySelector from '../components/CategorySelector';
 import Counter from '../components/Counter';
 import Button from '../components/Button';
 import ModalPuntos from '../components/ModalPuntos';
-import { COLORS, CATEGORIES } from '../utils/constants';
+import { CATEGORIES } from '../utils/constants';
 
-// Componente simple de ícono de cámara
-const CameraIcon = ({ size = 40, color = COLORS.textContenido }) => (
-  <View style={[styles.cameraIcon, { width: size, height: size * 0.75 }]}>
-    <View style={[styles.cameraBody, { borderColor: color, borderWidth: 2 }]} />
-    <View style={[styles.cameraLens, { borderColor: color, borderWidth: 2 }]} />
-  </View>
-);
+// Componente para texto con contorno (simula múltiples text-shadows)
+const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth = 3 }) => {
+  // Extraer propiedades específicas del estilo
+  const textColor = style?.color;
+  
+  // Crear estilo base sin color (el color se aplica por separado)
+  const baseStyle = {
+    fontSize: style?.fontSize || 35,
+    fontWeight: style?.fontWeight || '900',
+    letterSpacing: style?.letterSpacing,
+    fontStyle: style?.fontStyle,
+    lineHeight: style?.lineHeight,
+    includeFontPadding: false,
+    textAlign: style?.textAlign || 'center',
+  };
+
+  // Posiciones para crear el contorno (8 direcciones)
+  const offsets = [
+    { x: -outlineWidth, y: -outlineWidth }, // -3, -3
+    { x: outlineWidth, y: -outlineWidth },  // 3, -3
+    { x: -outlineWidth, y: outlineWidth },  // -3, 3
+    { x: outlineWidth, y: outlineWidth },   // 3, 3
+    { x: -outlineWidth, y: 0 },             // -3, 0
+    { x: outlineWidth, y: 0 },              // 3, 0
+    { x: 0, y: -outlineWidth },             // 0, -3
+    { x: 0, y: outlineWidth },              // 0, 3
+  ];
+
+  return (
+    <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Capas de contorno */}
+      {offsets.map((offset, index) => (
+        <Text
+          key={`outline-${index}`}
+          style={[
+            baseStyle,
+            {
+              position: 'absolute',
+              color: outlineColor,
+              transform: [{ translateX: offset.x }, { translateY: offset.y }],
+              width: '100%',
+            },
+          ]}
+        >
+          {children}
+        </Text>
+      ))}
+      {/* Texto principal */}
+      <Text style={[baseStyle, { color: textColor, position: 'relative' }]}>
+        {children}
+      </Text>
+    </View>
+  );
+};
 
 const HomeScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState(1);
@@ -28,12 +76,10 @@ const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleScan = () => {
-    // TODO: Implement camera/scanner functionality
     console.log('Scan evidence');
   };
 
   const handleSend = () => {
-    // TODO: Implement send recycling logic
     setModalVisible(true);
   };
 
@@ -47,14 +93,27 @@ const HomeScreen = () => {
         resizeMode="cover"
       >
         <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerContent}>
-              <Text style={styles.headerTitle}>Tingo Maria</Text>
-              <Text style={styles.headerSubtitle}>A reciclar por la selva!</Text>
+              <TextWithOutline 
+                style={styles.headerTitle}
+                outlineColor="#fff"
+                outlineWidth={3}
+              >
+                Tingo Maria
+              </TextWithOutline>
+              <TextWithOutline 
+                style={styles.headerSubtitle}
+                outlineColor="#1d420f"
+                outlineWidth={2}
+              >
+                A reciclar por la selva!
+              </TextWithOutline>
             </View>
           </View>
 
@@ -64,14 +123,14 @@ const HomeScreen = () => {
             onSelectCategory={setSelectedCategory}
           />
 
-          {/* Registration Card */}
+          {/* Card de Registro */}
           <View style={styles.registroCard}>
             <View style={styles.registroHeader}>
               <Text style={styles.registroTitle}>Registro</Text>
             </View>
 
             <View style={styles.registroContent}>
-              {/* Scan Button */}
+              {/* Botón de Escanear */}
               <TouchableOpacity
                 style={styles.scanButton}
                 onPress={handleScan}
@@ -83,9 +142,7 @@ const HomeScreen = () => {
                   resizeMode="cover"
                 />
                 <View style={styles.scanContent}>
-                  <View style={styles.scanIcon}>
-                    <CameraIcon size={40} color={COLORS.textContenido} />
-                  </View>
+                  <MaterialIcons name="camera-alt" size={50} color="#513015" />
                   <View style={styles.scanText}>
                     <Text style={styles.scanLabel}>¡ESCANEAR</Text>
                     <Text style={styles.scanLabel}>EVIDENCIA!</Text>
@@ -122,19 +179,23 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.fondoFallback,
+    backgroundColor: '#4a7c3f',
   },
   background: {
     flex: 1,
     width: '100%',
     height: '100%',
   },
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
-    paddingTop: 20,
+    paddingTop: 70,
     paddingBottom: 120,
     width: '90%',
     alignSelf: 'center',
     alignItems: 'center',
+    flexGrow: 1,
   },
   header: {
     width: '100%',
@@ -152,29 +213,22 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 40,
     fontWeight: '900',
-    color: COLORS.textBorde,
+    color: '#1d420f',
     letterSpacing: 1,
     marginBottom: 3,
-    textShadowColor: '#fff',
-    textShadowOffset: { width: -3, height: -3 },
-    textShadowRadius: 0,
-    includeFontPadding: false,
   },
   headerSubtitle: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: '700',
     fontStyle: 'italic',
-    color: COLORS.textTitle,
+    color: '#f3d645',
     lineHeight: 31.2,
-    textShadowColor: COLORS.textBorde,
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
     includeFontPadding: false,
   },
   registroCard: {
-    backgroundColor: COLORS.target,
+    backgroundColor: '#f8f7e3',
     borderWidth: 3,
-    borderColor: COLORS.textBorde,
+    borderColor: '#1d420f',
     borderRadius: 15,
     overflow: 'hidden',
     width: '100%',
@@ -187,7 +241,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   registroHeader: {
-    backgroundColor: COLORS.targetFondo,
+    backgroundColor: '#eedfc0',
     paddingVertical: 12,
     paddingHorizontal: 15,
     alignItems: 'center',
@@ -195,7 +249,7 @@ const styles = StyleSheet.create({
   registroTitle: {
     fontSize: 20,
     fontWeight: '900',
-    color: COLORS.textContenido,
+    color: '#513015',
     includeFontPadding: false,
   },
   registroContent: {
@@ -206,10 +260,10 @@ const styles = StyleSheet.create({
   scanButton: {
     width: '100%',
     height: 90,
-    backgroundColor: COLORS.targetFondo,
+    backgroundColor: '#eedfc0',
     borderRadius: 12,
     borderWidth: 3,
-    borderColor: COLORS.textBorde,
+    borderColor: '#1d420f',
     overflow: 'hidden',
     position: 'relative',
   },
@@ -227,48 +281,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: 35,
     paddingHorizontal: 15,
     paddingVertical: 12,
     zIndex: 1,
-  },
-  scanIcon: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   scanText: {
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
   scanLabel: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '900',
-    color: COLORS.textContenido,
+    color: '#513015',
     lineHeight: 19.2,
     includeFontPadding: false,
-  },
-  cameraIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  cameraBody: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 3,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  cameraLens: {
-    width: '45%',
-    height: '45%',
-    borderRadius: 20,
-    position: 'absolute',
-    top: '27.5%',
-    left: '27.5%',
   },
 });
 
