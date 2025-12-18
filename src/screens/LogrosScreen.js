@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import RankingCard from '../components/RankingCard';
 import CardInfo from '../components/CardInfo';
 import { COLORS, RANKING_DATA } from '../utils/constants';
@@ -155,9 +156,9 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 40, // Similar a HomeScreen
-    paddingBottom: 120,
-    width: '90%',
+    paddingTop: hp('5%'),
+    paddingBottom: hp('15%'),
+    width: wp('90%'),
     alignSelf: 'center',
     alignItems: 'center',
   },
@@ -165,25 +166,25 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.target,
     borderWidth: 3,
     borderColor: COLORS.textBorde,
-    borderRadius: 20, // 2rem
+    borderRadius: wp('5%'),
     overflow: 'hidden',
     width: '100%',
-    maxWidth: 400, // 40rem
+    maxWidth: wp('95%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 24,
     elevation: 5,
-    marginTop: 40, // 4rem
+    marginTop: hp('5%'),
   },
   header: {
     backgroundColor: COLORS.targetFondo,
-    paddingVertical: 10, // 1rem
-    paddingHorizontal: 20, // 2rem
+    paddingVertical: hp('1.2%'),
+    paddingHorizontal: wp('5%'),
     alignItems: 'center',
   },
   title: {
-    fontSize: 24, // 2.4rem
+    fontSize: wp('6%'),
     fontWeight: '900',
     color: COLORS.textContenido,
   },
@@ -194,9 +195,8 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    fontSize: 14, // 1.4rem
-    paddingVertical: 10, // 1rem
-    paddingHorizontal: 15, // 1.5rem
+    paddingVertical: hp('1.2%'),
+    paddingHorizontal: wp('3%'),
     backgroundColor: COLORS.target,
     borderRightWidth: 3,
     borderRightColor: COLORS.textBorde,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 3,
     borderBottomWidth: 3,
     borderBottomColor: COLORS.textBorde,
-    borderBottomRightRadius: 10, 
+    borderBottomRightRadius: wp('2.5%'),
   },
   tabLast: {
     borderRightWidth: 0,
@@ -215,13 +215,13 @@ const styles = StyleSheet.create({
     borderLeftColor: COLORS.textBorde,
     borderBottomWidth: 3,
     borderBottomColor: COLORS.textBorde,
-    borderBottomLeftRadius: 10, // 1rem
+    borderBottomLeftRadius: wp('2.5%'),
   },
   tabActive: {
     backgroundColor: COLORS.button,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     fontWeight: '700',
     color: COLORS.textContenido,
     textAlign: 'center',
@@ -230,35 +230,34 @@ const styles = StyleSheet.create({
     color: COLORS.textWhite,
   },
   content: {
-    // El contenido está dentro del rankingCard
-    padding: 10,
+    padding: wp('2.5%'),
   },
   rivals: {
-    paddingHorizontal: 20, // 2rem
-    paddingBottom: 20, // 2rem
+    paddingHorizontal: wp('5%'),
+    paddingBottom: hp('2%'),
     backgroundColor: COLORS.target,
   },
   rivalsTitle: {
-    fontSize: 20, // 2rem
+    fontSize: wp('5%'),
     fontWeight: '900',
     color: COLORS.textContenido,
     textAlign: 'center',
-    marginBottom: 15, // 1.5rem
+    marginBottom: hp('1.5%'),
   },
   rivalsList: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 15, // 1.5rem
+    gap: wp('3%'),
   },
   rival: {
     alignItems: 'center',
-    padding: 10, // 1rem
+    padding: wp('2.5%'),
     backgroundColor: COLORS.targetFondo,
     borderWidth: 2,
     borderColor: COLORS.textBorde,
-    borderRadius: 10, // 1rem
-    minWidth: 90, // 9rem
-    height: 110, // 11rem
+    borderRadius: wp('2.5%'),
+    minWidth: wp('22%'),
+    height: hp('13%'),
   },
   rivalCurrent: {
     borderColor: COLORS.button,
@@ -270,13 +269,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   rivalAvatar: {
-    width: 60, // 6rem
-    height: 60, // 6rem
-    borderRadius: 30,
+    width: wp('14%'),
+    height: wp('14%'),
+    borderRadius: wp('7%'),
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8, // 0.8rem
+    marginBottom: hp('1%'),
     borderWidth: 3,
   },
   rivalAvatarGray: {
@@ -296,7 +295,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   rivalName: {
-    fontSize: 12, // 1.2rem
+    fontSize: wp('3%'),
     fontWeight: '700',
     color: COLORS.textContenido,
     textAlign: 'center',

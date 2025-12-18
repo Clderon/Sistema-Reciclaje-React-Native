@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
@@ -66,8 +67,8 @@ const Button = ({ title, onPress, variant = 'primary', style, disabled = false }
 const styles = StyleSheet.create({
   button: {
     width: '100%',
-    height: 60,
-    borderRadius: 15,
+    height: hp('7%'),
+    borderRadius: wp('4%'),
     borderWidth: 3.5,
     borderColor: '#1d420f',
     overflow: 'visible',
@@ -92,17 +93,17 @@ const styles = StyleSheet.create({
   },
   buttonVines: {
     position: 'absolute',
-    top: -14,
+    top: hp('-1.8%'),
     left: 0,
-    right: -4,
-    bottom: -3,
+    right: wp('-1%'),
+    bottom: hp('-0.4%'),
     width: '100%',
     zIndex: 2,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '900',
-    lineHeight: 18,
+    lineHeight: wp('4.5%'),
     position: 'relative',
     zIndex: 3,
     includeFontPadding: false,

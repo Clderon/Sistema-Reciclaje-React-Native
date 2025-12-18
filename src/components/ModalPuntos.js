@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
-
-const { width, height } = Dimensions.get('window');
 
 const ModalPuntos = ({ visible, onClose, points = 10, agent = 'Juan P.', material = 'Plástico' }) => {
   return (
@@ -57,13 +55,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: wp('5%'),
   },
   modal: {
-    width: width * 0.9,
-    maxWidth: 400,
+    width: wp('90%'),
+    maxWidth: wp('95%'),
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: wp('5%'),
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -73,7 +71,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#46a330',
-    height: 150,
+    height: hp('18%'),
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -81,40 +79,40 @@ const styles = StyleSheet.create({
   },
   sunbeams: {
     position: 'absolute',
-    top: -50,
-    left: -50,
-    right: -50,
-    bottom: -50,
+    top: hp('-5%'),
+    left: wp('-12%'),
+    right: wp('-12%'),
+    bottom: hp('-5%'),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 100,
+    borderRadius: wp('25%'),
   },
   monkeyImage: {
-    width: 120,
-    height: 120,
+    width: wp('30%'),
+    height: wp('30%'),
     zIndex: 1,
   },
   content: {
-    padding: 30,
+    padding: wp('7%'),
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: wp('6%'),
     fontWeight: '900',
     color: COLORS.textBorde,
-    marginBottom: 15,
+    marginBottom: hp('2%'),
     textAlign: 'center',
   },
   message: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     color: COLORS.textContenido,
     textAlign: 'center',
-    marginBottom: 25,
-    lineHeight: 24,
+    marginBottom: hp('3%'),
+    lineHeight: hp('3%'),
   },
   points: {
     fontWeight: '900',
     color: COLORS.button,
-    fontSize: 18,
+    fontSize: wp('4.5%'),
   },
   agent: {
     fontWeight: '700',
@@ -126,16 +124,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: COLORS.button,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 15,
+    paddingVertical: hp('1.8%'),
+    paddingHorizontal: wp('10%'),
+    borderRadius: wp('4%'),
     borderWidth: 3,
     borderColor: COLORS.textBorde,
-    minWidth: 150,
+    minWidth: wp('35%'),
   },
   buttonText: {
     color: COLORS.textWhite,
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '900',
     textAlign: 'center',
   },

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../utils/constants';
 
@@ -95,20 +96,20 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: COLORS.target,
     position: 'relative',
-    padding: 10,
-    maxHeight: 400,
-    minHeight: 300,
+    padding: wp('2.5%'),
+    maxHeight: hp('50%'),
+    minHeight: hp('35%'),
   },
   imageSrc: {
     width: '100%',
-    aspectRatio: 400 / 400,
-    overflow: 'contain',
-    borderWidth:3,
+    aspectRatio: 1,
+    overflow: 'hidden',
+    borderWidth: 3,
     borderColor: COLORS.textBorde,
-    borderRadius: 10,
+    borderRadius: wp('2.5%'),
   },
   imageStyle: {
-    borderRadius: 7,
+    borderRadius: wp('2%'),
   },
   positionsContainer: {
     position: 'absolute',
@@ -116,54 +117,54 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    padding: 10, // 1rem padding de la imagen
+    padding: wp('2.5%'),
   },
   position: {
     position: 'absolute',
     alignItems: 'center',
   },
   avatar: {
-    borderRadius: 100,
+    borderRadius: wp('25%'),
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
   positionBadge: {
     position: 'absolute',
-    bottom: -5, // -0.5rem
+    bottom: hp('-0.5%'),
     left: '50%',
-    transform: [{ translateX: -15 }], // Centrar el badge
+    transform: [{ translateX: -wp('4%') }],
     backgroundColor: COLORS.button,
-    paddingVertical: 2, // 0.2rem
-    paddingHorizontal: 6, // 0.6rem
-    borderRadius: 10, // 1rem
+    paddingVertical: hp('0.2%'),
+    paddingHorizontal: wp('1.5%'),
+    borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textBorde,
-    minWidth: 20,
+    minWidth: wp('5%'),
     alignItems: 'center',
     justifyContent: 'center',
   },
   positionBadgeText: {
     color: COLORS.textWhite,
-    fontSize: 7, // 0.7rem
+    fontSize: wp('2%'),
     fontWeight: '900',
     textAlign: 'center',
     includeFontPadding: false,
   },
   progressContainer: {
     position: 'absolute',
-    bottom: 10, // 1rem de distancia del bottom
+    bottom: hp('1%'),
     left: 0,
     right: 0,
     alignItems: 'center',
-    paddingHorizontal: 10, // Padding del contenedor de la imagen
+    paddingHorizontal: wp('2.5%'),
   },
   progress: {
     borderWidth: 3,
     borderColor: COLORS.textBorde,
     width: '80%',
-    borderRadius: 100, // 10rem
-    height: 25, // 2rem
+    borderRadius: wp('25%'),
+    height: hp('3%'),
     position: 'relative',
     overflow: 'hidden',
   },
@@ -174,16 +175,16 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: COLORS.progressBg,
-    borderRadius: 100,
+    borderRadius: wp('25%'),
   },
   progressFill: {
     position: 'absolute',
     left: 0,
     top: 0.7,
     bottom: 0,
-    borderRadius: 10, // 1rem
+    borderRadius: wp('2.5%'),
     height: '99%',
-    zIndex: 1, // Por debajo del texto
+    zIndex: 1,
   },
   progressTextContainer: {
     position: 'absolute',
@@ -193,10 +194,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10, // Por encima del degradado verde
+    zIndex: 10,
   },
   progressText: {
-    fontSize: 14, // 1.4rem
+    fontSize: wp('3.5%'),
     fontWeight: '700',
     color: COLORS.textContenido,
     textAlign: 'center',

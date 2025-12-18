@@ -8,11 +8,9 @@ import {
   StyleSheet,
   ScrollView,
   ImageBackground,
-  Dimensions,
 } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
-
-const { width } = Dimensions.get('window');
 
 const CardInfo = ({ visible, onClose, userData }) => {
   if (!userData) return null;
@@ -124,17 +122,17 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   modalContent: {
-    width: width * 0.9,
-    maxWidth: 340,
+    width: wp('90%'),
+    maxWidth: wp('85%'),
     position: 'relative',
   },
   closeButton: {
     position: 'absolute',
-    top: -10,
-    right: -10,
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+    top: hp('-1%'),
+    right: wp('-2%'),
+    width: wp('9%'),
+    height: wp('9%'),
+    borderRadius: wp('4.5%'),
     backgroundColor: COLORS.button,
     borderWidth: 3,
     borderColor: COLORS.textBorde,
@@ -144,15 +142,15 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: COLORS.textWhite,
-    fontSize: 24,
+    fontSize: wp('6%'),
     fontWeight: '900',
-    lineHeight: 24,
+    lineHeight: wp('6%'),
   },
   card: {
     backgroundColor: COLORS.target,
     borderWidth: 3,
     borderColor: COLORS.textBorde,
-    borderRadius: 20,
+    borderRadius: wp('5%'),
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -162,17 +160,17 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: COLORS.targetFondo,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: wp('5%'),
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: wp('5%'),
     fontWeight: '900',
     color: COLORS.textContenido,
   },
   body: {
-    padding: 20,
+    padding: wp('5%'),
   },
   bodyBackground: {
     opacity: 0.15,
@@ -180,14 +178,14 @@ const styles = StyleSheet.create({
   profile: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: hp('2%'),
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: wp('10%'),
     overflow: 'hidden',
-    marginRight: 15,
+    marginRight: wp('4%'),
     borderWidth: 3,
     borderColor: COLORS.textBorde,
   },
@@ -199,73 +197,73 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   username: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '900',
     color: COLORS.textBorde,
-    marginBottom: 5,
+    marginBottom: hp('0.5%'),
   },
   level: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     fontWeight: '700',
     color: COLORS.textContenido,
   },
   badgeWrapper: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: hp('2%'),
   },
   badge: {
     backgroundColor: COLORS.button,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: hp('1%'),
+    paddingHorizontal: wp('5%'),
+    borderRadius: wp('5%'),
     borderWidth: 3,
     borderColor: COLORS.textBorde,
   },
   badgeText: {
     color: COLORS.textWhite,
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: '900',
   },
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 10,
+    marginTop: hp('1%'),
   },
   stat: {
     alignItems: 'center',
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: wp('3%'),
     fontWeight: '700',
     color: COLORS.textContenido,
-    marginBottom: 5,
+    marginBottom: hp('0.5%'),
     textAlign: 'center',
   },
   statValue: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '900',
     color: COLORS.textBorde,
   },
   badgesSection: {
-    padding: 20,
+    padding: wp('5%'),
     backgroundColor: COLORS.targetFondo,
   },
   badgesTitle: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '900',
     color: COLORS.textContenido,
-    marginBottom: 15,
+    marginBottom: hp('2%'),
     textAlign: 'center',
   },
   badgesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 10,
+    gap: wp('2.5%'),
   },
   badgeItem: {
-    width: 54,
-    height: 54,
+    width: wp('13%'),
+    height: wp('13%'),
   },
   badgeItemLocked: {
     opacity: 0.5,

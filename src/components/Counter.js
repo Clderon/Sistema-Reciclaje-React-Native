@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, Animated } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const AnimatedButton = ({ onPress, disabled, children }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -45,18 +46,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#eedfc0',
-    gap: 10,
+    gap: wp('2%'),
     width: '100%',
   },
   button: {
-    width: 50,
-    height: 50,
+    width: wp('12%'),
+    height: wp('12%'),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f8f7e3',
     borderWidth: 3,
     borderColor: '#1d420f',
-    borderRadius: 8,
+    borderRadius: wp('2%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -64,14 +65,14 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   buttonIcon: {
-    fontSize: 24,
+    fontSize: wp('6%'),
     fontWeight: '900',
     color: '#513015',
-    lineHeight: 24,
+    lineHeight: wp('6%'),
     includeFontPadding: false,
   },
   value: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '700',
     color: '#513015',
     flex: 1,

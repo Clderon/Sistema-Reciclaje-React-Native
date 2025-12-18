@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { CATEGORIES } from '../utils/constants';
 
 const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
@@ -79,21 +80,21 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: hp('1%'),
   },
   categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '90%',
-    maxWidth: 375,
-    gap: 20,
+    width: wp('90%'),
+    maxWidth: wp('95%'),
+    gap: wp('4%'),
   },
   category: {
-    width: 90,
-    height: 90,
-    borderRadius: 15,
+    width: wp('22%'),
+    height: wp('22%'),
+    borderRadius: wp('4%'),
     borderColor: '#1d420f',
     overflow: 'hidden',
     position: 'relative',
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   },
   categoryBg: {
     position: 'absolute',
-    top: -25,
+    top: -wp('6%'),
     left: 0,
     right: 0,
     bottom: 0,
@@ -118,30 +119,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 8,
-    paddingHorizontal: 5,
+    paddingBottom: hp('1%'),
+    paddingHorizontal: wp('1%'),
     position: 'relative',
     zIndex: 1,
   },
   categoryIcon: {
-    width: 45,
-    height: 45,
+    width: wp('11%'),
+    height: wp('11%'),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 3,
+    marginBottom: hp('0.3%'),
   },
   categoryImg: {
-    width: 50,
-    height: 50,
+    width: wp('12%'),
+    height: wp('12%'),
   },
   categoryLabel: {
-    fontSize: 12,
+    fontSize: wp('3%'),
     fontWeight: '700',
     color: '#e9f5e6',
     textAlign: 'center',
-    lineHeight: 11,
+    lineHeight: hp('1.4%'),
     includeFontPadding: false,
-    marginTop: 4,
+    marginTop: hp('0.5%'),
   },
 });
 

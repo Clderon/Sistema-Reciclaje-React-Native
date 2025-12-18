@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Animated,
 } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
 
 const AnimatedButton = ({ children, onPress, style }) => {
@@ -211,30 +212,30 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 75,
-    paddingHorizontal: '5%',
+    paddingTop: hp('8%'),
+    paddingHorizontal: wp('5%'),
     alignItems: 'center',
+    paddingBottom: hp('15%'),
   },
   perfilCard: {
     backgroundColor: COLORS.target,
-    borderRadius: 20, // 1rem
+    borderRadius: wp('5%'),
     borderWidth: 3,
     borderColor: COLORS.textContenido,
     overflow: 'hidden',
     width: '100%',
-    maxWidth: 400, // 40rem
+    maxWidth: wp('95%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 20,
-    padding: 10,
-    
+    padding: wp('2.5%'),
   },
   header: {
     backgroundColor: COLORS.targetFondo,
-    borderTopLeftRadius: 10, // 1rem 1rem 0 0
-    borderTopRightRadius: 10,
-    height: 60, // 6.4rem
+    borderTopLeftRadius: wp('2.5%'),
+    borderTopRightRadius: wp('2.5%'),
+    height: hp('7%'),
     position: 'relative',
     overflow: 'hidden',
   },
@@ -250,18 +251,18 @@ const styles = StyleSheet.create({
   title: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: 20, // 2rem
+    fontSize: wp('5%'),
     fontWeight: '700',
-    paddingHorizontal: 10, // 1rem
+    paddingHorizontal: wp('2.5%'),
     includeFontPadding: false,
   },
   section: {
     width: '100%',
-    height: 230, // 22.3rem
+    height: hp('28%'),
     position: 'relative',
-    marginBottom: 10, // 
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    marginBottom: hp('1%'),
+    borderBottomLeftRadius: wp('2.5%'),
+    borderBottomRightRadius: wp('2.5%'),
   },
   backgroundSection: {
     position: 'absolute',
@@ -270,33 +271,33 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '105%',
     zIndex: 1,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: wp('2.5%'),
+    borderBottomRightRadius: wp('2.5%'),
   },
   info: {
-    width: 359, // 35.9rem
-    height: 134, // 13.4rem
+    width: wp('90%'),
+    height: hp('16%'),
     position: 'absolute',
-    top: 10, // 0.5rem
+    top: hp('1%'),
     alignSelf: 'center',
     zIndex: 2,
   },
   avatarWrapper: {
-    width: 124, // 12.4rem
-    height: 124, // 13.4rem
+    width: wp('30%'),
+    height: wp('30%'),
     position: 'absolute',
-    left: 10,
+    left: wp('2%'),
     top: 0,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
   },
   avatarContainer: {
-    width: 120, // 11.8rem
-    height: 120, // 11.8rem
+    width: wp('28%'),
+    height: wp('28%'),
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: wp('2%'),
   },
   avatar: {
     width: '100%',
@@ -304,43 +305,43 @@ const styles = StyleSheet.create({
     objectFit: 'fill',
   },
   badge: {
-    marginTop: -15, // -1rem
-    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
-    borderRadius: 30, // 3rem
+    marginTop: hp('-1.5%'),
+    backgroundColor: COLORS.avatarBrown,
+    borderRadius: wp('8%'),
     borderWidth: 3,
     borderColor: COLORS.textContenido,
-    paddingVertical: 4, // 0.4rem
-    paddingHorizontal: 29, // 2.9rem
+    paddingVertical: hp('0.5%'),
+    paddingHorizontal: wp('7%'),
     zIndex: 2,
   },
   badgeText: {
     fontWeight: '700',
-    fontSize: 14, // 1.4rem
+    fontSize: wp('3.5%'),
     color: COLORS.textWhite,
     includeFontPadding: false,
   },
   nameCard: {
-    width: 240, // aumentado para que se extienda más hacia el avatar
-    height: 78, // 7.8rem
+    width: wp('58%'),
+    height: hp('9%'),
     position: 'absolute',
-    left: 60, // movido más a la izquierda para que quede debajo del avatar
-    top: 25, // centrado verticalmente con el avatar
-    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
-    borderRadius: 10, // 1rem
+    left: wp('15%'),
+    top: hp('3%'),
+    backgroundColor: COLORS.avatarBrown,
+    borderRadius: wp('2.5%'),
     borderWidth: 1,
     borderColor: COLORS.textContenido,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1, // detrás del avatar
+    zIndex: 1,
   },
   nameCardInner: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 10, // 1rem
+    borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textContenido,
-    paddingVertical: 10, // 1rem
-    paddingLeft: 60, // espacio para el avatar superpuesto
-    paddingRight: 12,
+    paddingVertical: hp('1%'),
+    paddingLeft: wp('15%'),
+    paddingRight: wp('3%'),
     width: '95%',
     height: '90%',
     justifyContent: 'center',
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontWeight: '700',
-    fontSize: 16, // 1.6rem
+    fontSize: wp('4%'),
     color: COLORS.textContenido,
     textAlign: 'right',
     width: '100%',
@@ -356,19 +357,19 @@ const styles = StyleSheet.create({
   },
   level: {
     fontWeight: '500',
-    fontSize: 14, // 1.4rem
+    fontSize: wp('3.5%'),
     color: COLORS.textContenido,
     textAlign: 'right',
     width: '100%',
     includeFontPadding: false,
   },
   stats: {
-    paddingHorizontal: 10, // 1rem
+    paddingHorizontal: wp('2.5%'),
     flexDirection: 'row',
-    gap: 5, // 0.5rem
+    gap: wp('1%'),
     justifyContent: 'space-between',
     width: '100%',
-    height: 80, // 8rem
+    height: hp('10%'),
     position: 'absolute',
     left: 0,
     bottom: 0,
@@ -379,11 +380,11 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   statOuter: {
-    backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
-    borderRadius: 10, // 1rem
+    backgroundColor: COLORS.avatarBrown,
+    borderRadius: wp('2.5%'),
     borderWidth: 1,
     borderColor: COLORS.textContenido,
-    padding: 5, // 0.5rem
+    padding: wp('1%'),
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
   },
   statInner: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 10, // 1rem
+    borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textContenido,
     width: '100%',
@@ -405,12 +406,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'column',
     gap: 2,
-    padding: 5, 
+    padding: wp('1%'),
   },
   statLabel: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: wp('3.2%'),
     fontWeight: '800',
     width: '100%',
     includeFontPadding: false,
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
   statValue: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: 18, // 1.6rem
+    fontSize: wp('4.5%'),
     letterSpacing: 1,
     fontWeight: '800',
     width: '100%',
@@ -426,60 +427,58 @@ const styles = StyleSheet.create({
   },
   badges: {
     width: '100%',
-    marginTop: 10, // 1.5rem
+    marginTop: hp('1%'),
     alignItems: 'center',
-    gap: 12, // 1.2rem
-    marginTop: 10,
+    gap: hp('1.5%'),
   },
   badgesTitle: {
     fontWeight: '700',
-    fontSize: 22, // 1.8rem
+    fontSize: wp('5.5%'),
     color: COLORS.textContenido,
-    paddingLeft: 10, // 1rem
+    paddingLeft: wp('2.5%'),
     alignSelf: 'center',
     includeFontPadding: false,
   },
   badgesList: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 10, // 1rem
-    padding: 10, // 
+    borderRadius: wp('2.5%'),
+    padding: wp('2.5%'),
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10, // 1rem
+    gap: wp('2.5%'),
     justifyContent: 'space-around',
     width: '100%',
-    minHeight: 100,
+    minHeight: hp('12%'),
   },
   badgeItemWrapper: {
-    width: 79, // 7.9rem
-    height: 79, // 7.9rem
+    width: wp('18%'),
+    height: wp('18%'),
     flexShrink: 0,
   },
   badgeItem: {
-    width: 79, // 7.9rem
-    height: 79, // 7.9rem
+    width: wp('18%'),
+    height: wp('18%'),
   },
   badgeItemMore: {
-    // Para mas_insignia.webp
   },
   actions: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 15, // 1.5rem
+    gap: wp('4%'),
     alignItems: 'center',
     justifyContent: 'space-evenly',
     width: '100%',
-    height: 70, // 7.4rem
-    paddingVertical: 10,
+    height: hp('8%'),
+    paddingVertical: hp('1%'),
   },
   buttonEdit: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 10, // 1rem
+    borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textContenido,
-    paddingVertical: 10, // 1rem
-    paddingHorizontal: 20, // 2rem
+    paddingVertical: hp('1%'),
+    paddingHorizontal: wp('5%'),
     flex: 1,
     alignItems: 'center',
     height: '100%',
@@ -488,15 +487,15 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.textContenido,
     fontWeight: '700',
-    fontSize: 20, // 2rem
+    fontSize: wp('5%'),
     includeFontPadding: false,
   },
   buttonSettings: {
     flexShrink: 0,
-    width: 58, // 5.8rem
+    width: wp('14%'),
     height: '100%',
     backgroundColor: COLORS.targetFondo,
-    borderRadius: 10, // 1rem
+    borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textContenido,
     shadowColor: '#000',
@@ -508,8 +507,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonIcon: {
-    width: 30, // 3rem
-    height: 30, // 3rem
+    width: wp('7%'),
+    height: wp('7%'),
     alignItems: 'center',
     justifyContent: 'center',
   },
