@@ -1,15 +1,36 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
   ImageBackground,
   Image,
   SafeAreaView,
+  Animated,
 } from 'react-native';
 import { COLORS } from '../utils/constants';
+
+const AnimatedButton = ({ children, onPress, style }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  return (
+    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Animated.View style={[style, { transform: [{ scale }] }]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const PerfilScreen = () => {
   return (
@@ -72,7 +93,7 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Puntos Totales{'\n'}
+                        Puntos Totales
                       </Text>
                       <Text style={styles.statValue}>150</Text>
                     </View>
@@ -95,7 +116,7 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Misiones{'\n'}
+                        Misiones
                       </Text>
                       <Text style={styles.statValue}>8</Text>
                     </View>
@@ -129,6 +150,20 @@ const PerfilScreen = () => {
                     resizeMode="cover"
                   />
                 </View>
+                <View style={styles.badgeItemWrapper}>
+                  <Image
+                    source={require('../assets/images/insignia.webp')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                </View>
+                <View style={styles.badgeItemWrapper}>
+                  <Image
+                    source={require('../assets/images/insignia.webp')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                </View>
                 <Image
                   source={require('../assets/images/mas_insignia.webp')}
                   style={[styles.badgeItem, styles.badgeItemMore]}
@@ -139,17 +174,15 @@ const PerfilScreen = () => {
 
             {/* Actions */}
             <View style={styles.actions}>
-              <TouchableOpacity
+              <AnimatedButton
                 style={styles.buttonEdit}
                 onPress={() => console.log('Edit profile')}
-                activeOpacity={0.8}
               >
                 <Text style={styles.buttonText}>Editar Mi Perfil</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </AnimatedButton>
+              <AnimatedButton
                 style={styles.buttonSettings}
                 onPress={() => console.log('Settings')}
-                activeOpacity={0.7}
               >
                 <View style={styles.buttonIcon}>
                   <Image
@@ -158,7 +191,7 @@ const PerfilScreen = () => {
                     resizeMode="cover"
                   />
                 </View>
-              </TouchableOpacity>
+              </AnimatedButton>
             </View>
           </View>
         </ScrollView>
@@ -178,30 +211,30 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 40,
-    paddingBottom: 120,
+    paddingTop: 75,
     paddingHorizontal: '5%',
     alignItems: 'center',
   },
   perfilCard: {
     backgroundColor: COLORS.target,
-    borderRadius: 10, // 1rem
+    borderRadius: 20, // 1rem
     borderWidth: 3,
-    borderColor: COLORS.textContenido, // var(--colorTextContenido) en CSS original
+    borderColor: COLORS.textContenido,
     overflow: 'hidden',
     width: '100%',
     maxWidth: 400, // 40rem
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 5,
+    shadowRadius: 20,
+    padding: 10,
+    
   },
   header: {
     backgroundColor: COLORS.targetFondo,
     borderTopLeftRadius: 10, // 1rem 1rem 0 0
     borderTopRightRadius: 10,
-    height: 64, // 6.4rem
+    height: 60, // 6.4rem
     position: 'relative',
     overflow: 'hidden',
   },
@@ -224,53 +257,54 @@ const styles = StyleSheet.create({
   },
   section: {
     width: '100%',
-    height: 223, // 22.3rem
+    height: 230, // 22.3rem
     position: 'relative',
-    marginBottom: 10, // 1rem
+    marginBottom: 10, // 
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   backgroundSection: {
     position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
-    height: '110%',
+    height: '105%',
     zIndex: 1,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   info: {
     width: 359, // 35.9rem
     height: 134, // 13.4rem
     position: 'absolute',
-    top: 5, // 0.5rem
+    top: 10, // 0.5rem
     alignSelf: 'center',
     zIndex: 2,
   },
   avatarWrapper: {
     width: 124, // 12.4rem
-    height: 134, // 13.4rem
+    height: 124, // 13.4rem
     position: 'absolute',
-    left: 0,
+    left: 10,
     top: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 2,
   },
   avatarContainer: {
-    backgroundColor: COLORS.textContenido, // var(--colorTextContenido)
-    borderRadius: 59, // 50%
-    borderWidth: 1,
-    borderColor: COLORS.textContenido,
-    padding: 3,
-    overflow: 'hidden',
-    width: 118, // 11.8rem
-    height: 118, // 11.8rem
+    width: 120, // 11.8rem
+    height: 120, // 11.8rem
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 10,
   },
   avatar: {
     width: '100%',
     height: '100%',
+    objectFit: 'fill',
   },
   badge: {
-    marginTop: -10, // -1rem
+    marginTop: -15, // -1rem
     backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
     borderRadius: 30, // 3rem
     borderWidth: 3,
@@ -286,17 +320,18 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   nameCard: {
-    width: 219, // 21.9rem
+    width: 240, // aumentado para que se extienda más hacia el avatar
     height: 78, // 7.8rem
     position: 'absolute',
-    left: 105, // 10.5rem
-    top: 17, // 1.7rem
+    left: 60, // movido más a la izquierda para que quede debajo del avatar
+    top: 25, // centrado verticalmente con el avatar
     backgroundColor: COLORS.avatarBrown, // var(--colorAvatarBrown)
     borderRadius: 10, // 1rem
     borderWidth: 1,
     borderColor: COLORS.textContenido,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1, // detrás del avatar
   },
   nameCardInner: {
     backgroundColor: COLORS.targetFondo,
@@ -304,8 +339,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.textContenido,
     paddingVertical: 10, // 1rem
-    paddingHorizontal: 9, // 0.9rem
-    width: 210, // 21rem
+    paddingLeft: 60, // espacio para el avatar superpuesto
+    paddingRight: 12,
+    width: '95%',
     height: '90%',
     justifyContent: 'center',
     alignItems: 'flex-end',
@@ -335,9 +371,8 @@ const styles = StyleSheet.create({
     height: 80, // 8rem
     position: 'absolute',
     left: 0,
-    bottom: -10, // -10px
+    bottom: 0,
     zIndex: 2,
-    backgroundColor: 'red',
   },
   stat: {
     flex: 1,
@@ -349,7 +384,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.textContenido,
     padding: 5, // 0.5rem
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -357,46 +392,48 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'blue',
   },
   statInner: {
     backgroundColor: COLORS.targetFondo,
     borderRadius: 10, // 1rem
     borderWidth: 2,
     borderColor: COLORS.textContenido,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
     width: '100%',
-    backgroundColor: 'green',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+    gap: 2,
+    padding: 5, 
   },
   statLabel: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: 11, // 1.1rem
+    fontSize: 14,
     fontWeight: '800',
-    lineHeight: 11, // 1.1
     width: '100%',
     includeFontPadding: false,
   },
   statValue: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: 16, // 1.6rem
+    fontSize: 18, // 1.6rem
     letterSpacing: 1,
     fontWeight: '800',
     width: '100%',
     includeFontPadding: false,
   },
   badges: {
-    width: '90%',
-    marginTop: 15, // 1.5rem
+    width: '100%',
+    marginTop: 10, // 1.5rem
     alignItems: 'center',
     gap: 12, // 1.2rem
+    marginTop: 10,
   },
   badgesTitle: {
     fontWeight: '700',
-    fontSize: 18, // 1.8rem
+    fontSize: 22, // 1.8rem
     color: COLORS.textContenido,
     paddingLeft: 10, // 1rem
     alignSelf: 'center',
@@ -405,14 +442,14 @@ const styles = StyleSheet.create({
   badgesList: {
     backgroundColor: COLORS.targetFondo,
     borderRadius: 10, // 1rem
-    padding: 10, // 1rem
+    padding: 10, // 
+    display: 'flex',
     flexDirection: 'row',
-    gap: 10, // 1rem
-    alignItems: 'center',
-    justifyContent: 'space-around',
     flexWrap: 'wrap',
+    gap: 10, // 1rem
+    justifyContent: 'space-around',
     width: '100%',
-    minHeight: 100, // 10rem
+    minHeight: 100,
   },
   badgeItemWrapper: {
     width: 79, // 7.9rem
@@ -427,13 +464,14 @@ const styles = StyleSheet.create({
     // Para mas_insignia.webp
   },
   actions: {
-    padding: 10, // 1rem
+    display: 'flex',
     flexDirection: 'row',
     gap: 15, // 1.5rem
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-evenly',
     width: '100%',
-    height: 74, // 7.4rem
+    height: 70, // 7.4rem
+    paddingVertical: 10,
   },
   buttonEdit: {
     backgroundColor: COLORS.targetFondo,
@@ -444,6 +482,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, // 2rem
     flex: 1,
     alignItems: 'center',
+    height: '100%',
     justifyContent: 'center',
   },
   buttonText: {

@@ -46,11 +46,6 @@ module.exports = {
       fontFamily: {
         sans: ['Roboto', 'sans-serif'],
       },
-      spacing: {
-        '15': '60px',
-        '18': '72px',
-        '88': '352px',
-      },
     },
   },
   plugins: [],

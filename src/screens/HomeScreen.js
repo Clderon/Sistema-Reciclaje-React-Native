@@ -160,7 +160,7 @@ const HomeScreen = () => {
               />
 
               {/* Send Button */}
-              <Button title="Enviar Mi Reciclaje" onPress={handleSend} variant="primary" />
+              <Button style={styles.sendButton} title="Enviar Mi Reciclaje" onPress={handleSend} variant="primary" />
             </View>
           </View>
         </ScrollView>
@@ -255,9 +255,11 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   registroContent: {
-    padding: 15,
-    alignItems: 'center',
+    paddingVertical:20,
+    paddingHorizontal:35,
+    alignItems: 'stretch',
     gap: 15,
+    width: '100%',
   },
   scanButton: {
     width: '100%',
@@ -287,6 +289,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 12,
     zIndex: 1,
+  },
+  sendButton: {
+    width: '100%',
+    height: 60,
   },
   scanText: {
     flexDirection: 'column',

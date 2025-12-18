@@ -1,28 +1,38 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, Pressable, StyleSheet, Animated } from 'react-native';
+
+const AnimatedButton = ({ onPress, disabled, children }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.85, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  return (
+    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} disabled={disabled}>
+      <Animated.View style={[styles.button, { transform: [{ scale }] }]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const Counter = ({ value, onIncrement, onDecrement, min = 1, max = 99 }) => {
   return (
     <View style={styles.counter}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => value > min && onDecrement()}
-        activeOpacity={0.95}
-        disabled={value <= min}
-      >
+      <AnimatedButton onPress={() => value > min && onDecrement()} disabled={value <= min}>
         <Text style={styles.buttonIcon}>−</Text>
-      </TouchableOpacity>
+      </AnimatedButton>
       
       <Text style={styles.value}>Cantidad: {value}</Text>
       
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => value < max && onIncrement()}
-        activeOpacity={0.95}
-        disabled={value >= max}
-      >
+      <AnimatedButton onPress={() => value < max && onIncrement()} disabled={value >= max}>
         <Text style={styles.buttonIcon}>+</Text>
-      </TouchableOpacity>
+      </AnimatedButton>
     </View>
   );
 };

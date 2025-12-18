@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollContent: {
-    paddingTop: 70, // Similar a HomeScreen
+    paddingTop: 40, // Similar a HomeScreen
     paddingBottom: 120,
     width: '90%',
     alignSelf: 'center',

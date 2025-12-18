@@ -1,37 +1,48 @@
-import React from 'react';
-import { TouchableOpacity, Text, ImageBackground, View, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
 
-const Button = ({ title, onPress, variant = 'primary' }) => {
+const Button = ({ title, onPress, variant = 'primary', style }) => {
   const isPrimary = variant === 'primary';
-  
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
-      ]}
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
-      <View style={styles.buttonContent}>
-        {isPrimary && (
-          <ImageBackground
-            source={require('../assets/images/upscalemedia-transformed.webp')}
-            style={styles.buttonVines}
-            resizeMode="cover"
-          />
-        )}
-        <Text style={[styles.buttonText, isPrimary ? styles.buttonTextPrimary : styles.buttonTextSecondary]}>
-          {title}
-        </Text>
-      </View>
-    </TouchableOpacity>
+    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} style={{ width: '100%' }}>
+      <Animated.View
+        style={[
+          styles.button,
+          isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
+          { transform: [{ scale }] },
+          style,
+        ]}
+      >
+        <View style={styles.buttonContent}>
+          {isPrimary && (
+            <ImageBackground
+              source={require('../assets/images/upscalemedia-transformed.webp')}
+              style={styles.buttonVines}
+              resizeMode="cover"
+            />
+          )}
+          <Text style={[styles.buttonText, isPrimary ? styles.buttonTextPrimary : styles.buttonTextSecondary]}>
+            {title}
+          </Text>
+        </View>
+      </Animated.View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    width: 250,
+    width: '100%',
     height: 60,
     borderRadius: 15,
     borderWidth: 3.5,

@@ -1,6 +1,51 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
 import { CATEGORIES } from '../utils/constants';
+
+const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  return (
+    <Pressable onPress={onSelect} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Animated.View
+        style={[
+          styles.category,
+          {
+            backgroundColor: color,
+            borderWidth: isActive ? 3 : 2,
+            transform: [{ scale }],
+          },
+          isActive && styles.categoryActive,
+        ]}
+      >
+        <ImageBackground
+          source={require('../assets/images/fondo-item-hd.webp')}
+          style={styles.categoryBg}
+          resizeMode="contain"
+        />
+        
+        <View style={styles.categoryContent}>
+          <View style={styles.categoryIcon}>
+            <Image
+              source={category.icon}
+              style={styles.categoryImg}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.categoryLabel}>{category.name}</Text>
+        </View>
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const CategorySelector = ({ selectedCategory, onSelectCategory }) => {
   const categoryColors = [
@@ -15,41 +60,16 @@ const CategorySelector = ({ selectedCategory, onSelectCategory }) => {
   return (
     <View style={styles.container}>
       <View style={styles.categories}>
-        {CATEGORIES.map((category, index) => {
-          const isActive = selectedCategory === category.id;
-          return (
-            <TouchableOpacity
-              key={category.id}
-              style={[
-                styles.category,
-                {
-                  backgroundColor: categoryColors[index],
-                  borderWidth: isActive ? 3 : 2,
-                },
-                isActive && styles.categoryActive,
-              ]}
-              onPress={() => onSelectCategory(category.id)}
-              activeOpacity={0.95}
-            >
-              <ImageBackground
-                source={require('../assets/images/fondo-item-hd.webp')}
-                style={styles.categoryBg}
-                resizeMode="contain"
-              />
-              
-              <View style={styles.categoryContent}>
-                <View style={styles.categoryIcon}>
-                  <Image
-                    source={category.icon}
-                    style={styles.categoryImg}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={styles.categoryLabel}>{category.name}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+        {CATEGORIES.map((category, index) => (
+          <CategoryItem
+            key={category.id}
+            category={category}
+            index={index}
+            isActive={selectedCategory === category.id}
+            onSelect={() => onSelectCategory(category.id)}
+            color={categoryColors[index]}
+          />
+        ))}
       </View>
     </View>
   );

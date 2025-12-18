@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { Image, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Image, Pressable, View, StyleSheet, Animated } from 'react-native';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -12,19 +12,39 @@ import { COLORS } from './src/utils/constants';
 
 const Tab = createBottomTabNavigator();
 
-// Componente personalizado para el botón del tab con border-right
-const TabBarButton = ({ children, onPress, isLast = false, style, ...props }) => (
-  <View style={[styles.tabBarButtonContainer, !isLast && styles.tabBarButtonContainerWithBorder]}>
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-      style={[styles.tabBarButton, style]}
-      {...props}
-    >
-      {children}
-    </TouchableOpacity>
-  </View>
-);
+// Componente personalizado para el botón del tab con animación
+const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, style, ...props }) => {
+  const focused = accessibilityState?.selected;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+  };
+
+  return (
+    <View style={[
+      styles.tabBarButtonContainer, 
+      !isLast && styles.tabBarButtonContainerWithBorder,
+      focused && styles.tabBarButtonContainerFocused,
+    ]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[styles.tabBarButton, style]}
+        {...props}
+      >
+        <Animated.View style={{ transform: [{ scale }], flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {children}
+        </Animated.View>
+      </Pressable>
+    </View>
+  );
+};
 
 export default function App() {
   return (
@@ -33,7 +53,7 @@ export default function App() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: COLORS.button,
+          tabBarActiveTintColor: '#FFFFFF',
           tabBarInactiveTintColor: COLORS.textContenido,
           tabBarStyle: {
             backgroundColor: COLORS.target,
@@ -109,10 +129,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     position: 'relative',
+    backgroundColor: COLORS.target,
   },
   tabBarButtonContainerWithBorder: {
     borderRightWidth: 3,
     borderRightColor: COLORS.textBorde,
+  },
+  tabBarButtonContainerFocused: {
+    backgroundColor: '#6BB927',
   },
   tabBarButton: {
     flex: 1,
