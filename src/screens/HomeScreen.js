@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
+import Toast from 'react-native-root-toast';
 import * as ImagePicker from 'expo-image-picker';
 import CategorySelector from '../components/CategorySelector';
 import Counter from '../components/Counter';
@@ -96,7 +97,7 @@ const HomeScreen = () => {
           onPress: async () => {
             const { status } = await ImagePicker.requestCameraPermissionsAsync();
             if (status !== 'granted') {
-              Alert.alert('Permiso denegado', 'Necesitamos acceso a la cámara');
+              Toast.show('Necesitamos acceso a la cámara', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
               return;
             }
             const result = await ImagePicker.launchCameraAsync({
@@ -115,7 +116,7 @@ const HomeScreen = () => {
           onPress: async () => {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
-              Alert.alert('Permiso denegado', 'Necesitamos acceso a la galería');
+              Toast.show('Necesitamos acceso a la galería', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
               return;
             }
             const result = await ImagePicker.launchImageLibraryAsync({
@@ -153,8 +154,10 @@ const HomeScreen = () => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          decelerationRate={0.75}
-          bounces={false}
+          decelerationRate="normal"
+          bounces={true}
+          overScrollMode="always"
+          scrollEventThrottle={16}
         >
           {/* Header */}
           <View style={styles.header}>

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import * as Haptics from 'expo-haptics';
 
 const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
@@ -9,6 +10,7 @@ const Button = ({ title, onPress, variant = 'primary', style, disabled = false }
 
   const handlePressIn = () => {
     if (!isDisabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
     }
   };

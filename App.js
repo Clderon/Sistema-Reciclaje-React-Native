@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Pressable, View, StyleSheet, Animated } from 'react-native';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -32,25 +33,26 @@ const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, s
       focused && styles.tabBarButtonContainerFocused,
     ]}>
       <Pressable
-        onPress={onPress}
+      onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        style={[styles.tabBarButton, style]}
-        {...props}
-      >
+      style={[styles.tabBarButton, style]}
+      {...props}
+    >
         <Animated.View style={{ transform: [{ scale }], flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {children}
+      {children}
         </Animated.View>
       </Pressable>
-    </View>
-  );
+  </View>
+);
 };
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar style="auto" />
-      <Tab.Navigator
+    <RootSiblingParent>
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        <Tab.Navigator
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: '#FFFFFF',
@@ -120,7 +122,8 @@ export default function App() {
           }}
         />
       </Tab.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </RootSiblingParent>
   );
 }
 

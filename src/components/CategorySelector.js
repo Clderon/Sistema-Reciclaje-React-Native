@@ -1,10 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { CATEGORIES } from '../utils/constants';
 
 const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
   const scale = useRef(new Animated.Value(1)).current;
+  const activeScale = useRef(new Animated.Value(isActive ? 1.05 : 1)).current;
+
+  useEffect(() => {
+    if (isActive) {
+      Animated.sequence([
+        Animated.spring(activeScale, { toValue: 1.02, useNativeDriver: true, speed: 50 }),
+        Animated.spring(activeScale, { toValue: 1.01, useNativeDriver: true, speed: 50 }),
+      ]).start();
+    } else {
+      Animated.spring(activeScale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+    }
+  }, [isActive]);
 
   const handlePressIn = () => {
     Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 50 }).start();
@@ -22,7 +34,7 @@ const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
           {
             backgroundColor: color,
             borderWidth: isActive ? 3 : 2,
-            transform: [{ scale }],
+            transform: [{ scale: Animated.multiply(scale, activeScale) }],
           },
           isActive && styles.categoryActive,
         ]}

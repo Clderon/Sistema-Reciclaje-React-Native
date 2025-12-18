@@ -41,6 +41,10 @@ const LogrosScreen = () => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          decelerationRate="normal"
+          bounces={true}
+          overScrollMode="always"
+          scrollEventThrottle={16}
         >
           <View style={styles.rankingCard}>
             {/* Header */}

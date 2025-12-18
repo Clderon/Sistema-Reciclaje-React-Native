@@ -11,6 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../utils/constants';
 
 const AnimatedButton = ({ children, onPress, style }) => {
@@ -44,8 +45,10 @@ const PerfilScreen = () => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          decelerationRate={0.75}
-          bounces={false}
+          decelerationRate="normal"
+          bounces={true}
+          overScrollMode="always"
+          scrollEventThrottle={16}
         >
           <View style={styles.perfilCard}>
             {/* Header */}
@@ -132,44 +135,49 @@ const PerfilScreen = () => {
               <View style={styles.badgesList}>
                 <View style={styles.badgeItemWrapper}>
                   <Image
-                    source={require('../assets/images/insignia.webp')}
+                    source={require('../assets/images/logro_vidrioV2.png')}
                     style={styles.badgeItem}
                     resizeMode="cover"
                   />
                 </View>
                 <View style={styles.badgeItemWrapper}>
                   <Image
-                    source={require('../assets/images/insignia.webp')}
+                    source={require('../assets/images/logro_caiman.png')}
                     style={styles.badgeItem}
                     resizeMode="cover"
                   />
                 </View>
                 <View style={styles.badgeItemWrapper}>
                   <Image
-                    source={require('../assets/images/insignia.webp')}
+                    source={require('../assets/images/logro_capibarav2.png')}
                     style={styles.badgeItem}
                     resizeMode="cover"
                   />
                 </View>
                 <View style={styles.badgeItemWrapper}>
                   <Image
-                    source={require('../assets/images/insignia.webp')}
+                    source={require('../assets/images/logro_perezoso.png')}
                     style={styles.badgeItem}
                     resizeMode="cover"
                   />
                 </View>
                 <View style={styles.badgeItemWrapper}>
                   <Image
-                    source={require('../assets/images/insignia.webp')}
+                    source={require('../assets/images/logro_sajino.png')}
                     style={styles.badgeItem}
                     resizeMode="cover"
                   />
                 </View>
-                <Image
-                  source={require('../assets/images/mas_insignia.webp')}
-                  style={[styles.badgeItem, styles.badgeItemMore]}
-                  resizeMode="contain"
-                />
+                <View style={[styles.badgeItemWrapper, styles.badgeItemLocked]}>
+                  <Image
+                    source={require('../assets/images/logro_mono.png')}
+                    style={styles.badgeItem}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.lockOverlay}>
+                    <MaterialIcons name="lock" size={wp('6%')} color="#fff" />
+                  </View>
+                </View>
               </View>
             </View>
 
@@ -452,15 +460,33 @@ const styles = StyleSheet.create({
     minHeight: hp('12%'),
   },
   badgeItemWrapper: {
-    width: wp('18%'),
-    height: wp('18%'),
-    flexShrink: 0,
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: wp('50%'),
+    borderWidth: 2,
+    borderColor: COLORS.textContenido,
+    padding: wp('1.5%'),
+    overflow: 'hidden',
   },
   badgeItem: {
-    width: wp('18%'),
-    height: wp('18%'),
+    width: '100%',
+    height: '100%',
+    borderRadius: wp('50%'),
   },
-  badgeItemMore: {
+  badgeItemLocked: {
+    opacity: 0.5,
+    borderColor: COLORS.avatarGray,
+  },
+  lockOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: wp('50%'),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   actions: {
     display: 'flex',
