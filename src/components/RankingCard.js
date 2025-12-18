@@ -8,8 +8,8 @@ const RankingCard = ({ rankingData, onPositionPress, progressText, progressValue
     const positions = {
       1: { top: '5%', left: '53%', transform: [{ translateX: -20 }] }, // 40px avatar, centrar
       2: { top: '25%', left: '23%' },
-      3: { top: '31%', left: '61%' },
-      4: { top: '60%', left: '59%', transform: [{ translateX: -30 }] }, // 60px avatar, centrar
+      3: { top: '35%', left: '61%' },
+      4: { top: '60%', left: '65%', transform: [{ translateX: -30 }] }, // 60px avatar, centrar
       5: { top: '71%', left: '20%' },
     };
     return positions[position] || {};
@@ -18,9 +18,9 @@ const RankingCard = ({ rankingData, onPositionPress, progressText, progressValue
   const getAvatarSize = (position) => {
     const sizes = {
       1: 40, // 4rem
-      2: 50, // 5rem (silver)
-      3: 65, // 6.5rem (bronze)
-      4: 60, // 6rem
+      2: 45, // 5rem (silver)
+      3: 55, // 6.5rem (bronze)
+      4: 55, // 6rem
       5: 60, // 6rem
     };
     return sizes[position] || 60;

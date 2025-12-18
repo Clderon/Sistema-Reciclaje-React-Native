@@ -1,24 +1,47 @@
 import React, { useRef } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
 
-const Button = ({ title, onPress, variant = 'primary', style }) => {
+const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
+  const isDisabled = disabled || variant === 'disabled';
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
-    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+    if (!isDisabled) {
+      Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+    }
   };
 
   const handlePressOut = () => {
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+    if (!isDisabled) {
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+    }
+  };
+
+  const getButtonStyle = () => {
+    if (isDisabled) return styles.buttonDisabled;
+    if (isPrimary) return styles.buttonPrimary;
+    return styles.buttonSecondary;
+  };
+
+  const getTextStyle = () => {
+    if (isDisabled) return styles.buttonTextDisabled;
+    if (isPrimary) return styles.buttonTextPrimary;
+    return styles.buttonTextSecondary;
   };
 
   return (
-    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} style={{ width: '100%' }}>
+    <Pressable 
+      onPress={isDisabled ? null : onPress} 
+      onPressIn={handlePressIn} 
+      onPressOut={handlePressOut} 
+      style={{ width: '100%' }}
+      disabled={isDisabled}
+    >
       <Animated.View
         style={[
           styles.button,
-          isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
+          getButtonStyle(),
           { transform: [{ scale }] },
           style,
         ]}
@@ -27,11 +50,11 @@ const Button = ({ title, onPress, variant = 'primary', style }) => {
           {isPrimary && (
             <ImageBackground
               source={require('../assets/images/upscalemedia-transformed.webp')}
-              style={styles.buttonVines}
+              style={[styles.buttonVines, isDisabled && { opacity: 0.5 }]}
               resizeMode="cover"
             />
           )}
-          <Text style={[styles.buttonText, isPrimary ? styles.buttonTextPrimary : styles.buttonTextSecondary]}>
+          <Text style={[styles.buttonText, getTextStyle()]}>
             {title}
           </Text>
         </View>
@@ -55,6 +78,11 @@ const styles = StyleSheet.create({
   },
   buttonSecondary: {
     backgroundColor: '#f8f7e3',
+  },
+  buttonDisabled: {
+    backgroundColor: '#6b9b5a',
+    borderColor: '#1d420f',
+    opacity: 0.6,
   },
   buttonContent: {
     flex: 1,
@@ -84,6 +112,9 @@ const styles = StyleSheet.create({
   },
   buttonTextSecondary: {
     color: '#513015',
+  },
+  buttonTextDisabled: {
+    color: '#ffffff',
   },
 });
 

@@ -7,8 +7,11 @@ import {
   ImageBackground,
   SafeAreaView,
   StyleSheet,
+  Alert,
+  Image,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import CategorySelector from '../components/CategorySelector';
 import Counter from '../components/Counter';
 import Button from '../components/Button';
@@ -72,15 +75,68 @@ const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth 
 
 const HomeScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState(1);
-  const [quantity, setQuantity] = useState(5);
+  const [quantity, setQuantity] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [photosByCategory, setPhotosByCategory] = useState({});
+  
+  const photo = photosByCategory[selectedCategory] || null;
+  
+  const setPhoto = (uri) => {
+    setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: uri }));
+  };
 
-  const handleScan = () => {
-    console.log('Scan evidence');
+  const handleScan = async () => {
+    Alert.alert(
+      'Escanear Evidencia',
+      '¿Cómo deseas agregar la imagen?',
+      [
+        {
+          text: 'Cámara',
+          onPress: async () => {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permiso denegado', 'Necesitamos acceso a la cámara');
+              return;
+            }
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ['images'],
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              setPhoto(result.assets[0].uri);
+            }
+          },
+        },
+        {
+          text: 'Galería',
+          onPress: async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permiso denegado', 'Necesitamos acceso a la galería');
+              return;
+            }
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ['images'],
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              setPhoto(result.assets[0].uri);
+            }
+          },
+        },
+        { text: 'Cancelar', style: 'cancel' },
+      ]
+    );
   };
 
   const handleSend = () => {
     setModalVisible(true);
+    setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: null }));
+    setQuantity(0);
   };
 
   const selectedCategoryData = CATEGORIES.find((cat) => cat.id === selectedCategory);
@@ -122,7 +178,10 @@ const HomeScreen = () => {
           {/* Category Selector */}
           <CategorySelector
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            onSelectCategory={(id) => {
+              setSelectedCategory(id);
+              setQuantity(0);
+            }}
           />
 
           {/* Card de Registro */}
@@ -132,35 +191,50 @@ const HomeScreen = () => {
             </View>
 
             <View style={styles.registroContent}>
-              {/* Botón de Escanear */}
+              {/* Botón de Escanear / Vista previa */}
               <TouchableOpacity
                 style={styles.scanButton}
                 onPress={handleScan}
                 activeOpacity={0.98}
               >
-                <ImageBackground
-                  source={require('../assets/images/fondo-camara.webp')}
-                  style={styles.scanBg}
-                  resizeMode="cover"
-                />
-                <View style={styles.scanContent}>
-                  <MaterialIcons name="camera-alt" size={50} color="#513015" />
-                  <View style={styles.scanText}>
-                    <Text style={styles.scanLabel}>¡ESCANEAR</Text>
-                    <Text style={styles.scanLabel}>EVIDENCIA!</Text>
-                  </View>
-                </View>
+                {photo ? (
+                  <>
+                    <Image source={{ uri: photo }} style={styles.photoPreview} resizeMode="cover" />
+                    <View style={styles.photoOverlay}>
+                      <MaterialIcons name="edit" size={24} color="#fff" />
+                      <Text style={styles.photoChangeText}>Cambiar foto</Text>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <ImageBackground
+                      source={require('../assets/images/fondo-camara.webp')}
+                      style={styles.scanBg}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.scanContent}>
+                      <MaterialIcons name="camera-alt" size={50} color="#513015" />
+                      <View style={styles.scanText}>
+                        <Text style={styles.scanLabel}>¡ESCANEAR</Text>
+                        <Text style={styles.scanLabel}>EVIDENCIA!</Text>
+                      </View>
+                    </View>
+                  </>
+                )}
               </TouchableOpacity>
 
               {/* Counter */}
               <Counter
                 value={quantity}
-                onIncrement={() => setQuantity((prev) => Math.min(prev + 1, 99))}
-                onDecrement={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+                onIncrement={() => setQuantity((prev) => Math.min(prev + selectedCategoryData.step, selectedCategoryData.max))}
+                onDecrement={() => setQuantity((prev) => Math.max(prev - selectedCategoryData.step, selectedCategoryData.min))}
+                min={selectedCategoryData.min}
+                max={selectedCategoryData.max}
+                unit={selectedCategoryData.unit}
               />
 
               {/* Send Button */}
-              <Button style={styles.sendButton} title="Enviar Mi Reciclaje" onPress={handleSend} variant="primary" />
+              <Button style={styles.sendButton} title="Enviar Mi Reciclaje" onPress={handleSend} disabled={!photo || quantity <= 0} />
             </View>
           </View>
         </ScrollView>
@@ -304,6 +378,29 @@ const styles = StyleSheet.create({
     color: '#513015',
     lineHeight: 19.2,
     includeFontPadding: false,
+  },
+  photoPreview: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    borderRadius: 9,
+  },
+  photoOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  photoChangeText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

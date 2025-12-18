@@ -21,14 +21,16 @@ const AnimatedButton = ({ onPress, disabled, children }) => {
   );
 };
 
-const Counter = ({ value, onIncrement, onDecrement, min = 1, max = 99 }) => {
+const Counter = ({ value, onIncrement, onDecrement, min = 0, max = 99, unit = 'unidades' }) => {
+  const displayValue = Number.isInteger(value) ? value : value.toFixed(1);
+  
   return (
     <View style={styles.counter}>
       <AnimatedButton onPress={() => value > min && onDecrement()} disabled={value <= min}>
         <Text style={styles.buttonIcon}>−</Text>
       </AnimatedButton>
       
-      <Text style={styles.value}>Cantidad: {value}</Text>
+      <Text style={styles.value}>Cantidad: {displayValue} {unit}</Text>
       
       <AnimatedButton onPress={() => value < max && onIncrement()} disabled={value >= max}>
         <Text style={styles.buttonIcon}>+</Text>
