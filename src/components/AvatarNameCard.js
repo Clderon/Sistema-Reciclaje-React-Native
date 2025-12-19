@@ -25,8 +25,14 @@ const AvatarNameCard = ({
   // Calcular el tamaño de la imagen restando el borde del contenedor
   const imageSize = avatarSize - (avatarBorderWidth * 2);
   
+  // Asegurar que info no se expanda verticalmente más allá del avatarSize
+  const infoStyle = {
+    maxHeight: avatarSize,
+    alignSelf: 'flex-start',
+  };
+  
   return (
-    <View style={styles.info}>
+    <View style={[styles.info, infoStyle]}>
       {/* Avatar y badge */}
       <View
         style={[
@@ -80,7 +86,6 @@ const AvatarNameCard = ({
 
 const styles = StyleSheet.create({
   info: {
-    flex: 1,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -93,11 +98,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 2,
     borderColor: COLORS.textContenido,
-    overflow: 'hidden',
-    // borderWidth y borderRadius se pasan como props
+    // width, height, borderWidth y borderRadius se pasan como props
   },
   avatar: {
-    // Tamaño se pasa como prop
+    // width, height y borderRadius se pasan como props
+    objectFit: 'contain',
+    marginLeft: wp('2%'),
+    marginTop: hp('3%'),
   },
   badge: {
     marginTop: hp('-1.5%'),
@@ -130,11 +137,11 @@ const styles = StyleSheet.create({
     borderRadius: wp('2.5%'),
     borderColor: COLORS.textContenido,
     paddingVertical: hp('1%'),
-    paddingHorizontal: wp('3%'),
-    width: '95%',
+    paddingHorizontal: wp('4%'),
     height: '90%',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: hp('3%'),
     // borderWidth se pasa como prop
   },
   name: {

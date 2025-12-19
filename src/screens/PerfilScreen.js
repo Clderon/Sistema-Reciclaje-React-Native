@@ -74,6 +74,7 @@ const PerfilScreen = () => {
                 level="Nivel: Hormiga"
                 badge="ANT"
                 showBadge={true}
+                avatarSize={wp('25%')}
               />
 
               {/* Estadísticas */}

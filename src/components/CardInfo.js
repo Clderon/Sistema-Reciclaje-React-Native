@@ -42,7 +42,11 @@ const CardInfo = ({ visible, onClose, userData }) => {
               {/* Profile Section */}
               <View style={styles.profile}>
                 <View style={styles.avatarContainer}>
-                  <Image source={userData.avatar} style={styles.avatar} resizeMode="contain" />
+                  <Image 
+                    source={userData.avatar} 
+                    style={styles.avatar} 
+                    resizeMode="cover"
+                  />
                 </View>
                 <View style={styles.userInfo}>
                   <Text style={styles.username}>{userData.name}</Text>
