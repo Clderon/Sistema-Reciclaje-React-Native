@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { CATEGORIES } from '../utils/constants';
+import { CATEGORIES, COLORS } from '../utils/constants';
 
 const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -101,18 +101,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: wp('90%'),
     maxWidth: wp('95%'),
-    gap: wp('4%'),
   },
   category: {
     width: wp('22%'),
     height: wp('22%'),
     borderRadius: wp('4%'),
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     overflow: 'hidden',
-    position: 'relative',
+    margin: wp('2%'),
   },
   categoryActive: {
-    shadowColor: '#46a330',
+    shadowColor: COLORS.button,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: hp('1%'),
     paddingHorizontal: wp('1%'),
-    position: 'relative',
     zIndex: 1,
   },
   categoryIcon: {
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontSize: wp('3%'),
     fontWeight: '700',
-    color: '#e9f5e6',
+    color: COLORS.textWhite,
     textAlign: 'center',
     lineHeight: hp('1.4%'),
     includeFontPadding: false,

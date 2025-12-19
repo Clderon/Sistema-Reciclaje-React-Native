@@ -18,7 +18,7 @@ import CategorySelector from '../components/CategorySelector';
 import Counter from '../components/Counter';
 import Button from '../components/Button';
 import ModalPuntos from '../components/ModalPuntos';
-import { CATEGORIES } from '../utils/constants';
+import { CATEGORIES, COLORS } from '../utils/constants';
 
 // Componente para texto con contorno (simula múltiples text-shadows)
 const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth = 3 }) => {
@@ -68,7 +68,7 @@ const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth 
         </Text>
       ))}
       {/* Texto principal */}
-      <Text style={[baseStyle, { color: textColor, position: 'relative' }]}>
+      <Text style={[baseStyle, { color: textColor }]}>
         {children}
       </Text>
     </View>
@@ -164,14 +164,14 @@ const HomeScreen = () => {
             <View style={styles.headerContent}>
               <TextWithOutline 
                 style={styles.headerTitle}
-                outlineColor="#fff"
+                outlineColor={COLORS.textWhite}
                 outlineWidth={3}
               >
                 Tingo Maria
               </TextWithOutline>
               <TextWithOutline 
                 style={styles.headerSubtitle}
-                outlineColor="#1d420f"
+                outlineColor={COLORS.textBorde}
                 outlineWidth={2}
               >
                 A reciclar por la selva!
@@ -217,7 +217,7 @@ const HomeScreen = () => {
                       resizeMode="cover"
                     />
                     <View style={styles.scanContent}>
-                      <MaterialIcons name="camera-alt" size={50} color="#513015" />
+                      <MaterialIcons name="camera-alt" size={50} color={COLORS.textContenido} />
                       <View style={styles.scanText}>
                         <Text style={styles.scanLabel}>¡ESCANEAR</Text>
                         <Text style={styles.scanLabel}>EVIDENCIA!</Text>
@@ -259,7 +259,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4a7c3f',
+    backgroundColor: COLORS.fondoFallback,
   },
   background: {
     flex: 1,
@@ -283,7 +283,6 @@ const styles = StyleSheet.create({
     minHeight: hp('10%'),
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
     paddingVertical: hp('1%'),
   },
   headerContent: {
@@ -293,7 +292,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: wp('9%'),
     fontWeight: '900',
-    color: '#1d420f',
+    color: COLORS.textBorde,
     letterSpacing: 1,
     marginBottom: 3,
   },
@@ -301,14 +300,14 @@ const styles = StyleSheet.create({
     fontSize: wp('5%'),
     fontWeight: '700',
     fontStyle: 'italic',
-    color: '#f3d645',
+    color: COLORS.textTitle,
     lineHeight: hp('4%'),
     includeFontPadding: false,
   },
   registroCard: {
-    backgroundColor: '#f8f7e3',
+    backgroundColor: COLORS.target,
     borderWidth: 3,
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     borderRadius: wp('4%'),
     overflow: 'hidden',
     width: '100%',
@@ -321,7 +320,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   registroHeader: {
-    backgroundColor: '#eedfc0',
+    backgroundColor: COLORS.targetFondo,
     paddingVertical: hp('1.5%'),
     paddingHorizontal: wp('4%'),
     alignItems: 'center',
@@ -329,41 +328,34 @@ const styles = StyleSheet.create({
   registroTitle: {
     fontSize: wp('5%'),
     fontWeight: '900',
-    color: '#513015',
+    color: COLORS.textContenido,
     includeFontPadding: false,
   },
   registroContent: {
     paddingVertical: hp('2%'),
     paddingHorizontal: wp('8%'),
     alignItems: 'stretch',
-    gap: hp('2%'),
     width: '100%',
+    gap: hp('2%'),
   },
   scanButton: {
     width: '100%',
     height: hp('11%'),
-    backgroundColor: '#eedfc0',
+    backgroundColor: COLORS.targetFondo,
     borderRadius: wp('3%'),
     borderWidth: 3,
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     overflow: 'hidden',
-    position: 'relative',
+    marginBottom: hp('2%'),
   },
   scanBg: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
   },
   scanContent: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: wp('8%'),
     paddingHorizontal: wp('4%'),
     paddingVertical: hp('1.5%'),
     zIndex: 1,
@@ -375,22 +367,17 @@ const styles = StyleSheet.create({
   scanText: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    marginLeft: wp('8%'),
   },
   scanLabel: {
     fontSize: wp('5%'),
     fontWeight: '900',
-    color: '#513015',
+    color: COLORS.textContenido,
     lineHeight: hp('2.5%'),
     includeFontPadding: false,
   },
   photoPreview: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
     borderRadius: wp('2%'),
   },
   photoOverlay: {
@@ -399,10 +386,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: wp('2%'),
+    paddingHorizontal: wp('2%'),
   },
   photoChangeText: {
-    color: '#fff',
+    color: COLORS.textWhite,
     fontSize: wp('4%'),
     fontWeight: '700',
   },

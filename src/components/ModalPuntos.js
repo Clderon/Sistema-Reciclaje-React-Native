@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   modal: {
     width: wp('90%'),
     maxWidth: wp('95%'),
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.target,
     borderRadius: wp('5%'),
     overflow: 'hidden',
     shadowColor: '#000',
@@ -70,11 +70,10 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   header: {
-    backgroundColor: '#46a330',
+    backgroundColor: COLORS.button,
     height: hp('18%'),
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
     overflow: 'hidden',
   },
   sunbeams: {

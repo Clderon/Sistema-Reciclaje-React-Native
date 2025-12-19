@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as Haptics from 'expo-haptics';
+import { COLORS } from '../utils/constants';
 
 const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
@@ -72,26 +73,24 @@ const styles = StyleSheet.create({
     height: hp('7%'),
     borderRadius: wp('4%'),
     borderWidth: 3.5,
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     overflow: 'visible',
-    position: 'relative',
   },
   buttonPrimary: {
-    backgroundColor: '#46a330',
+    backgroundColor: COLORS.button,
   },
   buttonSecondary: {
-    backgroundColor: '#f8f7e3',
+    backgroundColor: COLORS.target,
   },
   buttonDisabled: {
     backgroundColor: '#6b9b5a',
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     opacity: 0.6,
   },
   buttonContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
   },
   buttonVines: {
     position: 'absolute',
@@ -106,18 +105,17 @@ const styles = StyleSheet.create({
     fontSize: wp('4.5%'),
     fontWeight: '900',
     lineHeight: wp('4.5%'),
-    position: 'relative',
     zIndex: 3,
     includeFontPadding: false,
   },
   buttonTextPrimary: {
-    color: '#e9f5e6',
+    color: COLORS.textWhite,
   },
   buttonTextSecondary: {
-    color: '#513015',
+    color: COLORS.textContenido,
   },
   buttonTextDisabled: {
-    color: '#ffffff',
+    color: COLORS.textWhite,
   },
 });
 

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { COLORS } from '../utils/constants';
 
 const AnimatedButton = ({ onPress, disabled, children }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -45,18 +46,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#eedfc0',
-    gap: wp('2%'),
+    backgroundColor: COLORS.targetFondo,
     width: '100%',
+    paddingHorizontal: wp('2%'),
   },
   button: {
     width: wp('12%'),
     height: wp('12%'),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f8f7e3',
+    backgroundColor: COLORS.target,
     borderWidth: 3,
-    borderColor: '#1d420f',
+    borderColor: COLORS.textBorde,
     borderRadius: wp('2%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -67,17 +68,18 @@ const styles = StyleSheet.create({
   buttonIcon: {
     fontSize: wp('6%'),
     fontWeight: '900',
-    color: '#513015',
+    color: COLORS.textContenido,
     lineHeight: wp('6%'),
     includeFontPadding: false,
   },
   value: {
     fontSize: wp('4.5%'),
     fontWeight: '700',
-    color: '#513015',
+    color: COLORS.textContenido,
     flex: 1,
     textAlign: 'center',
     includeFontPadding: false,
+    marginHorizontal: wp('2%'),
   },
 });
 

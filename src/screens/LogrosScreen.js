@@ -251,7 +251,6 @@ const styles = StyleSheet.create({
   rivalsList: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: wp('3%'),
   },
   rival: {
     alignItems: 'center',
@@ -262,6 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: wp('2.5%'),
     minWidth: wp('22%'),
     height: hp('13%'),
+    marginHorizontal: wp('1.5%'),
   },
   rivalCurrent: {
     borderColor: COLORS.button,
@@ -283,15 +283,15 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   rivalAvatarGray: {
-    backgroundColor: COLORS.avatarGray || '#929aa0',
-    borderColor: COLORS.avatarGrayBorder || '#6d7479',
+    backgroundColor: COLORS.avatarGray,
+    borderColor: COLORS.avatarGrayBorder,
   },
   rivalAvatarGreen: {
-    backgroundColor: COLORS.buttonDegradado || '#7bc224',
+    backgroundColor: COLORS.buttonDegradado,
     borderColor: COLORS.button,
   },
   rivalAvatarBrown: {
-    backgroundColor: COLORS.avatarBrown || '#d27c2f',
+    backgroundColor: COLORS.avatarBrown,
     borderColor: COLORS.textBorde,
   },
   rivalAvatarImg: {

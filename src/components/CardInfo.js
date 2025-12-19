@@ -115,16 +115,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overlayTouch: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
   },
   modalContent: {
     width: wp('90%'),
     maxWidth: wp('85%'),
-    position: 'relative',
   },
   closeButton: {
     position: 'absolute',
@@ -153,10 +148,10 @@ const styles = StyleSheet.create({
     borderRadius: wp('5%'),
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 32,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
   header: {
     backgroundColor: COLORS.targetFondo,
@@ -259,11 +254,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: wp('2.5%'),
   },
   badgeItem: {
     width: wp('13%'),
     height: wp('13%'),
+    margin: wp('1.25%'),
   },
   badgeItemLocked: {
     opacity: 0.5,

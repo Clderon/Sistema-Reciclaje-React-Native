@@ -55,7 +55,7 @@ export default function App() {
         <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#FFFFFF',
+          tabBarActiveTintColor: COLORS.textWhite,
           tabBarInactiveTintColor: COLORS.textContenido,
           tabBarStyle: {
             backgroundColor: COLORS.target,
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
   tabBarButtonContainer: {
     flex: 1,
     height: '100%',
-    position: 'relative',
     backgroundColor: COLORS.target,
   },
   tabBarButtonContainerWithBorder: {
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     borderRightColor: COLORS.textBorde,
   },
   tabBarButtonContainerFocused: {
-    backgroundColor: '#6BB927',
+    backgroundColor: COLORS.buttonDegradado,
   },
   tabBarButton: {
     flex: 1,

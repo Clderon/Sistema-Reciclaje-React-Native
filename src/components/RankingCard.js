@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
   rankingImage: {
     width: '100%',
     backgroundColor: COLORS.target,
-    position: 'relative',
     padding: wp('2.5%'),
     maxHeight: hp('50%'),
     minHeight: hp('35%'),
@@ -165,7 +164,6 @@ const styles = StyleSheet.create({
     width: '80%',
     borderRadius: wp('25%'),
     height: hp('3%'),
-    position: 'relative',
     overflow: 'hidden',
   },
   progressBg: {
@@ -180,10 +178,9 @@ const styles = StyleSheet.create({
   progressFill: {
     position: 'absolute',
     left: 0,
-    top: 0.7,
+    top: 1,
     bottom: 0,
     borderRadius: wp('2.5%'),
-    height: '99%',
     zIndex: 1,
   },
   progressTextContainer: {
