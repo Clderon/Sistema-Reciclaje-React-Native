@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../utils/constants';
 import AvatarNameCard from '../components/AvatarNameCard';
+import BadgeItem from '../components/BadgeItem';
+import ModalBadge from '../components/ModalBadge';
 
 const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -36,6 +38,67 @@ const AnimatedButton = ({ children, onPress, style }) => {
 };
 
 const PerfilScreen = () => {
+  const [selectedBadge, setSelectedBadge] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const badgesData = [
+    {
+      id: 1,
+      imageSource: require('../assets/images/logro_vidrioV2.png'),
+      title: 'Maestro del Vidrio',
+      description: 'Has reciclado más de 50 unidades de vidrio. ¡Eres un experto en darle una segunda vida a este material!',
+      backgroundColor: COLORS.badgeBackground,
+    },
+    {
+      id: 2,
+      imageSource: require('../assets/images/logro_caiman.png'),
+      title: 'Guardián del Agua',
+      description: 'Has completado 10 misiones de reciclaje relacionadas con la conservación del agua. ¡El planeta te lo agradece!',
+      backgroundColor: COLORS.badgeBackground,
+    },
+    {
+      id: 3,
+      imageSource: require('../assets/images/logro_capibarav2.png'),
+      title: 'Protector de la Naturaleza',
+      description: 'Has reciclado más de 100 kilos de materiales en total. ¡Eres un verdadero defensor del medio ambiente!',
+      backgroundColor: COLORS.badgeBackground,
+    },
+    {
+      id: 4,
+      imageSource: require('../assets/images/logro_perezoso.png'),
+      title: 'Reciclador Consistente',
+      description: 'Has reciclado durante 30 días consecutivos. ¡Tu dedicación es admirable!',
+      backgroundColor: COLORS.badgeBackground,
+    },
+    {
+      id: 5,
+      imageSource: require('../assets/images/logro_sajinoV2.png'),
+      title: 'Líder del Reciclaje',
+      description: 'Has alcanzado más de 500 puntos totales. ¡Eres un ejemplo para todos!',
+      backgroundColor: COLORS.badgeBackground,
+    },
+    {
+      id: 6,
+      imageSource: require('../assets/images/logro_mono.png'),
+      title: 'Leyenda del Reciclaje',
+      description: 'Has completado todas las misiones disponibles. ¡Eres una verdadera leyenda del reciclaje!',
+      backgroundColor: COLORS.badgeBackground,
+      isLocked: true,
+    },
+  ];
+
+  const handleBadgePress = (badge) => {
+    if (!badge.isLocked) {
+      setSelectedBadge(badge);
+      setModalVisible(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedBadge(null);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -69,12 +132,16 @@ const PerfilScreen = () => {
               
               {/* Contenedor de información (avatar y nombre) */}
               <AvatarNameCard
-                avatarSource={require('../assets/images/avatar.webp')}
+                avatarSource={require('../assets/images/elefante.png')}
                 name="Explorador Juan"
                 level="Nivel: Hormiga"
                 badge="ANT"
                 showBadge={true}
-                avatarSize={wp('25%')}
+                avatarSize={wp('30%')}
+                avatarBorderWidth={5}
+                avatarBorderColor={COLORS.textContenido}
+                avatarWrapperBackgroundColor={'#A3DDEE'}
+
               />
 
               {/* Estadísticas */}
@@ -106,7 +173,7 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Misiones
+                        Misiones cumplidas
                       </Text>
                       <Text style={styles.statValue}>8</Text>
                     </View>
@@ -119,51 +186,15 @@ const PerfilScreen = () => {
             <View style={styles.badges}>
               <Text style={styles.badgesTitle}>Mis insignias</Text>
               <View style={styles.badgesList}>
-                <View style={styles.badgeItemWrapper}>
-                  <Image
-                    source={require('../assets/images/logro_vidrioV2.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
+                {badgesData.map((badge) => (
+                  <BadgeItem
+                    key={badge.id}
+                    imageSource={badge.imageSource}
+                    backgroundColor={badge.backgroundColor}
+                    isLocked={badge.isLocked}
+                    onPress={() => handleBadgePress(badge)}
                   />
-                </View>
-                <View style={styles.badgeItemWrapper}>
-                  <Image
-                    source={require('../assets/images/logro_caiman.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View style={styles.badgeItemWrapper}>
-                  <Image
-                    source={require('../assets/images/logro_capibarav2.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View style={styles.badgeItemWrapper}>
-                  <Image
-                    source={require('../assets/images/logro_perezoso.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View style={styles.badgeItemWrapper}>
-                  <Image
-                    source={require('../assets/images/logro_sajino.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View style={[styles.badgeItemWrapper, styles.badgeItemLocked]}>
-                  <Image
-                    source={require('../assets/images/logro_mono.png')}
-                    style={styles.badgeItem}
-                    resizeMode="cover"
-                  />
-                  <View style={styles.lockOverlay}>
-                    <MaterialIcons name="lock" size={wp('6%')} color="#fff" />
-                  </View>
-                </View>
+                ))}
               </View>
             </View>
 
@@ -191,6 +222,11 @@ const PerfilScreen = () => {
           </View>
         </ScrollView>
       </ImageBackground>
+      <ModalBadge
+        visible={modalVisible}
+        onClose={handleCloseModal}
+        badge={selectedBadge}
+      />
     </SafeAreaView>
   );
 };
@@ -219,17 +255,18 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '100%',
     maxWidth: wp('95%'),
-    shadowColor: '#000',
+    shadowColor: COLORS.textBorde,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 20,
-    padding: wp('2.5%'),
+    paddingHorizontal: wp('3.5%'),
+    paddingVertical: hp('2%'),
   },
   header: {
     backgroundColor: COLORS.targetFondo,
     borderTopLeftRadius: wp('2.5%'),
     borderTopRightRadius: wp('2.5%'),
-    height: hp('7%'),
+    height: hp('5%'),
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -244,7 +281,7 @@ const styles = StyleSheet.create({
   },
   section: {
     width: '100%',
-    height: hp('34%'),
+    height: hp('32.5%'),
     borderBottomLeftRadius: wp('2.5%'),
     borderBottomRightRadius: wp('2.5%'),
     flexDirection: 'column',
@@ -277,7 +314,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.textContenido,
     padding: wp('1%'),
-    shadowColor: '#000',
+    shadowColor: COLORS.textBorde,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -297,7 +334,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     flexDirection: 'column',
-    gap: hp('1%'),
     padding: wp('1%'),
   },
   statLabel: {
@@ -339,40 +375,10 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: hp('12%'),
   },
-  badgeItemWrapper: {
-    width: wp('20%'),
-    height: wp('20%'),
-    borderRadius: wp('50%'),
-    borderWidth: 2,
-    borderColor: COLORS.textContenido,
-    padding: wp('1.5%'),
-    overflow: 'hidden',
-    margin: wp('1.25%'),
-  },
-  badgeItem: {
-    width: '100%',
-    height: '100%',
-    borderRadius: wp('50%'),
-  },
-  badgeItemLocked: {
-    opacity: 0.5,
-    borderColor: COLORS.avatarGray,
-  },
-  lockOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: wp('50%'),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     width: '100%',
     height: hp('8%'),
     paddingVertical: hp('1%'),
@@ -383,11 +389,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.textContenido,
     paddingVertical: hp('1%'),
-    paddingHorizontal: wp('5%'),
+    paddingHorizontal: wp('15%'),
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: wp('2%'),
   },
   buttonText: {
     color: COLORS.textContenido,
@@ -403,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: wp('2.5%'),
     borderWidth: 2,
     borderColor: COLORS.textContenido,
-    shadowColor: '#000',
+    shadowColor: COLORS.textBorde,
     shadowOffset: { width: 0, height: -11 },
     shadowOpacity: 0.1,
     shadowRadius: 0.5,

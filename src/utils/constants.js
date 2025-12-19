@@ -85,6 +85,14 @@ export const COLORS = {
   avatarGrayBorder: '#6b7280',
   avatarGreen: '#46a330',
   avatarBrown: '#a67c52',
+  avatarWrapperBackground: '#AFE3B2',
+  avatarBadgeBackground: '#A66A3D',
+  avatarNameCardBackground: '#A66A3D',
+  
+  // Insignias
+  badgeBackground: '#AEE6BF',
+  badgeWrapperBackground: '#D1B387',
+  badgeInnerBackground: '#B0E7C0',
   
   // Barra de progreso
   progressStart: '#C2F07C',

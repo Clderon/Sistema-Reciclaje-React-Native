@@ -18,6 +18,13 @@ const AvatarNameCard = ({
   badgeBorderWidth = 3,
   nameCardBorderWidth = 2,
   avatarBorderWidth = 0,
+  avatarBorderColor = COLORS.textContenido,
+  badgeBorderColor = COLORS.textContenido,
+  nameCardBorderColor = COLORS.textContenido,
+  avatarWrapperBackgroundColor = COLORS.avatarWrapperBackground,
+  badgeBackgroundColor = COLORS.avatarBadgeBackground,
+  nameCardBackgroundColor = COLORS.avatarNameCardBackground,
+  nameCardInnerBackgroundColor = COLORS.targetFondo,
 }) => {
   // Ajustar el marginTop del nameCard basado en si hay badge o no
   const nameCardMarginTop = showBadge && badge ? hp('-2%') : 0;
@@ -42,6 +49,8 @@ const AvatarNameCard = ({
             height: avatarSize,
             borderWidth: avatarBorderWidth,
             borderRadius: avatarBorderWidth > 0 ? avatarSize / 2 : 0,
+            borderColor: avatarBorderColor,
+            backgroundColor: avatarWrapperBackgroundColor,
           },
         ]}
       >
@@ -58,7 +67,7 @@ const AvatarNameCard = ({
           resizeMode="cover"
         />
         {showBadge && badge && (
-          <View style={[styles.badge, { borderWidth: badgeBorderWidth }]}>
+          <View style={[styles.badge, { borderWidth: badgeBorderWidth, borderColor: badgeBorderColor, backgroundColor: badgeBackgroundColor }]}>
             <Text style={[styles.badgeText, { fontSize: badgeFontSize }]}>{badge}</Text>
           </View>
         )}
@@ -72,10 +81,11 @@ const AvatarNameCard = ({
             maxWidth: nameCardMaxWidth,
             height: nameCardHeight,
             marginTop: nameCardMarginTop,
+            backgroundColor: nameCardBackgroundColor,
           },
         ]}
       >
-        <View style={[styles.nameCardInner, { borderWidth: nameCardBorderWidth }]}>
+        <View style={[styles.nameCardInner, { borderWidth: nameCardBorderWidth, borderColor: nameCardBorderColor, backgroundColor: nameCardInnerBackgroundColor }]}>
           <Text style={[styles.name, { fontSize: nameFontSize }]}>{name}</Text>
           {level && <Text style={[styles.level, { fontSize: levelFontSize }]}>{level}</Text>}
         </View>
@@ -97,11 +107,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
-    borderColor: COLORS.textContenido,
-    // width, height, borderWidth y borderRadius se pasan como props
   },
   avatar: {
-    // width, height y borderRadius se pasan como props
     objectFit: 'contain',
     marginLeft: wp('2%'),
     marginTop: hp('3%'),
@@ -109,12 +116,10 @@ const styles = StyleSheet.create({
   badge: {
     marginTop: hp('-1.5%'),
     borderRadius: wp('8%'),
-    borderColor: COLORS.textContenido,
     paddingVertical: hp('0.5%'),
     paddingHorizontal: wp('7%'),
     zIndex: 2,
     alignSelf: 'center',
-    backgroundColor: '#A66A3D',
   },
   badgeText: {
     fontWeight: '700',
@@ -130,33 +135,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 1,
     marginLeft: wp('-10%'),
-    // marginTop se ajusta dinámicamente basado en si hay badge
+    paddingHorizontal: wp('1%'),
   },
   nameCardInner: {
-    backgroundColor: COLORS.targetFondo,
     borderRadius: wp('2.5%'),
-    borderColor: COLORS.textContenido,
     paddingVertical: hp('1%'),
     paddingHorizontal: wp('4%'),
     height: '90%',
+    width: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: hp('3%'),
-    // borderWidth se pasa como prop
   },
   name: {
     fontWeight: '700',
     color: COLORS.textContenido,
-    textAlign: 'center',
+    textAlign: 'right',
     width: '100%',
     includeFontPadding: false,
   },
   level: {
     fontWeight: '500',
     color: COLORS.textContenido,
-    textAlign: 'center',
     width: '100%',
     includeFontPadding: false,
+    textAlign: 'right',
   },
 });
 
