@@ -13,6 +13,7 @@ import {
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../utils/constants';
+import AvatarNameCard from '../components/AvatarNameCard';
 
 const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -67,29 +68,13 @@ const PerfilScreen = () => {
               />
               
               {/* Contenedor de información (avatar y nombre) */}
-              <View style={styles.info}>
-                {/* Avatar y badge */}
-                <View style={styles.avatarWrapper}>
-                  <View style={styles.avatarContainer}>
-                    <Image
-                      source={require('../assets/images/avatar.webp')}
-                      style={styles.avatar}
-                      resizeMode="cover"
-                    />
-                  </View>
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>ANT</Text>
-                  </View>
-                </View>
-
-                {/* Tarjeta de nombre y nivel */}
-                <View style={styles.nameCard}>
-                  <View style={styles.nameCardInner}>
-                    <Text style={styles.name}>Explorador Juan</Text>
-                    <Text style={styles.level}>Nivel: Hormiga</Text>
-                  </View>
-                </View>
-              </View>
+              <AvatarNameCard
+                avatarSource={require('../assets/images/avatar.webp')}
+                name="Explorador Juan"
+                level="Nivel: Hormiga"
+                badge="ANT"
+                showBadge={true}
+              />
 
               {/* Estadísticas */}
               <View style={styles.stats}>
@@ -258,119 +243,28 @@ const styles = StyleSheet.create({
   },
   section: {
     width: '100%',
-    height: hp('28%'),
-    marginBottom: hp('1%'),
+    height: hp('34%'),
     borderBottomLeftRadius: wp('2.5%'),
     borderBottomRightRadius: wp('2.5%'),
+    flexDirection: 'column',
+    overflow: 'hidden',
   },
   backgroundSection: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '105%',
+    ...StyleSheet.absoluteFillObject,
     zIndex: 1,
     borderBottomLeftRadius: wp('2.5%'),
     borderBottomRightRadius: wp('2.5%'),
   },
-  info: {
-    width: wp('90%'),
-    height: hp('16%'),
-    position: 'absolute',
-    top: hp('1%'),
-    alignSelf: 'center',
-    zIndex: 2,
-  },
-  avatarWrapper: {
-    width: wp('30%'),
-    height: wp('30%'),
-    position: 'absolute',
-    left: wp('2%'),
-    top: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  avatarContainer: {
-    width: wp('28%'),
-    height: wp('28%'),
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: wp('2%'),
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-  },
-  badge: {
-    marginTop: hp('-1.5%'),
-    backgroundColor: COLORS.avatarBrown,
-    borderRadius: wp('8%'),
-    borderWidth: 3,
-    borderColor: COLORS.textContenido,
-    paddingVertical: hp('0.5%'),
-    paddingHorizontal: wp('7%'),
-    zIndex: 2,
-  },
-  badgeText: {
-    fontWeight: '700',
-    fontSize: wp('3.5%'),
-    color: COLORS.textWhite,
-    includeFontPadding: false,
-  },
-  nameCard: {
-    width: wp('58%'),
-    height: hp('9%'),
-    position: 'absolute',
-    left: wp('15%'),
-    top: hp('3%'),
-    backgroundColor: COLORS.avatarBrown,
-    borderRadius: wp('2.5%'),
-    borderWidth: 1,
-    borderColor: COLORS.textContenido,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
-  nameCardInner: {
-    backgroundColor: COLORS.targetFondo,
-    borderRadius: wp('2.5%'),
-    borderWidth: 2,
-    borderColor: COLORS.textContenido,
-    paddingVertical: hp('1%'),
-    paddingLeft: wp('15%'),
-    paddingRight: wp('3%'),
-    width: '95%',
-    height: '90%',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  name: {
-    fontWeight: '700',
-    fontSize: wp('4%'),
-    color: COLORS.textContenido,
-    textAlign: 'right',
-    width: '100%',
-    includeFontPadding: false,
-  },
-  level: {
-    fontWeight: '500',
-    fontSize: wp('3.5%'),
-    color: COLORS.textContenido,
-    textAlign: 'right',
-    width: '100%',
-    includeFontPadding: false,
-  },
   stats: {
-    paddingHorizontal: wp('2.5%'),
+    flex: 1,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    height: hp('10%'),
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
+    alignItems: 'center',
+    gap: wp('1%'),
     zIndex: 2,
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('2%'),
   },
   stat: {
     flex: 1,
@@ -387,7 +281,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 4,
-    height: '100%',
+    height: hp('12%'),
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: wp('0.5%'),
@@ -399,15 +293,16 @@ const styles = StyleSheet.create({
     borderColor: COLORS.textContenido,
     width: '100%',
     height: '100%',
-    alignItems: 'flex-end',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     flexDirection: 'column',
+    gap: hp('1%'),
     padding: wp('1%'),
   },
   statLabel: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: wp('3.2%'),
+    fontSize: wp('3.5%'),
     fontWeight: '800',
     width: '100%',
     includeFontPadding: false,
@@ -415,7 +310,7 @@ const styles = StyleSheet.create({
   statValue: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: wp('4.5%'),
+    fontSize: wp('5.5%'),
     letterSpacing: 1,
     fontWeight: '800',
     width: '100%',
@@ -428,7 +323,7 @@ const styles = StyleSheet.create({
   },
   badgesTitle: {
     fontWeight: '700',
-    fontSize: wp('5.5%'),
+    fontSize: wp('6%'),
     color: COLORS.textContenido,
     marginBottom: hp('1.5%'),
     includeFontPadding: false,
