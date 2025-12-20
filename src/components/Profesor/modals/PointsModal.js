@@ -31,6 +31,12 @@ const PointsModal = ({
                 source={require('../../../assets/images/fondos/fondoP.png')}
                 resizeMode="cover"
               />
+              <Image 
+            source={require('../../../assets/images/profesor/monoFeliz.png')}
+            style={styles.capturaDeScreen}
+            resizeMode="contain"
+          />
+          
              </View>
               {/* Contenido del texto */}
               <View style={styles.div2}>
@@ -49,16 +55,19 @@ const PointsModal = ({
           </View>
 
           {/* Botón Genial */}
-          <Pressable style={styles.divWrapper} onPress={onClose}>
+          <Pressable style={styles.hojaButton} onPress={onClose}>
+            <Image 
+                source={require('../../../assets/images/hoja.png')}
+                style={styles.hojaImagen}
+                resizeMode="contain"
+            />
             <Text style={styles.textWrapper4}>¡Genial!</Text>
           </Pressable>
 
           {/* Mono feliz */}
-          <Image 
-            source={require('../../../assets/images/profesor/monoFeliz.png')}
-            style={styles.capturaDeScreen}
-            resizeMode="contain"
-          />
+        
+
+          
         </Pressable>
       </Pressable>
     </Modal>
@@ -72,6 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    height: '100%',
   },
 
   // .frame
@@ -79,8 +89,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'column',
     gap: hp('2.5%'),              // gap: 20px
-    height: hp('58%'),            // height: 463px
-    paddingVertical: hp('8.8%'),  // padding: 70px 0px 39px
+    flex: 1,          // height: 463px
+    paddingVertical: hp('10.8%'),  // padding: 70px 0px 39px
     paddingHorizontal: 0,
     position: 'relative',
     width: wp('85%'),             // width: 340px
@@ -93,15 +103,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.madera,     // background-color: #e1ae6f
     borderWidth: 1,
     borderColor: COLORS.textContenido,  // border-color: #513015
-    flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     padding: wp('2.5%'),                // padding: 10px
     position: 'relative',
-    width: '100%',
+    minHeight: wp('100%'),
+    
   },
+
+     
+
+
   contenedorImagen: {
     position: 'relative',
-    top: hp('-5%'),                    // Sobresalir del borde superior
+    top: hp('0%'),                    // Sobresalir del borde superior
     width: wp('100%'),                  // Ancho del círculo
     height: wp('50%'),               // Mitad del ancho para medio círculo
     backgroundColor: COLORS.button,    // Color verde
@@ -110,13 +124,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderBottomWidth: 0,              // Sin borde inferior
     borderColor: COLORS.textBorde,
-    zIndex: 10,
-     overflow: 'hidden',       
+    zIndex: 1,
+    overflow: 'hidden',       
   },
   // .frame .div
   div: {
     alignItems: 'center',
     alignSelf: 'stretch',
+    paddingBottom: hp('5%'), 
     backgroundColor: COLORS.targetFondo,   // background-color: #eedfc0
     borderWidth: 1,
     borderColor: COLORS.textContenido,     // border-color: #513015
@@ -124,16 +139,14 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    justifyContent: 'center',
-    paddingVertical: hp('10%'),           // padding: 69px vertical
     paddingHorizontal: wp('4.3%'),         // padding: 17px horizontal
     position: 'relative',
     overflow: 'hidden', 
+    zIndex: 5, 
   },
 
   // .frame .intersect
   intersect: {
-    height: hp('13%'),            // height: 104px
     left: 0,
     position: 'absolute',
     top: 0,
@@ -145,15 +158,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     alignSelf: 'stretch',
     flexDirection: 'column',
-    paddingBottom: hp('2%'),
     position: 'relative',
     width: '100%',
+    zIndex: 10, 
   },
 
   // .frame .text-wrapper
   textWrapper: {
     alignSelf: 'stretch',
-    color: COLORS.textBorde,      // color: #1d420f
+    color: COLORS.textBorde,      // color: #7f1e97ff
     fontSize: wp('5%'),           // font-size: 20px
     fontWeight: '700',
     textAlign: 'center',
@@ -185,32 +198,52 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // .frame .div-wrapper (botón Genial)
-  divWrapper: {
-    backgroundColor: COLORS.button,        // Verde del botón
-    borderRadius: wp('5%'),
-    borderWidth: 2,
-    borderColor: COLORS.textBorde,
-    paddingVertical: hp('1.5%'),
-    paddingHorizontal: wp('8%'),
+  
+  hojaButton: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'center',
-  },
+    top: wp('-6%'),
+    zIndex: 9,  
+                    
+},
+
+// Imagen de la hoja
+hojaImagen: {
+  width: hp('25%'), 
+  height: hp('15%'), 
+  position: 'absolute', 
+                 // Imagen como fondo
+  
+},
+
 
   // .frame .text-wrapper-4
-  textWrapper4: {
-    color: COLORS.textWhite,
-    fontSize: wp('5%'),
-    fontWeight: '700',
-    textAlign: 'center',
+    textWrapper4: {
+        color: COLORS.textWhite,
+        
+        fontSize: wp('5.5%'),                 // Tamaño ajustado para caber en la hoja
+        fontWeight: '700',
+        textAlign: 'center',
+        textShadowColor: 'rgba(0, 0, 0, 1)',   // Sombra para mejor legibilidad
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 4,
+        zIndex: 10,  
+        elevation: 10,
   },
 
   // .frame .captura-de-screen (mono feliz)
   capturaDeScreen: {
-    height: hp('25%'),            // Ajustado para React Native
-    width: wp('35%'),
-    position: 'absolute',
-    bottom: hp('25%'),            // Posición ajustada
-    left: wp('25%'),
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',    
+    height: wp('45%'),            // Ajustado para React Native
+    width: wp('44%'),
+    position: 'relative',
+    bottom: hp('40%'),            // Posición ajustada
+    left: wp('0%'),
+    zIndex: 20, 
   },
 });
 
