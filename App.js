@@ -8,10 +8,12 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
-import HomeScreen from './src/screens/HomeScreen';
+import HomeScreen from './src/screens/HomeScreen'; // Para estudiantes
 import LogrosScreen from './src/screens/LogrosScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
+import ProfeScreen from './src/screens/ProfeScreen';
 import { COLORS } from './src/utils/constants';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -36,22 +38,22 @@ const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, s
       focused && styles.tabBarButtonContainerFocused,
     ]}>
       <Pressable
-      onPress={onPress}
+        onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-      style={[styles.tabBarButton, style]}
-      {...props}
-    >
+        style={[styles.tabBarButton, style]}
+        {...props}
+      >
         <Animated.View style={{ transform: [{ scale }], flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {children}
+          {children}
         </Animated.View>
       </Pressable>
-  </View>
-);
+    </View>
+  );
 };
 
-// Componente del Tab Navigator (pantallas principales después del login)
-function MainTabs() {
+// Tab Navigator para ESTUDIANTES
+function StudentTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -82,7 +84,7 @@ function MainTabs() {
     >
       <Tab.Screen
         name="Inicio"
-        component={HomeScreen}
+        component={HomeScreen} // Pantalla de estudiantes
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
@@ -126,8 +128,99 @@ function MainTabs() {
   );
 }
 
+// Tab Navigator para PADRES
+function TeacherTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.textWhite,
+        tabBarInactiveTintColor: COLORS.textContenido,
+        tabBarStyle: {
+          backgroundColor: COLORS.target,
+          borderTopWidth: 3,
+          borderTopColor: COLORS.textBorde,
+          height: 85,
+          paddingBottom: 5,
+          paddingTop: 0,
+          paddingHorizontal: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          elevation: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 16,
+          marginTop: 10,
+          fontWeight: '700',
+          textAlign: 'center',
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Control"
+        component={ProfeScreen} // Pantalla de padres
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('./src/assets/images/home.webp')}
+              style={{ width: 50, height: 50, marginTop: 15}}
+              resizeMode="cover"
+            />
+          ),
+          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
+        }}
+      />
+      <Tab.Screen
+        name="Estadísticas"
+        component={LogrosScreen} // Podrías crear una pantalla específica para padres
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('./src/assets/images/trofeos.webp')}
+              style={{ width: 50, height: 50, marginTop: 15 }}
+              resizeMode="cover"
+            />
+          ),
+          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
+        }}
+      />
+      <Tab.Screen
+        name="Configuración"
+        component={PerfilScreen} // Podrías crear una pantalla específica para padres
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('./src/assets/images/mochila.webp')}
+              style={{ width: 50, height: 50, marginTop: 15 }}
+              resizeMode="cover"
+            />
+          ),
+          tabBarButton: (props) => <TabBarButton {...props} isLast={true} />,
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null); // Agregar estado para el rol
+
+  const handleLogin = (role) => {
+    setUserRole(role); // Guardar el rol del usuario
+    setIsAuthenticated(true); // Marcar como autenticado
+  };
+
+  // Función para determinar qué Tab Navigator usar
+  const getMainComponent = () => {
+    if (userRole === 'teacher') {
+      return TeacherTabs; // Tabs para padres
+    }
+    // Por defecto, usar tabs para estudiantes
+    return StudentTabs; // Tabs para estudiantes
+  };
 
   return (
     <RootSiblingParent>
@@ -143,12 +236,12 @@ export default function App() {
               {(props) => (
                 <LoginScreen
                   {...props}
-                  onLogin={() => setIsAuthenticated(true)}
+                  onLogin={handleLogin} // Pasar la función que maneja el rol
                 />
               )}
             </Stack.Screen>
           ) : (
-            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="Main" component={getMainComponent()} />
           )}
         </Stack.Navigator>
       </NavigationContainer>
@@ -156,6 +249,7 @@ export default function App() {
   );
 }
 
+// ...existing styles...
 const styles = StyleSheet.create({
   tabBarButtonContainer: {
     flex: 1,

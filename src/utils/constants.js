@@ -63,13 +63,14 @@ export const CATEGORIES = [
   },
 ];
 
+
 // Colores del tema
 export const COLORS = {
   // Fondos
   targetFondo: '#eedfc0',
   target: '#FBF7EB',
   fondoFallback: '#4a7c3f',
-  
+  madera: '#E1AE6F',
   // Botones
   button: '#46a330',
   buttonDegradado: '#7bc224',

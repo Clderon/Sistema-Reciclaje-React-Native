@@ -112,14 +112,28 @@ const LoginScreen = ({ onLogin }) => {
     }
   }, [response, onLogin]);
 
-  const handleRoleSelect = (role) => {
-    console.log('Rol seleccionado:', role);
-    // Aquí iría la lógica de autenticación real
-    // Por ahora, simplemente navegamos a la pantalla principal
+  
+const handleRoleSelect = (role) => {
+  console.log('Rol seleccionado:', role);
+  
+  // Agregar navegación específica por rol
+  if (role === 'parent') {
+    // Navegar al Centro de Control para padres
     if (onLogin) {
-      onLogin();
+      onLogin('parent'); // Pasamos el rol al callback
     }
-  };
+  } else if (role === 'teacher') {
+    // Navegar a la pantalla de docente (por definir)
+    if (onLogin) {
+      onLogin('teacher');
+    }
+  } else if (role === 'student') {
+    // Navegar a la pantalla de alumno (por definir)
+    if (onLogin) {
+      onLogin('student');
+    }
+  }
+};
 
   const handleGoogleLogin = async () => {
     try {
