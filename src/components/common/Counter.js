@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../utils/constants';
+import { COLORS } from '../../utils/constants';
 
 const AnimatedButton = ({ onPress, disabled, children }) => {
   const scale = useRef(new Animated.Value(1)).current;

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
-import { COLORS } from '../utils/constants';
+import { COLORS } from '../../utils/constants';
 
 const BadgeItem = ({
   imageSource,

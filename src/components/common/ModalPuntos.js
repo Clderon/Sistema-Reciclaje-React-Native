@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../utils/constants';
+import { COLORS } from '../../utils/constants';
 
 const ModalPuntos = ({ visible, onClose, points = 10, agent = 'Juan P.', material = 'Plástico' }) => {
   return (
@@ -24,7 +24,7 @@ const ModalPuntos = ({ visible, onClose, points = 10, agent = 'Juan P.', materia
           <View style={styles.header}>
             <View style={styles.sunbeams} />
             <Image
-              source={require('../assets/images/mono_modal.webp')}
+              source={require('../../assets/images/mono_modal.webp')}
               style={styles.monkeyImage}
               resizeMode="contain"
             />

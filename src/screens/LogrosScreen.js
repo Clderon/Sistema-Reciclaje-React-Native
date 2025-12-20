@@ -9,15 +9,18 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import RankingCard from '../components/RankingCard';
-import CardInfo from '../components/CardInfo';
+import RankingCard from '../components/ranking/RankingCard';
+import CardInfo from '../components/profile/CardInfo';
+import RankingUserCard from '../components/ranking/RankingUserCard';
 import { COLORS, RANKING_DATA } from '../utils/constants';
 
 const LogrosScreen = () => {
   const [activeTab, setActiveTab] = useState('estudiantes');
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
   const handlePositionPress = (user) => {
     setSelectedUser(user);
@@ -28,6 +31,14 @@ const LogrosScreen = () => {
     setModalVisible(false);
     setSelectedUser(null);
   };
+
+  // Ejecutar animación cada vez que la pantalla recibe foco
+  useFocusEffect(
+    React.useCallback(() => {
+      // Incrementar la key para forzar el remontaje y ejecutar la animación
+      setAnimationKey(prev => prev + 1);
+    }, [])
+  );
 
   const currentRanking = activeTab === 'estudiantes' ? RANKING_DATA.estudiantes : RANKING_DATA.salones;
 
@@ -84,10 +95,13 @@ const LogrosScreen = () => {
             {/* Ranking Content */}
             <View style={styles.content}>
               <RankingCard 
+                key={`${activeTab}-${animationKey}`}
                 rankingData={currentRanking} 
                 onPositionPress={handlePositionPress}
                 progressText={`Faltan ${activeTab === 'estudiantes' ? 120 : 320} para subir`}
                 progressValue={50}
+                avatarSize={wp('16%')}
+                avatarWrapperBackgroundColor={COLORS.avatarNameCardBorder}
               />
 
               {/* Rivals Section */}
@@ -96,42 +110,73 @@ const LogrosScreen = () => {
                   {activeTab === 'estudiantes' ? 'Rivales Cercanos' : 'Salones Cercanos'}
                 </Text>
                 <View style={styles.rivalsList}>
-                  <View style={styles.rival}>
-                    <View style={[styles.rivalAvatar, styles.rivalAvatarGray]}>
-                      <Image
-                        source={require('../assets/images/elefante.webp')}
-                        style={styles.rivalAvatarImg}
-                        resizeMode="cover"
-                      />
-                    </View>
-                    <Text style={styles.rivalName}>
-                      4. {activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A'}
-                    </Text>
-                  </View>
-                  <View style={[styles.rival, styles.rivalCurrent]}>
-                    <View style={[styles.rivalAvatar, styles.rivalAvatarGreen]}>
-                      <Image
-                        source={require('../assets/images/hormiga.webp')}
-                        style={styles.rivalAvatarImg}
-                        resizeMode="cover"
-                      />
-                    </View>
-                    <Text style={styles.rivalName}>
-                      14. Tu{activeTab === 'salones' ? ' Salón' : ''}
-                    </Text>
-                  </View>
-                  <View style={styles.rival}>
-                    <View style={[styles.rivalAvatar, styles.rivalAvatarBrown]}>
-                      <Image
-                        source={require('../assets/images/mono.webp')}
-                        style={styles.rivalAvatarImg}
-                        resizeMode="cover"
-                      />
-                    </View>
-                    <Text style={styles.rivalName}>
-                      15. {activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C'}
-                    </Text>
-                  </View>
+                  <RankingUserCard
+                    user={{
+                      id: 4,
+                      name: activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A',
+                      avatar: require('../assets/images/sajino.png'),
+                    }}
+                    position={4}
+                    containerBackgroundColor={COLORS.targetFondo}
+                    containerPadding={wp('2%')}
+                    containerBorderRadius={wp('2%')}
+                    containerBorderWidth={1}
+                    onPress={() => handlePositionPress({
+                      id: 4,
+                      name: activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A',
+                      avatar: require('../assets/images/sajino.png'),
+                      level: 'Hormiga',
+                      badge: 'Hierro',
+                      points: 280,
+                      recyclings: 58,
+                      position: 4,
+                    })}
+                  />
+                  <RankingUserCard
+                    user={{
+                      id: 14,
+                      name: `Tu${activeTab === 'salones' ? ' Salón' : ''}`,
+                      avatar: require('../assets/images/elefante.png'),
+                    }}
+                    position={14}
+                    isCurrentUser={true}
+                    containerBackgroundColor={COLORS.targetFondo}
+                    containerPadding={wp('2%')}
+                    containerBorderRadius={wp('2%')}
+                    containerBorderWidth={1}
+                    onPress={() => handlePositionPress({
+                      id: 14,
+                      name: `Tu${activeTab === 'salones' ? ' Salón' : ''}`,
+                      avatar: require('../assets/images/elefante.png'),
+                      level: 'Elefante',
+                      badge: 'Cobre',
+                      points: 150,
+                      recyclings: 45,
+                      position: 14,
+                    })}
+                  />
+                  <RankingUserCard
+                    user={{
+                      id: 15,
+                      name: activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C',
+                      avatar: require('../assets/images/serpiente.png'),
+                    }}
+                    position={15}
+                    containerBackgroundColor={COLORS.targetFondo}
+                    containerPadding={wp('2%')}
+                    containerBorderRadius={wp('2%')}
+                    containerBorderWidth={1}
+                    onPress={() => handlePositionPress({
+                      id: 15,
+                      name: activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C',
+                      avatar: require('../assets/images/serpiente.png'),
+                      level: 'Serpiente',
+                      badge: 'Oro',
+                      points: 350,
+                      recyclings: 72,
+                      position: 15,
+                    })}
+                  />
                 </View>
               </View>
             </View>
@@ -251,58 +296,6 @@ const styles = StyleSheet.create({
   rivalsList: {
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  rival: {
-    alignItems: 'center',
-    padding: wp('2.5%'),
-    backgroundColor: COLORS.targetFondo,
-    borderWidth: 2,
-    borderColor: COLORS.textBorde,
-    borderRadius: wp('2.5%'),
-    minWidth: wp('22%'),
-    height: hp('13%'),
-    marginHorizontal: wp('1.5%'),
-  },
-  rivalCurrent: {
-    borderColor: COLORS.button,
-    borderWidth: 3,
-    shadowColor: COLORS.button,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  rivalAvatar: {
-    width: wp('14%'),
-    height: wp('14%'),
-    borderRadius: wp('7%'),
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: hp('1%'),
-    borderWidth: 3,
-  },
-  rivalAvatarGray: {
-    backgroundColor: COLORS.avatarGray,
-    borderColor: COLORS.avatarGrayBorder,
-  },
-  rivalAvatarGreen: {
-    backgroundColor: COLORS.buttonDegradado,
-    borderColor: COLORS.button,
-  },
-  rivalAvatarBrown: {
-    backgroundColor: COLORS.avatarBrown,
-    borderColor: COLORS.textBorde,
-  },
-  rivalAvatarImg: {
-    width: '100%',
-    height: '100%',
-  },
-  rivalName: {
-    fontSize: wp('3%'),
-    fontWeight: '700',
-    color: COLORS.textContenido,
-    textAlign: 'center',
   },
 });
 

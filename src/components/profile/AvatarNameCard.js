@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../utils/constants';
+import { COLORS } from '../../utils/constants';
 
 const AvatarNameCard = ({
   avatarSource,
@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   avatar: {
-    objectFit: 'contain',
+    objectFit: 'cover',
+    overflow: 'hidden',
     marginLeft: wp('2%'),
     marginTop: hp('3%'),
   },

@@ -16,7 +16,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { COLORS } from '../utils/constants';
-import RoleButtonCard from '../components/RoleButtonCard';
+import RoleButtonCard from '../components/common/RoleButtonCard';
 
 // Necesario para que funcione correctamente en web
 WebBrowser.maybeCompleteAuthSession();

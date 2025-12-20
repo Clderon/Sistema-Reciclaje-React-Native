@@ -88,6 +88,7 @@ export const COLORS = {
   avatarWrapperBackground: '#AFE3B2',
   avatarBadgeBackground: '#A66A3D',
   avatarNameCardBackground: '#A66A3D',
+  avatarNameCardBorder: '#EAB457',
   
   // Insignias
   badgeBackground: '#AEE6BF',
@@ -126,7 +127,7 @@ export const RANKING_DATA = {
       badge: 'Safiro',
       points: 520,
       recyclings: 98,
-      avatar: require('../assets/images/gallito-rocas.webp'),
+      avatar: require('../assets/images/capibara.png'),
       position: 1,
     },
     {
@@ -136,7 +137,7 @@ export const RANKING_DATA = {
       badge: 'Diamante',
       points: 480,
       recyclings: 85,
-      avatar: require('../assets/images/elefante.webp'),
+      avatar: require('../assets/images/oso-perezoso.png'),
       position: 2,
     },
     {
@@ -146,7 +147,7 @@ export const RANKING_DATA = {
       badge: 'Oro',
       points: 350,
       recyclings: 72,
-      avatar: require('../assets/images/mono.webp'),
+      avatar: require('../assets/images/serpiente.png'),
       position: 3,
     },
     {
@@ -156,7 +157,7 @@ export const RANKING_DATA = {
       badge: 'Hierro',
       points: 280,
       recyclings: 58,
-      avatar: require('../assets/images/hormiga.webp'),
+      avatar: require('../assets/images/sajino.png'),
       position: 4,
     },
     {
@@ -166,7 +167,7 @@ export const RANKING_DATA = {
       badge: 'Cobre',
       points: 150,
       recyclings: 45,
-      avatar: require('../assets/images/user.webp'),
+      avatar: require('../assets/images/elefante.png'),
       position: 5,
     },
   ],
@@ -178,7 +179,7 @@ export const RANKING_DATA = {
       badge: 'Safiro',
       points: 1520,
       recyclings: 298,
-      avatar: require('../assets/images/gallito-rocas.webp'),
+      avatar: require('../assets/images/tucan.png'),
       position: 1,
     },
     {
@@ -188,7 +189,7 @@ export const RANKING_DATA = {
       badge: 'Diamante',
       points: 1480,
       recyclings: 285,
-      avatar: require('../assets/images/elefante.webp'),
+      avatar: require('../assets/images/oso-perezoso.png'),
       position: 2,
     },
     {
@@ -198,7 +199,7 @@ export const RANKING_DATA = {
       badge: 'Oro',
       points: 1350,
       recyclings: 272,
-      avatar: require('../assets/images/mono.webp'),
+      avatar: require('../assets/images/serpiente.png'),
       position: 3,
     },
     {
@@ -208,7 +209,7 @@ export const RANKING_DATA = {
       badge: 'Hierro',
       points: 1280,
       recyclings: 258,
-      avatar: require('../assets/images/hormiga.webp'),
+        avatar: require('../assets/images/hormiga.png'),
       position: 4,
     },
     {
@@ -218,7 +219,7 @@ export const RANKING_DATA = {
       badge: 'Cobre',
       points: 1150,
       recyclings: 245,
-      avatar: require('../assets/images/user.webp'),
+      avatar: require('../assets/images/sajino.png'),
       position: 5,
     },
   ],

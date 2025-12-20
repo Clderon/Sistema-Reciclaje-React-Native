@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as Haptics from 'expo-haptics';
-import { COLORS } from '../utils/constants';
+import { COLORS } from '../../utils/constants';
 
 const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
@@ -53,7 +53,7 @@ const Button = ({ title, onPress, variant = 'primary', style, disabled = false }
         <View style={styles.buttonContent}>
           {isPrimary && (
             <ImageBackground
-              source={require('../assets/images/upscalemedia-transformed.webp')}
+              source={require('../../assets/images/upscalemedia-transformed.webp')}
               style={[styles.buttonVines, isDisabled && { opacity: 0.5 }]}
               resizeMode="cover"
             />

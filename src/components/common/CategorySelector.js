@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { CATEGORIES, COLORS } from '../utils/constants';
+import { CATEGORIES, COLORS } from '../../utils/constants';
 
 const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -40,7 +40,7 @@ const CategoryItem = ({ category, index, isActive, onSelect, color }) => {
         ]}
       >
         <ImageBackground
-          source={require('../assets/images/fondo-item-hd.webp')}
+          source={require('../../assets/images/fondo-item-hd.webp')}
           style={styles.categoryBg}
           resizeMode="contain"
         />

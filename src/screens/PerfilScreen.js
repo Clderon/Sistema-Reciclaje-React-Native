@@ -13,9 +13,9 @@ import {
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../utils/constants';
-import AvatarNameCard from '../components/AvatarNameCard';
-import BadgeItem from '../components/BadgeItem';
-import ModalBadge from '../components/ModalBadge';
+import AvatarNameCard from '../components/profile/AvatarNameCard';
+import BadgeItem from '../components/badges/BadgeItem';
+import ModalBadge from '../components/badges/ModalBadge';
 
 const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;

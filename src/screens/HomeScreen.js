@@ -14,10 +14,10 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-root-toast';
 import * as ImagePicker from 'expo-image-picker';
-import CategorySelector from '../components/CategorySelector';
-import Counter from '../components/Counter';
-import Button from '../components/Button';
-import ModalPuntos from '../components/ModalPuntos';
+import CategorySelector from '../components/common/CategorySelector';
+import Counter from '../components/common/Counter';
+import Button from '../components/common/Button';
+import ModalPuntos from '../components/common/ModalPuntos';
 import { CATEGORIES, COLORS } from '../utils/constants';
 
 // Componente para texto con contorno (simula múltiples text-shadows)
