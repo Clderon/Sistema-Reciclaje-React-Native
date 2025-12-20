@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -10,30 +10,40 @@ import {
   Animated,
   TouchableOpacity,
   Alert,
-  Platform,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { COLORS } from '../utils/constants';
 import RoleButtonCard from '../components/common/RoleButtonCard';
+import ModalNombre from '../components/common/ModalNombre';
+import { useAuth } from '../context/AuthContext';
 
 // Necesario para que funcione correctamente en web
 WebBrowser.maybeCompleteAuthSession();
 
-const AnimatedButton = ({ children, onPress, style }) => {
+const AnimatedButton = ({ children, onPress, style, disabled = false }) => {
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
-    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+    if (!disabled) {
+      Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
+    }
   };
 
   const handlePressOut = () => {
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+    if (!disabled) {
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50 }).start();
+    }
   };
 
   return (
-    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <Pressable 
+      onPress={onPress} 
+      onPressIn={handlePressIn} 
+      onPressOut={handlePressOut}
+      disabled={disabled}
+    >
       <Animated.View style={[style, { transform: [{ scale }] }]}>
         {children}
       </Animated.View>
@@ -41,84 +51,89 @@ const AnimatedButton = ({ children, onPress, style }) => {
   );
 };
 
-const LoginScreen = ({ onLogin }) => {
-  // Configuración de Google OAuth
-  // NOTA: Para que funcione, necesitas configurar las credenciales en Google Cloud Console
-  // https://console.cloud.google.com/apis/credentials
+const LoginScreen = ({ onLogin, navigation }) => {
+  const { signIn } = useAuth();
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [modalNombreVisible, setModalNombreVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Configuración de Google OAuth (mantener para futuro)
   const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
-  const GOOGLE_ANDROID_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || GOOGLE_CLIENT_ID;
-  const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || GOOGLE_CLIENT_ID;
-  const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || GOOGLE_CLIENT_ID;
+  const isDemoMode = !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === '';
   
-  // Modo demo: si no hay credenciales configuradas, usar modo simulado
-  const isDemoMode = !GOOGLE_CLIENT_ID || 
-                     GOOGLE_CLIENT_ID === 'TU_CLIENT_ID_AQUI' || 
-                     GOOGLE_CLIENT_ID === '';
-  
-  // Solo inicializar el hook de Google si tenemos credenciales válidas
-  // En modo demo, no inicializamos el hook para evitar errores
-  const googleAuthConfig = isDemoMode 
-    ? null 
-    : {
-        expoClientId: GOOGLE_CLIENT_ID,
-        iosClientId: GOOGLE_IOS_CLIENT_ID,
-        androidClientId: GOOGLE_ANDROID_CLIENT_ID,
-        webClientId: GOOGLE_WEB_CLIENT_ID,
-      };
+  const googleAuthConfig = isDemoMode ? null : {
+    expoClientId: GOOGLE_CLIENT_ID,
+    androidClientId: GOOGLE_CLIENT_ID,
+    iosClientId: GOOGLE_CLIENT_ID,
+    webClientId: GOOGLE_CLIENT_ID,
+  };
   
   const [request, response, promptAsync] = Google.useAuthRequest(
     googleAuthConfig || {
-      // Valores dummy para evitar errores en modo demo (no se usarán)
       expoClientId: 'demo',
       androidClientId: 'demo',
       iosClientId: 'demo',
       webClientId: 'demo',
     },
-    { useProxy: true } // Usar proxy de Expo para desarrollo
+    { useProxy: true }
   );
 
-  // Manejar respuesta de Google
   React.useEffect(() => {
     if (response?.type === 'success') {
-      const { authentication } = response;
-      console.log('Autenticación exitosa con Google:', authentication);
-      
-      // Aquí puedes obtener información del usuario con el access_token
-      // Ejemplo: fetchUserInfo(authentication.accessToken);
-      
-      // Navegar a la pantalla principal
+      // Google login - implementar después
       if (onLogin) {
         onLogin();
       }
-    } else if (response?.type === 'error') {
-      console.error('Error en autenticación Google:', response.error);
-      
-      // Mensaje más específico según el tipo de error
-      let errorMessage = 'No se pudo completar el inicio de sesión con Google.';
-      
-      if (response.error?.code === '4004' || response.error?.message?.includes('4004')) {
-        errorMessage = 'Error 4004: Las credenciales de Google OAuth no están configuradas correctamente.\n\n' +
-          'Por favor, configura tus credenciales en Google Cloud Console:\n' +
-          '1. Ve a https://console.cloud.google.com/\n' +
-          '2. Crea un proyecto o selecciona uno existente\n' +
-          '3. Habilita Google Sign-In API\n' +
-          '4. Crea credenciales OAuth 2.0\n' +
-          '5. Agrega EXPO_PUBLIC_GOOGLE_CLIENT_ID a tu archivo .env';
-      }
-      
-      Alert.alert('Error de autenticación', errorMessage, [{ text: 'OK' }]);
-    } else if (response?.type === 'cancel') {
-      console.log('Usuario canceló el inicio de sesión con Google');
     }
   }, [response, onLogin]);
 
-  const handleRoleSelect = (role) => {
-    console.log('Rol seleccionado:', role);
-    // Aquí iría la lógica de autenticación real
-    // Por ahora, simplemente navegamos a la pantalla principal
-    if (onLogin) {
-      onLogin();
+  const handleRoleSelect = (role, navigation) => {
+    if (role === 'student') {
+      // Navegar a la pantalla de login de estudiantes
+      navigation.navigate('StudentLogin');
+    } else {
+      setSelectedRole(role);
+      setModalNombreVisible(true);
     }
+  };
+
+  const handleConfirmNombre = async (username) => {
+    if (!selectedRole) return;
+
+    setModalNombreVisible(false);
+    setLoading(true);
+    
+    try {
+      // Llamar al backend para login/registro (padres/docentes)
+      const result = await signIn(username, selectedRole);
+      
+      if (result.success) {
+        // Login exitoso, navegar a la app
+        if (onLogin) {
+          onLogin();
+        }
+      } else {
+        Alert.alert(
+          'Error',
+          result.error || 'No se pudo iniciar sesión. Intenta de nuevo.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('Error en login:', error);
+      Alert.alert(
+        'Error de conexión',
+        'No se pudo conectar con el servidor. Verifica tu conexión a internet.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalNombreVisible(false);
+    setSelectedRole(null);
   };
 
   const handleGoogleLogin = async () => {
@@ -223,41 +238,47 @@ const LoginScreen = ({ onLogin }) => {
 
           {/* Botones de selección de rol */}
           <View style={styles.rolesContainer}>
-            {/* Botón Padre/Madre */}
+            {/* Botón Padre/Madre - Deshabilitado */}
             <RoleButtonCard
               avatarSource={require('../assets/images/elefante.png')}
               name="Soy Padre/ Madre"
-              onPress={() => handleRoleSelect('parent')}
+              onPress={() => {}} // No hace nada
               nameCardBorderWidth={0}
               avatarBorderWidth={5}
               avatarInnerColor="#AFE3B2"
+              disabled={true}
             />
 
-            {/* Botón Docente */}
+            {/* Botón Docente - Deshabilitado */}
             <RoleButtonCard
               avatarSource={require('../assets/images/gallito-rocas.png')}
               name="Soy Docente"
-              onPress={() => handleRoleSelect('teacher')}
+              onPress={() => {}} // No hace nada
               nameCardBorderWidth={0}
               avatarInnerColor="#AFE3B2"
+              disabled={true}
             />
 
-            {/* Botón Alumno */}
+            {/* Botón Alumno - Habilitado */}
             <RoleButtonCard
               avatarSource={require('../assets/images/tucan.png')}
               name="Soy Alumno"
-              onPress={() => handleRoleSelect('student')}
+              onPress={() => handleRoleSelect('student', navigation)}
               nameCardBorderWidth={0}
               avatarInnerColor="#9CDAE7"
+              disabled={false}
             />
           </View>
 
-          {/* Botón Google */}
+          {/* Botón Google - Deshabilitado */}
           <AnimatedButton
-            onPress={handleGoogleLogin}
-            style={styles.googleButton}
+            onPress={() => {}} // No hace nada
+            style={[styles.googleButton, styles.buttonDisabled]}
+            disabled={true}
           >
-            <Text style={styles.googleButtonText}>ingresar con Google</Text>
+            <Text style={[styles.googleButtonText, styles.buttonTextDisabled]}>
+              ingresar con Google
+            </Text>
           </AnimatedButton>
 
           {/* Link de contraseña olvidada */}
@@ -270,6 +291,16 @@ const LoginScreen = ({ onLogin }) => {
           </TouchableOpacity>
         </ScrollView>
       </ImageBackground>
+
+      {/* Modal para ingresar nombre (padres/docentes) */}
+      <ModalNombre
+        visible={modalNombreVisible}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmNombre}
+        role={selectedRole}
+        loading={loading}
+      />
+
     </SafeAreaView>
   );
 };
@@ -351,7 +382,6 @@ const styles = StyleSheet.create({
   forgotPasswordContainer: {
     paddingHorizontal: wp('5%'),
     borderRadius: wp('2.5%'),
-    backgroundColor: '#EDDEBF',
     paddingVertical: hp('1%'),
   },
   forgotPasswordText: {
@@ -361,6 +391,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
     includeFontPadding: false,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: hp('2%'),
+    marginBottom: hp('2%'),
+  },
+  loadingText: {
+    marginTop: hp('1%'),
+    fontSize: wp('4%'),
+    color: COLORS.textContenido,
+    fontWeight: '600',
+    includeFontPadding: false,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonTextDisabled: {
+    opacity: 0.7,
   },
 });
 

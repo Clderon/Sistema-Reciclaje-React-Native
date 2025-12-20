@@ -16,6 +16,7 @@ const RoleButtonCard = ({
   avatarOuterSize = null, // Si no se especifica, será avatarSize + padding
   avatarOuterColor = COLORS.avatarBrown, // Color del contenedor externo
   avatarInnerColor = '#9BDDE4', // Color del contenedor interno
+  disabled = false,
 }) => {
   // Tamaño del contenedor externo (marco/fondo) - el más grande
   const outerSize = avatarOuterSize || avatarSize;
@@ -27,8 +28,9 @@ const RoleButtonCard = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      activeOpacity={0.7}
-      style={styles.container}
+      activeOpacity={disabled ? 1 : 0.7}
+      disabled={disabled}
+      style={[styles.container, disabled && styles.containerDisabled]}
     >
       <View style={styles.info}>
         {/* Contenedor externo del avatar (marco/fondo) */}
@@ -151,6 +153,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
     includeFontPadding: false,
+  },
+  containerDisabled: {
+    opacity: 0.5,
   },
 });
 

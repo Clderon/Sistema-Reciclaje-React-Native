@@ -16,6 +16,9 @@ import { COLORS } from '../utils/constants';
 import AvatarNameCard from '../components/profile/AvatarNameCard';
 import BadgeItem from '../components/badges/BadgeItem';
 import ModalBadge from '../components/badges/ModalBadge';
+import ModalAjustes from '../components/common/ModalAjustes';
+import { useAuth } from '../context/AuthContext';
+import { getUserAvatar } from '../utils/avatarHelper';
 
 const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -38,8 +41,23 @@ const AnimatedButton = ({ children, onPress, style }) => {
 };
 
 const PerfilScreen = () => {
+  const { user, signOut } = useAuth();
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalAjustesVisible, setModalAjustesVisible] = useState(false);
+
+  // Obtener datos del usuario o valores por defecto
+  const userName = user?.username || 'Usuario';
+  const userLevel = user?.currentLevel || 'Hormiga';
+  const totalPoints = user?.totalPoints || 0;
+  const totalRecyclings = user?.totalRecyclings || 0;
+
+  const handleLogout = async () => {
+    setModalAjustesVisible(false);
+    await signOut();
+    // El App.js detectará automáticamente el cambio en isAuthenticated
+    // y mostrará la pantalla de Login
+  };
 
   const badgesData = [
     {
@@ -99,6 +117,25 @@ const PerfilScreen = () => {
     setSelectedBadge(null);
   };
 
+  // Función para obtener el badge según el nivel
+  const getLevelBadge = (level) => {
+    const levelMap = {
+      'Hormiga': 'ANT',
+      'Oso Perezoso': 'SLOTH',
+      'Mono': 'MONKEY',
+      'Elefante': 'ELEPHANT',
+      'Gallito de las Rocas': 'ROCK',
+    };
+    return levelMap[level] || 'ANT';
+  };
+
+  // Función para obtener el avatar del usuario actual
+  const getAvatarSource = () => {
+    // Si el usuario tiene avatar_url, lo usaremos en el futuro
+    // Por ahora, asignar avatar aleatorio pero consistente basado en el ID
+    return getUserAvatar(user?.id, user?.avatarUrl);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -132,16 +169,15 @@ const PerfilScreen = () => {
               
               {/* Contenedor de información (avatar y nombre) */}
               <AvatarNameCard
-                avatarSource={require('../assets/images/elefante.png')}
-                name="Explorador Juan"
-                level="Nivel: Hormiga"
-                badge="ANT"
+                avatarSource={getAvatarSource()}
+                name={userName}
+                level={`Nivel: ${userLevel}`}
+                badge={getLevelBadge(userLevel)}
                 showBadge={true}
                 avatarSize={wp('30%')}
                 avatarBorderWidth={5}
                 avatarBorderColor={COLORS.textContenido}
                 avatarWrapperBackgroundColor={'#A3DDEE'}
-
               />
 
               {/* Estadísticas */}
@@ -152,7 +188,7 @@ const PerfilScreen = () => {
                       <Text style={styles.statLabel}>
                         Puntos Totales
                       </Text>
-                      <Text style={styles.statValue}>150</Text>
+                      <Text style={styles.statValue}>{totalPoints}</Text>
                     </View>
                   </View>
                 </View>
@@ -161,10 +197,10 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Kilos{'\n'}
-                        Reciclados
+                        Reciclajes{'\n'}
+                        Totales
                       </Text>
-                      <Text style={styles.statValue}>52.3</Text>
+                      <Text style={styles.statValue}>{totalRecyclings}</Text>
                     </View>
                   </View>
                 </View>
@@ -173,9 +209,9 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Misiones cumplidas
+                        Nivel Actual
                       </Text>
-                      <Text style={styles.statValue}>8</Text>
+                      <Text style={[styles.statValue, { fontSize: wp('4%') }]}>{userLevel}</Text>
                     </View>
                   </View>
                 </View>
@@ -208,7 +244,7 @@ const PerfilScreen = () => {
               </AnimatedButton>
               <AnimatedButton
                 style={styles.buttonSettings}
-                onPress={() => console.log('Settings')}
+                onPress={() => setModalAjustesVisible(true)}
               >
                 <View style={styles.buttonIcon}>
                   <Image
@@ -226,6 +262,11 @@ const PerfilScreen = () => {
         visible={modalVisible}
         onClose={handleCloseModal}
         badge={selectedBadge}
+      />
+      <ModalAjustes
+        visible={modalAjustesVisible}
+        onClose={() => setModalAjustesVisible(false)}
+        onLogout={handleLogout}
       />
     </SafeAreaView>
   );

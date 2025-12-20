@@ -19,6 +19,10 @@ import Counter from '../components/common/Counter';
 import Button from '../components/common/Button';
 import ModalPuntos from '../components/common/ModalPuntos';
 import { CATEGORIES, COLORS } from '../utils/constants';
+import { useAuth } from '../context/AuthContext';
+import { validateImage, getMimeTypeFromAsset, MAX_IMAGE_SIZE } from '../utils/imageValidation';
+import { getUserImageCount, uploadImage } from '../services/uploadService';
+import { createRecycling } from '../services/recyclingService';
 
 // Componente para texto con contorno (simula múltiples text-shadows)
 const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth = 3 }) => {
@@ -76,18 +80,84 @@ const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth 
 };
 
 const HomeScreen = () => {
+  const { user, updateUser } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(1);
   const [quantity, setQuantity] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [pointsEarned, setPointsEarned] = useState(0);
   const [photosByCategory, setPhotosByCategory] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [assetsByCategory, setAssetsByCategory] = useState({});
   
   const photo = photosByCategory[selectedCategory] || null;
+  const asset = assetsByCategory[selectedCategory] || null;
   
-  const setPhoto = (uri) => {
+  const setPhoto = (uri, assetData = null) => {
     setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: uri }));
+    if (assetData) {
+      setAssetsByCategory(prev => ({ ...prev, [selectedCategory]: assetData }));
+    }
+  };
+
+  // Validar si el usuario puede subir más imágenes
+  const canUploadMoreImages = async () => {
+    if (!user?.id) return false;
+
+    try {
+      const { getUserImageCount } = await import('../services/uploadService');
+      const result = await getUserImageCount(user.id);
+      
+      if (result.success) {
+        return result.canUpload;
+      }
+      return true; // Si hay error, permitir intentar (el backend validará)
+    } catch (error) {
+      console.error('Error verificando límite de imágenes:', error);
+      return true; // Si hay error, permitir intentar
+    }
+  };
+
+  // Validar imagen seleccionada
+  const validateSelectedImage = async (asset) => {
+    if (!asset) {
+      return { valid: false, error: 'No se seleccionó ninguna imagen' };
+    }
+
+    // Validar formato
+    const mimeType = getMimeTypeFromAsset(asset);
+    const validation = validateImage(asset.uri, mimeType, asset.fileSize);
+
+    if (!validation.valid) {
+      return validation;
+    }
+
+    // Validar tamaño si está disponible
+    if (asset.fileSize && asset.fileSize > MAX_IMAGE_SIZE) {
+      const maxSizeMB = MAX_IMAGE_SIZE / (1024 * 1024);
+      return {
+        valid: false,
+        error: `La imagen es muy grande. El tamaño máximo permitido es ${maxSizeMB} MB`,
+      };
+    }
+
+    return { valid: true, error: null };
   };
 
   const handleScan = async () => {
+    // Verificar límite de imágenes antes de permitir seleccionar (solo si hay usuario)
+    if (user?.id) {
+      const canUpload = await canUploadMoreImages();
+      
+      if (!canUpload) {
+        Alert.alert(
+          'Límite alcanzado',
+          'Has alcanzado el límite de 5 imágenes. Elimina algunas imágenes antes de subir nuevas.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+    }
+
     Alert.alert(
       'Escanear Evidencia',
       '¿Cómo deseas agregar la imagen?',
@@ -95,38 +165,84 @@ const HomeScreen = () => {
         {
           text: 'Cámara',
           onPress: async () => {
-            const { status } = await ImagePicker.requestCameraPermissionsAsync();
-            if (status !== 'granted') {
-              Toast.show('Necesitamos acceso a la cámara', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
-              return;
-            }
-            const result = await ImagePicker.launchCameraAsync({
-              mediaTypes: ['images'],
-              allowsEditing: true,
-              aspect: [4, 3],
-              quality: 0.8,
-            });
-            if (!result.canceled) {
-              setPhoto(result.assets[0].uri);
+            try {
+              const { status } = await ImagePicker.requestCameraPermissionsAsync();
+              
+              if (status !== 'granted') {
+                Toast.show('Necesitamos acceso a la cámara', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
+                return;
+              }
+              
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 0.8,
+              });
+              
+              if (!result.canceled && result.assets && result.assets[0]) {
+                const asset = result.assets[0];
+                const validation = await validateSelectedImage(asset);
+                
+                if (validation.valid) {
+                  setPhoto(asset.uri, asset);
+                } else {
+                  Toast.show(validation.error || 'Imagen no válida', { 
+                    duration: Toast.durations.LONG, 
+                    position: Toast.positions.BOTTOM, 
+                    backgroundColor: '#d9534f' 
+                  });
+                }
+              }
+            } catch (error) {
+              console.error('Error en cámara:', error);
+              Toast.show('Error al abrir la cámara', { 
+                duration: Toast.durations.SHORT, 
+                position: Toast.positions.BOTTOM, 
+                backgroundColor: '#d9534f' 
+              });
             }
           },
         },
         {
           text: 'Galería',
           onPress: async () => {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-              Toast.show('Necesitamos acceso a la galería', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
-              return;
-            }
-            const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ['images'],
-              allowsEditing: true,
-              aspect: [4, 3],
-              quality: 0.8,
-            });
-            if (!result.canceled) {
-              setPhoto(result.assets[0].uri);
+            try {
+              const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+              
+              if (status !== 'granted') {
+                Toast.show('Necesitamos acceso a la galería', { duration: Toast.durations.SHORT, position: Toast.positions.BOTTOM, backgroundColor: '#d9534f' });
+                return;
+              }
+              
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 0.8,
+              });
+              
+              if (!result.canceled && result.assets && result.assets[0]) {
+                const asset = result.assets[0];
+                const validation = await validateSelectedImage(asset);
+                
+                if (validation.valid) {
+                  setPhoto(asset.uri, asset);
+                } else {
+                  Toast.show(validation.error || 'Imagen no válida', { 
+                    duration: Toast.durations.LONG, 
+                    position: Toast.positions.BOTTOM, 
+                    backgroundColor: '#d9534f' 
+                  });
+                }
+              }
+            } catch (error) {
+              console.error('Error en galería:', error);
+              Toast.show('Error al abrir la galería', { 
+                duration: Toast.durations.SHORT, 
+                position: Toast.positions.BOTTOM, 
+                backgroundColor: '#d9534f' 
+              });
             }
           },
         },
@@ -135,10 +251,90 @@ const HomeScreen = () => {
     );
   };
 
-  const handleSend = () => {
-    setModalVisible(true);
-    setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: null }));
-    setQuantity(0);
+  const handleSend = async () => {
+    if (!user?.id || !photo || quantity <= 0) {
+      Toast.show('Completa todos los campos', { 
+        duration: Toast.durations.SHORT, 
+        position: Toast.positions.BOTTOM, 
+        backgroundColor: '#d9534f' 
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // 1. Subir imagen a S3
+      const uploadResult = await uploadImage(photo, user.id, asset);
+      
+      if (!uploadResult.success) {
+        Alert.alert(
+          'Error al subir imagen',
+          uploadResult.error || 'No se pudo subir la imagen',
+          [{ text: 'OK' }]
+        );
+        setLoading(false);
+        return;
+      }
+
+      const imageUrl = uploadResult.imageUrl;
+      console.log('✅ URL temporal generada:', imageUrl);
+
+      // 2. Crear registro de reciclaje
+      const selectedCategoryData = CATEGORIES.find((cat) => cat.id === selectedCategory);
+      
+      const recyclingResult = await createRecycling(
+        user.id,
+        selectedCategory,
+        quantity,
+        selectedCategoryData.unit,
+        imageUrl
+      );
+
+      if (!recyclingResult.success) {
+        Toast.show(recyclingResult.error || 'Error al registrar reciclaje', { 
+          duration: Toast.durations.LONG, 
+          position: Toast.positions.BOTTOM, 
+          backgroundColor: '#d9534f' 
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 3. Actualizar usuario con nuevos puntos y estadísticas
+      if (recyclingResult.userStats && user) {
+        updateUser({
+          ...user,
+          totalPoints: recyclingResult.userStats.totalPoints,
+          totalRecyclings: recyclingResult.userStats.totalRecyclings,
+          currentLevel: recyclingResult.userStats.currentLevel,
+        });
+      }
+
+      // 4. Guardar puntos ganados y mostrar modal de éxito
+      const earnedPoints = recyclingResult.recycling?.pointsEarned || 0;
+      setPointsEarned(earnedPoints);
+      setModalVisible(true);
+      setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: null }));
+      setAssetsByCategory(prev => ({ ...prev, [selectedCategory]: null }));
+      setQuantity(0);
+
+      Toast.show('¡Reciclaje registrado exitosamente!', { 
+        duration: Toast.durations.SHORT, 
+        position: Toast.positions.BOTTOM, 
+        backgroundColor: '#5cb85c' 
+      });
+
+    } catch (error) {
+      console.error('Error en handleSend:', error);
+      Alert.alert(
+        'Error',
+        `Error al procesar: ${error.message || 'Error desconocido'}`,
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const selectedCategoryData = CATEGORIES.find((cat) => cat.id === selectedCategory);
@@ -238,7 +434,12 @@ const HomeScreen = () => {
               />
 
               {/* Send Button */}
-              <Button style={styles.sendButton} title="Enviar Mi Reciclaje" onPress={handleSend} disabled={!photo || quantity <= 0} />
+              <Button 
+                style={styles.sendButton} 
+                title={loading ? "Enviando..." : "Enviar Mi Reciclaje"} 
+                onPress={handleSend} 
+                disabled={!photo || quantity <= 0 || loading} 
+              />
             </View>
           </View>
         </ScrollView>
@@ -248,8 +449,8 @@ const HomeScreen = () => {
       <ModalPuntos
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        points={10}
-        agent="Juan P."
+        points={pointsEarned}
+        agent={user?.username || 'Usuario'}
         material={selectedCategoryData?.name || 'Plástico'}
       />
     </SafeAreaView>

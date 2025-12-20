@@ -70,7 +70,7 @@ export const COLORS = {
   target: '#FBF7EB',
   fondoFallback: '#4a7c3f',
   
-  // Botones
+  // Botones #D49758
   button: '#46a330',
   buttonDegradado: '#7bc224',
   
@@ -80,7 +80,7 @@ export const COLORS = {
   textContenido: '#513015',
   textWhite: '#e9f5e6',
   
-  // Avatares
+  // Avatares #E2CDA2
   avatarGray: '#9ca3af',
   avatarGrayBorder: '#6b7280',
   avatarGreen: '#46a330',
@@ -89,7 +89,7 @@ export const COLORS = {
   avatarBadgeBackground: '#A66A3D',
   avatarNameCardBackground: '#A66A3D',
   avatarNameCardBorder: '#EAB457',
-  
+  formBorderColor: '#4E340F',
   // Insignias
   badgeBackground: '#AEE6BF',
   badgeWrapperBackground: '#D1B387',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,19 +8,150 @@ import {
   ImageBackground,
   SafeAreaView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import RankingCard from '../components/ranking/RankingCard';
 import CardInfo from '../components/profile/CardInfo';
 import RankingUserCard from '../components/ranking/RankingUserCard';
-import { COLORS, RANKING_DATA } from '../utils/constants';
+import { COLORS } from '../utils/constants';
+import { useAuth } from '../context/AuthContext';
+import { getStudentsRanking } from '../services/rankingService';
+import { getUserAvatar } from '../utils/avatarHelper';
 
 const LogrosScreen = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('estudiantes');
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const [rankingData, setRankingData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Función para determinar el nivel según puntos (igual que en backend)
+  const getLevelByPoints = (totalPoints) => {
+    if (totalPoints >= 1000) return 'Gallito de las Rocas';
+    if (totalPoints >= 800) return 'Elefante';
+    if (totalPoints >= 600) return 'Mono';
+    if (totalPoints >= 400) return 'Oso Perezoso';
+    if (totalPoints >= 200) return 'Hormiga';
+    return 'Hormiga';
+  };
+
+  // Función para obtener el badge según el nivel
+  const getLevelBadge = (level) => {
+    const levelMap = {
+      'Hormiga': 'ANT',
+      'Oso Perezoso': 'SLOTH',
+      'Mono': 'MONKEY',
+      'Elefante': 'ELEPHANT',
+      'Gallito de las Rocas': 'ROCK',
+    };
+    return levelMap[level] || 'ANT';
+  };
+
+  // Función para formatear datos del ranking del backend al formato esperado
+  const formatRankingData = (backendRankings) => {
+    return backendRankings.map((user) => {
+      const level = user.level || getLevelByPoints(user.points || 0);
+      return {
+        id: user.id,
+        name: user.name || user.username || 'Usuario',
+        level: level,
+        badge: getLevelBadge(level),
+        points: user.points || 0,
+        recyclings: user.recyclings || user.total_recyclings || 0,
+        // Asignar avatar aleatorio pero consistente basado en el ID del usuario
+        avatar: getUserAvatar(user.id, user.avatar_url),
+        position: user.position || 0,
+      };
+    });
+  };
+
+  // Cargar ranking desde el backend
+  const loadRanking = async () => {
+    if (activeTab !== 'estudiantes') {
+      // Por ahora solo implementamos estudiantes, salones después
+      setRankingData([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await getStudentsRanking(20); // Obtener top 20
+      if (result.success) {
+        const formattedData = formatRankingData(result.rankings);
+        setRankingData(formattedData);
+      } else {
+        console.error('Error al cargar ranking:', result.error);
+        setRankingData([]);
+      }
+    } catch (error) {
+      console.error('Error al cargar ranking:', error);
+      setRankingData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Recargar cuando la pantalla recibe foco o cambia el tab
+  useFocusEffect(
+    React.useCallback(() => {
+      loadRanking();
+      // Incrementar la key para forzar el remontaje y ejecutar la animación
+      setAnimationKey(prev => prev + 1);
+    }, [activeTab])
+  );
+
+  // Calcular progreso hacia el siguiente nivel
+  const calculateProgress = () => {
+    const totalPoints = user?.totalPoints || 0;
+    const currentLevel = user?.currentLevel || getLevelByPoints(totalPoints);
+    
+    // Definir los umbrales de puntos para cada nivel (según backend)
+    // El backend usa: >= 1000 = Gallito, >= 800 = Elefante, >= 600 = Mono, >= 400 = Oso Perezoso, >= 200 = Hormiga, < 200 = Hormiga
+    // Esto significa: 0-199 = Hormiga, 200-399 = Oso Perezoso, 400-599 = Mono, 600-799 = Elefante, 800-999 = Gallito, 1000+ = Gallito
+    // Pero el backend tiene un bug: >= 200 retorna 'Hormiga', cuando debería retornar 'Oso Perezoso'
+    // Vamos a usar la lógica correcta: Hormiga 0-199, Oso 200-399, Mono 400-599, Elefante 600-799, Gallito 800+
+    const levelThresholds = {
+      'Hormiga': { min: 0, next: 200, nextLevel: 'Oso Perezoso' },
+      'Oso Perezoso': { min: 200, next: 400, nextLevel: 'Mono' },
+      'Mono': { min: 400, next: 600, nextLevel: 'Elefante' },
+      'Elefante': { min: 600, next: 800, nextLevel: 'Gallito de las Rocas' },
+      'Gallito de las Rocas': { min: 800, next: null, nextLevel: null }, // Nivel máximo
+    };
+
+    const threshold = levelThresholds[currentLevel] || levelThresholds['Hormiga'];
+    
+    // Si está en el nivel máximo o no hay siguiente nivel
+    if (!threshold.nextLevel || !threshold.next) {
+      return {
+        progressValue: 100,
+        pointsRemaining: 0,
+        progressText: '¡Nivel máximo alcanzado!',
+      };
+    }
+
+    // Calcular puntos en el nivel actual (desde el mínimo del nivel)
+    const pointsInCurrentLevel = Math.max(0, totalPoints - threshold.min);
+    
+    // Calcular puntos necesarios para el siguiente nivel (rango del nivel actual)
+    const pointsNeededForNext = threshold.next - threshold.min;
+    
+    // Calcular porcentaje de progreso (0-100%)
+    const progressPercentage = Math.min(100, Math.max(0, (pointsInCurrentLevel / pointsNeededForNext) * 100));
+    
+    // Calcular puntos faltantes para el siguiente nivel
+    const pointsRemaining = Math.max(0, threshold.next - totalPoints);
+
+    return {
+      progressValue: progressPercentage,
+      pointsRemaining,
+      progressText: `Faltan ${pointsRemaining} puntos para ${threshold.nextLevel}`,
+    };
+  };
 
   const handlePositionPress = (user) => {
     setSelectedUser(user);
@@ -32,15 +163,24 @@ const LogrosScreen = () => {
     setSelectedUser(null);
   };
 
-  // Ejecutar animación cada vez que la pantalla recibe foco
-  useFocusEffect(
-    React.useCallback(() => {
-      // Incrementar la key para forzar el remontaje y ejecutar la animación
-      setAnimationKey(prev => prev + 1);
-    }, [])
-  );
+  // Encontrar usuarios cercanos al usuario actual para la sección "Rivales Cercanos"
+  const getNearbyUsers = () => {
+    if (!user || !rankingData.length) {
+      return [];
+    }
 
-  const currentRanking = activeTab === 'estudiantes' ? RANKING_DATA.estudiantes : RANKING_DATA.salones;
+    const currentUserPosition = rankingData.findIndex(u => u.id === user.id);
+    
+    if (currentUserPosition === -1) {
+      // Usuario no está en el top, mostrar últimos 3
+      return rankingData.slice(-3);
+    }
+
+    // Mostrar usuario anterior, actual, y siguiente
+    const start = Math.max(0, currentUserPosition - 1);
+    const end = Math.min(rankingData.length, currentUserPosition + 2);
+    return rankingData.slice(start, end);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,91 +234,54 @@ const LogrosScreen = () => {
 
             {/* Ranking Content */}
             <View style={styles.content}>
-              <RankingCard 
-                key={`${activeTab}-${animationKey}`}
-                rankingData={currentRanking} 
-                onPositionPress={handlePositionPress}
-                progressText={`Faltan ${activeTab === 'estudiantes' ? 120 : 320} para subir`}
-                progressValue={50}
-                avatarSize={wp('16%')}
-                avatarWrapperBackgroundColor={COLORS.avatarNameCardBorder}
-              />
+              {loading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color={COLORS.button} />
+                  <Text style={styles.loadingText}>Cargando ranking...</Text>
+                </View>
+              ) : rankingData.length > 0 ? (
+                <RankingCard 
+                  key={`${activeTab}-${animationKey}`}
+                  rankingData={rankingData} 
+                  onPositionPress={handlePositionPress}
+                  progressText={calculateProgress().progressText}
+                  progressValue={calculateProgress().progressValue}
+                  avatarSize={wp('16%')}
+                  avatarWrapperBackgroundColor={COLORS.avatarNameCardBorder}
+                />
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No hay datos de ranking disponibles</Text>
+                </View>
+              )}
 
               {/* Rivals Section */}
-              <View style={styles.rivals}>
-                <Text style={styles.rivalsTitle}>
-                  {activeTab === 'estudiantes' ? 'Rivales Cercanos' : 'Salones Cercanos'}
-                </Text>
-                <View style={styles.rivalsList}>
-                  <RankingUserCard
-                    user={{
-                      id: 4,
-                      name: activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A',
-                      avatar: require('../assets/images/sajino.png'),
-                    }}
-                    position={4}
-                    containerBackgroundColor={COLORS.targetFondo}
-                    containerPadding={wp('2%')}
-                    containerBorderRadius={wp('2%')}
-                    containerBorderWidth={1}
-                    onPress={() => handlePositionPress({
-                      id: 4,
-                      name: activeTab === 'estudiantes' ? 'Maria' : 'Salón 1A',
-                      avatar: require('../assets/images/sajino.png'),
-                      level: 'Hormiga',
-                      badge: 'Hierro',
-                      points: 280,
-                      recyclings: 58,
-                      position: 4,
-                    })}
-                  />
-                  <RankingUserCard
-                    user={{
-                      id: 14,
-                      name: `Tu${activeTab === 'salones' ? ' Salón' : ''}`,
-                      avatar: require('../assets/images/elefante.png'),
-                    }}
-                    position={14}
-                    isCurrentUser={true}
-                    containerBackgroundColor={COLORS.targetFondo}
-                    containerPadding={wp('2%')}
-                    containerBorderRadius={wp('2%')}
-                    containerBorderWidth={1}
-                    onPress={() => handlePositionPress({
-                      id: 14,
-                      name: `Tu${activeTab === 'salones' ? ' Salón' : ''}`,
-                      avatar: require('../assets/images/elefante.png'),
-                      level: 'Elefante',
-                      badge: 'Cobre',
-                      points: 150,
-                      recyclings: 45,
-                      position: 14,
-                    })}
-                  />
-                  <RankingUserCard
-                    user={{
-                      id: 15,
-                      name: activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C',
-                      avatar: require('../assets/images/serpiente.png'),
-                    }}
-                    position={15}
-                    containerBackgroundColor={COLORS.targetFondo}
-                    containerPadding={wp('2%')}
-                    containerBorderRadius={wp('2%')}
-                    containerBorderWidth={1}
-                    onPress={() => handlePositionPress({
-                      id: 15,
-                      name: activeTab === 'estudiantes' ? 'Pedro' : 'Salón 2C',
-                      avatar: require('../assets/images/serpiente.png'),
-                      level: 'Serpiente',
-                      badge: 'Oro',
-                      points: 350,
-                      recyclings: 72,
-                      position: 15,
-                    })}
-                  />
+              {!loading && rankingData.length > 0 && (
+                <View style={styles.rivals}>
+                  <Text style={styles.rivalsTitle}>
+                    {activeTab === 'estudiantes' ? 'Rivales Cercanos' : 'Salones Cercanos'}
+                  </Text>
+                  <View style={styles.rivalsList}>
+                    {getNearbyUsers().slice(0, 3).map((nearbyUser) => (
+                      <RankingUserCard
+                        key={nearbyUser.id}
+                        user={{
+                          id: nearbyUser.id,
+                          name: nearbyUser.name,
+                          avatar: nearbyUser.avatar,
+                        }}
+                        position={nearbyUser.position}
+                        isCurrentUser={nearbyUser.id === user?.id}
+                        containerBackgroundColor={COLORS.targetFondo}
+                        containerPadding={wp('1%')}
+                        containerBorderRadius={wp('2%')}
+                        containerBorderWidth={1}
+                        onPress={() => handlePositionPress(nearbyUser)}
+                      />
+                    ))}
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -296,6 +399,30 @@ const styles = StyleSheet.create({
   rivalsList: {
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: wp('2%'),
+  },
+  loadingContainer: {
+    paddingVertical: hp('5%'),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: hp('2%'),
+    fontSize: wp('4%'),
+    color: COLORS.textContenido,
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    paddingVertical: hp('5%'),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: wp('4%'),
+    color: COLORS.textContenido,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
 

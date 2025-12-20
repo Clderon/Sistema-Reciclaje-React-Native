@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: wp('1.25%'),
   },
   avatarWrapper: {
     borderRadius: wp('50%'),

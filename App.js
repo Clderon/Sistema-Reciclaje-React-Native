@@ -3,15 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { Image, Pressable, View, StyleSheet, Animated } from 'react-native';
+import { Image, Pressable, View, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
+import StudentLoginScreen from './src/screens/StudentLoginScreen';
+import StudentRegisterScreen from './src/screens/StudentRegisterScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import LogrosScreen from './src/screens/LogrosScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import { COLORS } from './src/utils/constants';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -126,32 +129,55 @@ function MainTabs() {
   );
 }
 
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// Componente interno que usa el contexto de autenticación
+function AppNavigator() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.target }}>
+        <ActivityIndicator size="large" color={COLORS.button} />
+      </View>
+    );
+  }
 
   return (
-    <RootSiblingParent>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          {!isAuthenticated ? (
+    <NavigationContainer>
+      <StatusBar style="auto" />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {!isAuthenticated ? (
+          <>
             <Stack.Screen name="Login">
               {(props) => (
                 <LoginScreen
                   {...props}
-                  onLogin={() => setIsAuthenticated(true)}
+                  onLogin={() => {
+                    // El AuthContext ya maneja el estado, no necesitamos hacer nada aquí
+                  }}
                 />
               )}
             </Stack.Screen>
-          ) : (
-            <Stack.Screen name="Main" component={MainTabs} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen name="StudentLogin" component={StudentLoginScreen} />
+            <Stack.Screen name="StudentRegister" component={StudentRegisterScreen} />
+          </>
+        ) : (
+          <Stack.Screen name="Main" component={MainTabs} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <RootSiblingParent>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
     </RootSiblingParent>
   );
 }
