@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Image, StyleSheet, Pressable, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, Pressable, Text, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../utils/constants';
 
@@ -10,6 +10,8 @@ const Evidence = ({
   badgeCount = 1,
   size = 'small' // 'small', 'medium', 'large'
 }) => {
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
   const getSizeStyles = () => {
     switch (size) {
       case 'small':
@@ -41,14 +43,29 @@ const Evidence = ({
       onPress={onPress}
     >
       {/* Imagen de evidencia */}
+      {imageUri && imageLoading && !imageError && (
+        <View style={[styles.loadingContainer, sizeStyles]}>
+          <ActivityIndicator size="small" color={COLORS.button} />
+        </View>
+      )}
       <Image
         source={
-          imageUri 
+          imageUri && !imageError
             ? { uri: imageUri }
             : require('../../assets/images/profesor/foto.png') // Imagen por defecto
         }
-        style={[styles.evidenceImage, sizeStyles]}
+        style={[styles.evidenceImage, sizeStyles, imageError && styles.errorImage]}
         resizeMode="cover"
+        onLoadStart={() => {
+          setImageLoading(true);
+          setImageError(false);
+        }}
+        onLoadEnd={() => setImageLoading(false)}
+        onError={() => {
+          setImageLoading(false);
+          setImageError(true);
+          console.error('Error cargando imagen de evidencia:', imageUri);
+        }}
       />
 
       {/* Badge con número de fotos */}
@@ -78,6 +95,15 @@ const styles = StyleSheet.create({
   },
   evidenceImage: {
     // Tamaño dinámico aplicado inline
+  },
+  errorImage: {
+    opacity: 0.5,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
   },
   badge: {
     position: 'absolute',

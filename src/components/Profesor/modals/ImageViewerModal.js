@@ -1,10 +1,13 @@
-import React from 'react';
-import { Modal, View, Image, StyleSheet, Pressable, Text } from 'react-native';
+import React, { useState } from 'react';
+import { Modal, View, Image, StyleSheet, Pressable, Text, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const ImageViewerModal = ({ visible, imageUri, onClose }) => {
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
   if (!visible || !imageUri) return null;
 
   return (
@@ -22,10 +25,33 @@ const ImageViewerModal = ({ visible, imageUri, onClose }) => {
 
         {/* Imagen expandida */}
         <Pressable style={styles.imageContainer} onPress={onClose} activeOpacity={1}>
+          {imageLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={COLORS.textWhite} />
+              <Text style={styles.loadingText}>Cargando imagen...</Text>
+            </View>
+          )}
+          {imageError && (
+            <View style={styles.errorContainer}>
+              <MaterialIcons name="error-outline" size={wp('15%')} color={COLORS.textWhite} />
+              <Text style={styles.errorText}>Error al cargar la imagen</Text>
+              <Text style={styles.errorSubtext}>Verifica tu conexión</Text>
+            </View>
+          )}
           <Image
             source={{ uri: imageUri }}
-            style={styles.fullImage}
+            style={[styles.fullImage, (imageLoading || imageError) && styles.hiddenImage]}
             resizeMode="contain"
+            onLoadStart={() => {
+              setImageLoading(true);
+              setImageError(false);
+            }}
+            onLoadEnd={() => setImageLoading(false)}
+            onError={(error) => {
+              setImageLoading(false);
+              setImageError(true);
+              console.error('Error cargando imagen en modal:', imageUri, error);
+            }}
           />
         </Pressable>
       </View>
@@ -64,6 +90,40 @@ const styles = StyleSheet.create({
   fullImage: {
     width: '100%',
     height: '100%',
+  },
+  hiddenImage: {
+    opacity: 0,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  loadingText: {
+    marginTop: hp('2%'),
+    color: COLORS.textWhite,
+    fontSize: wp('4%'),
+  },
+  errorContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  errorText: {
+    marginTop: hp('2%'),
+    color: COLORS.textWhite,
+    fontSize: wp('5%'),
+    fontWeight: 'bold',
+  },
+  errorSubtext: {
+    marginTop: hp('1%'),
+    color: COLORS.textWhite,
+    fontSize: wp('4%'),
+    opacity: 0.7,
   },
 });
 

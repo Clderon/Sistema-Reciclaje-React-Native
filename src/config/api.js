@@ -19,50 +19,31 @@ const URL_PRODUCCION = 'https://sistema-reciclaje-backend.onrender.com/api';
 
 // URL del backend
 const getApiBaseUrl = () => {
-  // PRIORIDAD 1: Variable de entorno (más flexible)
+  // PRIORIDAD 1: Variable de entorno (más flexible) - permite override
   if (process.env.EXPO_PUBLIC_API_URL) {
     console.log('🌐 Usando API URL desde variable de entorno:', process.env.EXPO_PUBLIC_API_URL);
     return process.env.EXPO_PUBLIC_API_URL;
   }
 
-  // PRIORIDAD 2: Desarrollo local (detectar automáticamente)
+  // PRIORIDAD 2: Por defecto usar Render (producción)
+  // Esto asegura que funcione tanto en desarrollo como en producción
+  // Para usar backend local, configurar EXPO_PUBLIC_API_URL en .env
+  console.log('🌐 Usando API URL de producción (Render):', URL_PRODUCCION);
+  console.log('💡 Para usar backend local, crea un archivo .env con: EXPO_PUBLIC_API_URL=http://192.168.100.209:3000/api');
+  return URL_PRODUCCION;
+
+  // NOTA: Código comentado para usar backend local (solo si lo necesitas)
+  // Descomenta y comenta la línea de arriba si quieres usar backend local en desarrollo
+  /*
   if (__DEV__) {
-    console.log('🔧 Modo desarrollo detectado');
-    console.log('📱 Plataforma:', Platform.OS);
-    
-    // Emulador Android - usar IP local de la máquina
-    // IMPORTANTE: Asegúrate de que el emulador esté en la misma red
-    if (Platform.OS === 'android') {
-      // Usar la IP local de la máquina (misma que para dispositivo físico)
-      const localUrl = 'http://192.168.100.209:3000/api';
-      console.log('🌐 Usando API URL local (Android):', localUrl);
-      console.log('💡 Asegúrate de que:');
-      console.log('   1. El backend esté corriendo: npm run dev (en Sistema-Reciclaje-Backend)');
-      console.log('   2. El firewall de Windows permita conexiones en el puerto 3000');
-      console.log('   3. Si cambias de red, actualiza la IP en src/config/api.js línea 35');
-      return localUrl;
-    }
-    // iOS Simulator o Web
-    if (Platform.OS === 'ios' || Platform.OS === 'web') {
-      const localUrl = 'http://localhost:3000/api';
-      console.log('🌐 Usando API URL local (iOS/Web):', localUrl);
-      return localUrl;
-    }
-    // Dispositivo físico - usar IP local
-    // IMPORTANTE: Asegúrate de que tu dispositivo móvil esté en la misma red WiFi
-    const localUrl = 'http://192.168.100.209:3000/api';
-    console.log('🌐 Usando API URL local (dispositivo físico):', localUrl);
-    console.log('💡 Asegúrate de que:');
-    console.log('   1. El backend esté corriendo: npm run dev (en Sistema-Reciclaje-Backend)');
-    console.log('   2. Tu dispositivo móvil esté en la misma red WiFi');
-    console.log('   3. El firewall de Windows permita conexiones en el puerto 3000');
-    console.log('   4. Si no funciona, actualiza la IP en src/config/api.js línea 45');
+    console.log('🔧 Modo desarrollo - usando backend local');
+    const localUrl = Platform.OS === 'android' || Platform.OS !== 'web' && Platform.OS !== 'ios'
+      ? 'http://192.168.100.209:3000/api'  // Android o dispositivo físico
+      : 'http://localhost:3000/api';        // iOS Simulator o Web
+    console.log('🌐 URL local:', localUrl);
     return localUrl;
   }
-
-  // PRIORIDAD 3: Producción (backend desplegado en Render)
-  console.log('🌐 Usando API URL de producción (Render):', URL_PRODUCCION);
-  return URL_PRODUCCION;
+  */
 };
 
 export const API_BASE_URL = getApiBaseUrl();
