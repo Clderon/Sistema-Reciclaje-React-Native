@@ -91,6 +91,9 @@ const LoginScreen = ({ onLogin, navigation }) => {
     if (role === 'student') {
       // Navegar a la pantalla de login de estudiantes
       navigation.navigate('StudentLogin');
+    } else if (role === 'teacher') {
+      // Navegar a la pantalla de login de docentes
+      navigation.navigate('TeacherLogin');
     } else {
       setSelectedRole(role);
       setModalNombreVisible(true);
@@ -240,7 +243,7 @@ const LoginScreen = ({ onLogin, navigation }) => {
           <View style={styles.rolesContainer}>
             {/* Botón Padre/Madre - Deshabilitado */}
             <RoleButtonCard
-              avatarSource={require('../assets/images/elefante.png')}
+              avatarSource={require('../assets/images/Padres.webp')}
               name="Soy Padre/ Madre"
               onPress={() => {}} // No hace nada
               nameCardBorderWidth={0}
@@ -249,19 +252,19 @@ const LoginScreen = ({ onLogin, navigation }) => {
               disabled={true}
             />
 
-            {/* Botón Docente - Deshabilitado */}
+            {/* Botón Docente - Habilitado */}
             <RoleButtonCard
-              avatarSource={require('../assets/images/gallito-rocas.png')}
+              avatarSource={require('../assets/images/Maestro.webp')}
               name="Soy Docente"
-              onPress={() => {}} // No hace nada
+              onPress={() => handleRoleSelect('teacher', navigation)}
               nameCardBorderWidth={0}
               avatarInnerColor="#AFE3B2"
-              disabled={true}
+              disabled={false}
             />
 
             {/* Botón Alumno - Habilitado */}
             <RoleButtonCard
-              avatarSource={require('../assets/images/tucan.png')}
+              avatarSource={require('../assets/images/estudiante.webp')}
               name="Soy Alumno"
               onPress={() => handleRoleSelect('student', navigation)}
               nameCardBorderWidth={0}

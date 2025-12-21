@@ -118,14 +118,14 @@ const StudentRegisterScreen = ({ navigation }) => {
                 <View style={styles.inputWrapper}>
                 {/* Bambú horizontal superior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderTop}
                   resizeMode="stretch"
                 />
                 {/* Contenedor horizontal con bambú lateral y input */}
                 <View style={styles.inputContainer}>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderLeft}
                     resizeMode="stretch"
                   />
@@ -147,14 +147,14 @@ const StudentRegisterScreen = ({ navigation }) => {
                     />
                   </View>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderRight}
                     resizeMode="stretch"
                   />
                 </View>
                 {/* Bambú horizontal inferior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderBottom}
                   resizeMode="stretch"
                 />
@@ -164,14 +164,14 @@ const StudentRegisterScreen = ({ navigation }) => {
               <View style={styles.inputWrapper}>
                 {/* Bambú horizontal superior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderTop}
                   resizeMode="stretch"
                 />
                 {/* Contenedor horizontal con bambú lateral y input */}
                 <View style={styles.inputContainer}>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderLeft}
                     resizeMode="stretch"
                   />
@@ -193,14 +193,14 @@ const StudentRegisterScreen = ({ navigation }) => {
                     />
                   </View>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderRight}
                     resizeMode="stretch"
                   />
                 </View>
                 {/* Bambú horizontal inferior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderBottom}
                   resizeMode="stretch"
                 />
@@ -210,14 +210,14 @@ const StudentRegisterScreen = ({ navigation }) => {
               <View style={styles.inputWrapper}>
                 {/* Bambú horizontal superior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderTop}
                   resizeMode="stretch"
                 />
                 {/* Contenedor horizontal con bambú lateral y input */}
                 <View style={styles.inputContainer}>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderLeft}
                     resizeMode="stretch"
                   />
@@ -239,14 +239,14 @@ const StudentRegisterScreen = ({ navigation }) => {
                     />
                   </View>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderRight}
                     resizeMode="stretch"
                   />
                 </View>
                 {/* Bambú horizontal inferior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderBottom}
                   resizeMode="stretch"
                 />
@@ -256,14 +256,14 @@ const StudentRegisterScreen = ({ navigation }) => {
               <View style={styles.inputWrapper}>
                 {/* Bambú horizontal superior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderTop}
                   resizeMode="stretch"
                 />
                 {/* Contenedor horizontal con bambú lateral y input */}
                 <View style={styles.inputContainer}>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderLeft}
                     resizeMode="stretch"
                   />
@@ -287,14 +287,14 @@ const StudentRegisterScreen = ({ navigation }) => {
                     />
                   </View>
                   <Image
-                    source={require('../assets/images/banbo-vertical.png')}
+                    source={require('../assets/images/banbo-vertical.webp')}
                     style={styles.bambuBorderRight}
                     resizeMode="stretch"
                   />
                 </View>
                 {/* Bambú horizontal inferior */}
                 <Image
-                  source={require('../assets/images/banbo-horizontal.png')}
+                  source={require('../assets/images/banbo-horizontal.webp')}
                   style={styles.bambuBorderBottom}
                   resizeMode="stretch"
                 />
@@ -312,7 +312,7 @@ const StudentRegisterScreen = ({ navigation }) => {
                 activeOpacity={0.8}
               >
                 <ImageBackground
-                  source={require('../assets/images/hoja-login.png')}
+                  source={require('../assets/images/hoja-login.webp')}
                   style={[
                     styles.registerButton,
                     (!isValid() || loading) && styles.buttonDisabled,

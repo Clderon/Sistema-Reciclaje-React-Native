@@ -3,6 +3,33 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../utils/constants';
 
+// Función para abreviar badges largos (SLOTH, MONKEY, ELEPHANT, etc.)
+const abbreviateBadge = (badge) => {
+  if (!badge) return '';
+  
+  const badgeUpper = badge.toUpperCase();
+  
+  // Abreviaciones específicas para badges conocidos (si son muy largos)
+  // SLOTH (5 letras) se mantiene pero se ajustará automáticamente con adjustsFontSizeToFit
+  const badgeMap = {
+    'MONKEY': 'MONK', // 6 letras -> 4 letras
+    'ELEPHANT': 'ELEP', // 8 letras -> 4 letras
+    'ROCK': 'ROCK', // 4 letras - mantener
+    'ANT': 'ANT', // 3 letras - mantener
+  };
+  
+  if (badgeMap[badgeUpper]) {
+    return badgeMap[badgeUpper];
+  }
+  
+  // Si el badge es muy largo (más de 5 caracteres), abreviar
+  if (badge.length > 5) {
+    return badge.substring(0, 5).toUpperCase();
+  }
+  
+  return badge;
+};
+
 const AvatarNameCard = ({
   avatarSource,
   name,
@@ -12,8 +39,8 @@ const AvatarNameCard = ({
   nameCardMaxWidth = wp('60%'),
   nameCardHeight = hp('10%'),
   nameFontSize = wp('5%'),
-  levelFontSize = wp('4%'),
-  badgeFontSize = wp('4%'),
+  levelFontSize = wp('3.5%'),
+  badgeFontSize = wp('3%'),
   showBadge = true,
   badgeBorderWidth = 3,
   nameCardBorderWidth = 2,
@@ -25,9 +52,13 @@ const AvatarNameCard = ({
   badgeBackgroundColor = COLORS.avatarBadgeBackground,
   nameCardBackgroundColor = COLORS.avatarNameCardBackground,
   nameCardInnerBackgroundColor = COLORS.targetFondo,
+  infoPaddingTop,
 }) => {
   // Ajustar el marginTop del nameCard basado en si hay badge o no
   const nameCardMarginTop = showBadge && badge ? hp('-2%') : 0;
+  
+  // NO abreviar el nivel aquí (debajo del nombre hay espacio suficiente)
+  const levelText = level || '';
   
   // Calcular el tamaño de la imagen restando el borde del contenedor
   const imageSize = avatarSize - (avatarBorderWidth * 2);
@@ -39,7 +70,7 @@ const AvatarNameCard = ({
   };
   
   return (
-    <View style={[styles.info, infoStyle]}>
+    <View style={[styles.info, infoStyle, infoPaddingTop && { paddingTop: infoPaddingTop }]}>
       {/* Avatar y badge */}
       <View
         style={[
@@ -68,7 +99,14 @@ const AvatarNameCard = ({
         />
         {showBadge && badge && (
           <View style={[styles.badge, { borderWidth: badgeBorderWidth, borderColor: badgeBorderColor, backgroundColor: badgeBackgroundColor }]}>
-            <Text style={[styles.badgeText, { fontSize: badgeFontSize }]}>{badge}</Text>
+            <Text 
+              style={[styles.badgeText, { fontSize: badgeFontSize }]} 
+              numberOfLines={1} 
+              adjustsFontSizeToFit 
+              minimumFontScale={0.6}
+            >
+              {abbreviateBadge(badge)}
+            </Text>
           </View>
         )}
       </View>
@@ -87,7 +125,7 @@ const AvatarNameCard = ({
       >
         <View style={[styles.nameCardInner, { borderWidth: nameCardBorderWidth, borderColor: nameCardBorderColor, backgroundColor: nameCardInnerBackgroundColor }]}>
           <Text style={[styles.name, { fontSize: nameFontSize }]}>{name}</Text>
-          {level && <Text style={[styles.level, { fontSize: levelFontSize }]}>{level}</Text>}
+          {levelText && <Text style={[styles.level, { fontSize: levelFontSize }]}>{levelText}</Text>}
         </View>
       </View>
     </View>
@@ -101,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
-    paddingHorizontal: wp('4%'),
+    paddingHorizontal: wp('5%'),
   },
   avatarWrapper: {
     alignItems: 'center',
@@ -111,21 +149,24 @@ const styles = StyleSheet.create({
   avatar: {
     objectFit: 'cover',
     overflow: 'hidden',
-    marginLeft: wp('2%'),
-    marginTop: hp('3%'),
   },
   badge: {
     marginTop: hp('-1.5%'),
     borderRadius: wp('8%'),
     paddingVertical: hp('0.5%'),
-    paddingHorizontal: wp('7%'),
+    paddingHorizontal: wp('4%'),
     zIndex: 2,
     alignSelf: 'center',
+    maxWidth: wp('25%'),
+    minWidth: wp('15%'),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeText: {
     fontWeight: '700',
     color: COLORS.textWhite,
     includeFontPadding: false,
+    textAlign: 'center',
   },
   nameCard: {
     flex: 1,

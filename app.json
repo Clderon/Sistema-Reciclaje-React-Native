@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sistemareciclaje.app"
+      "package": "com.sistemareciclaje.app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

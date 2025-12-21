@@ -19,9 +19,10 @@ import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
 import { getStudentsRanking } from '../services/rankingService';
 import { getUserAvatar } from '../utils/avatarHelper';
+import { getUserById } from '../services/userService';
 
 const LogrosScreen = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('estudiantes');
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,12 +31,12 @@ const LogrosScreen = () => {
   const [loading, setLoading] = useState(true);
 
   // Función para determinar el nivel según puntos (igual que en backend)
+  // Niveles: Hormiga (0-199), Oso Perezoso (200-399), Mono (400-599), Elefante (600-799), Gallito de las Rocas (800+)
   const getLevelByPoints = (totalPoints) => {
-    if (totalPoints >= 1000) return 'Gallito de las Rocas';
-    if (totalPoints >= 800) return 'Elefante';
-    if (totalPoints >= 600) return 'Mono';
-    if (totalPoints >= 400) return 'Oso Perezoso';
-    if (totalPoints >= 200) return 'Hormiga';
+    if (totalPoints >= 800) return 'Gallito de las Rocas';
+    if (totalPoints >= 600) return 'Elefante';
+    if (totalPoints >= 400) return 'Mono';
+    if (totalPoints >= 200) return 'Oso Perezoso';
     return 'Hormiga';
   };
 
@@ -96,25 +97,43 @@ const LogrosScreen = () => {
     }
   };
 
+  // Refrescar datos del usuario para obtener puntos y nivel actualizados
+  const refreshUserData = React.useCallback(async () => {
+    if (!user?.id) return;
+    
+    try {
+      const result = await getUserById(user.id);
+      if (result.success && result.user) {
+        updateUser(result.user);
+      }
+    } catch (error) {
+      console.error('Error refrescando datos del usuario:', error);
+    }
+  }, [user?.id, updateUser]);
+
   // Recargar cuando la pantalla recibe foco o cambia el tab
   useFocusEffect(
     React.useCallback(() => {
+      if (user?.id) {
+        refreshUserData(); // Refrescar datos del usuario
+      }
       loadRanking();
       // Incrementar la key para forzar el remontaje y ejecutar la animación
       setAnimationKey(prev => prev + 1);
-    }, [activeTab])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, user?.id])
   );
 
   // Calcular progreso hacia el siguiente nivel
   const calculateProgress = () => {
     const totalPoints = user?.totalPoints || 0;
-    const currentLevel = user?.currentLevel || getLevelByPoints(totalPoints);
+    // Siempre calcular el nivel basado en los puntos actuales, no confiar en currentLevel de la BD
+    // Esto asegura que si el nivel está desactualizado en la BD, se use el correcto
+    const calculatedLevel = getLevelByPoints(totalPoints);
+    const currentLevel = calculatedLevel; // Usar siempre el nivel calculado
     
-    // Definir los umbrales de puntos para cada nivel (según backend)
-    // El backend usa: >= 1000 = Gallito, >= 800 = Elefante, >= 600 = Mono, >= 400 = Oso Perezoso, >= 200 = Hormiga, < 200 = Hormiga
-    // Esto significa: 0-199 = Hormiga, 200-399 = Oso Perezoso, 400-599 = Mono, 600-799 = Elefante, 800-999 = Gallito, 1000+ = Gallito
-    // Pero el backend tiene un bug: >= 200 retorna 'Hormiga', cuando debería retornar 'Oso Perezoso'
-    // Vamos a usar la lógica correcta: Hormiga 0-199, Oso 200-399, Mono 400-599, Elefante 600-799, Gallito 800+
+    // Definir los umbrales de puntos para cada nivel (según backend corregido)
+    // Hormiga 0-199, Oso Perezoso 200-399, Mono 400-599, Elefante 600-799, Gallito de las Rocas 800+
     const levelThresholds = {
       'Hormiga': { min: 0, next: 200, nextLevel: 'Oso Perezoso' },
       'Oso Perezoso': { min: 200, next: 400, nextLevel: 'Mono' },
@@ -164,8 +183,19 @@ const LogrosScreen = () => {
   };
 
   // Encontrar usuarios cercanos al usuario actual para la sección "Rivales Cercanos"
+  // Para docentes, mostrar los top 3 recicladores
   const getNearbyUsers = () => {
-    if (!user || !rankingData.length) {
+    if (!rankingData.length) {
+      return [];
+    }
+
+    // Si es docente, mostrar los primeros 3 del ranking (top recicladores)
+    if (user?.role === 'teacher') {
+      return rankingData.slice(0, 3);
+    }
+
+    // Para estudiantes, mostrar usuarios cercanos al usuario actual
+    if (!user) {
       return [];
     }
 
@@ -180,6 +210,17 @@ const LogrosScreen = () => {
     const start = Math.max(0, currentUserPosition - 1);
     const end = Math.min(rankingData.length, currentUserPosition + 2);
     return rankingData.slice(start, end);
+  };
+
+  // Obtener usuarios para el podio (solo para docentes)
+  const getPodiumUsers = () => {
+    const top3 = rankingData.slice(0, 3);
+    // Orden: tercero (izq), primero (centro), segundo (der)
+    return [
+      top3[2] || null, // Tercero - izquierda
+      top3[0] || null, // Primero - centro
+      top3[1] || null, // Segundo - derecha
+    ];
   };
 
   return (
@@ -255,30 +296,59 @@ const LogrosScreen = () => {
                 </View>
               )}
 
-              {/* Rivals Section */}
+              {/* Rivals Section / Top Recicladores */}
               {!loading && rankingData.length > 0 && (
                 <View style={styles.rivals}>
                   <Text style={styles.rivalsTitle}>
-                    {activeTab === 'estudiantes' ? 'Rivales Cercanos' : 'Salones Cercanos'}
+                    {user?.role === 'teacher' 
+                      ? 'Top Recicladores' 
+                      : activeTab === 'estudiantes' 
+                        ? 'Rivales Cercanos' 
+                        : 'Salones Cercanos'}
                   </Text>
                   <View style={styles.rivalsList}>
-                    {getNearbyUsers().slice(0, 3).map((nearbyUser) => (
-                      <RankingUserCard
-                        key={nearbyUser.id}
-                        user={{
-                          id: nearbyUser.id,
-                          name: nearbyUser.name,
-                          avatar: nearbyUser.avatar,
-                        }}
-                        position={nearbyUser.position}
-                        isCurrentUser={nearbyUser.id === user?.id}
-                        containerBackgroundColor={COLORS.targetFondo}
-                        containerPadding={wp('1%')}
-                        containerBorderRadius={wp('2%')}
-                        containerBorderWidth={1}
-                        onPress={() => handlePositionPress(nearbyUser)}
-                      />
-                    ))}
+                    {user?.role === 'teacher' ? (
+                      // Podio para docentes: tercero (izq), primero (centro), segundo (der)
+                      getPodiumUsers().map((podiumUser, index) => {
+                        if (!podiumUser) return <View key={`empty-${index}`} style={{ flex: 1 }} />;
+                        return (
+                          <RankingUserCard
+                            key={podiumUser.id}
+                            user={{
+                              id: podiumUser.id,
+                              name: podiumUser.name,
+                              avatar: podiumUser.avatar,
+                            }}
+                            position={podiumUser.position}
+                            isCurrentUser={false}
+                            containerBackgroundColor={COLORS.targetFondo}
+                            containerPadding={wp('1%')}
+                            containerBorderRadius={wp('2%')}
+                            containerBorderWidth={1}
+                            onPress={() => handlePositionPress(podiumUser)}
+                          />
+                        );
+                      })
+                    ) : (
+                      // Lista normal para estudiantes
+                      getNearbyUsers().slice(0, 3).map((nearbyUser) => (
+                        <RankingUserCard
+                          key={nearbyUser.id}
+                          user={{
+                            id: nearbyUser.id,
+                            name: nearbyUser.name,
+                            avatar: nearbyUser.avatar,
+                          }}
+                          position={nearbyUser.position}
+                          isCurrentUser={nearbyUser.id === user?.id}
+                          containerBackgroundColor={COLORS.targetFondo}
+                          containerPadding={wp('1%')}
+                          containerBorderRadius={wp('2%')}
+                          containerBorderWidth={1}
+                          onPress={() => handlePositionPress(nearbyUser)}
+                        />
+                      ))
+                    )}
                   </View>
                 </View>
               )}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,39 @@ import ModalBadge from '../components/badges/ModalBadge';
 import ModalAjustes from '../components/common/ModalAjustes';
 import { useAuth } from '../context/AuthContext';
 import { getUserAvatar } from '../utils/avatarHelper';
+import { useFocusEffect } from '@react-navigation/native';
+import { getUserById } from '../services/userService';
+
+// Función para abreviar nombres largos de niveles
+const abbreviateLevelName = (levelName) => {
+  if (!levelName) return '';
+  
+  // Abreviaciones específicas para niveles conocidos
+  const levelLower = levelName.toLowerCase();
+  
+  if (levelLower.includes('oso perezoso') || levelName === 'Oso Perezoso') {
+    return 'Oso P.';
+  }
+  
+  if (levelLower.includes('gallito') && (levelLower.includes('rocas') || levelLower.includes('roca'))) {
+    return 'Gallito R.';
+  }
+  
+  // Si el nombre es muy largo (más de 10 caracteres), abreviar
+  if (levelName.length > 10) {
+    const words = levelName.split(' ');
+    if (words.length > 1) {
+      // Tomar primera palabra + inicial de la segunda palabra con punto
+      const firstWord = words[0];
+      const secondInitial = words[1]?.[0]?.toUpperCase() || '';
+      return secondInitial ? `${firstWord} ${secondInitial}.` : firstWord;
+    }
+    // Si es una sola palabra larga, truncar a 10 caracteres
+    return levelName.substring(0, 10) + '.';
+  }
+  
+  return levelName;
+};
 
 const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;
@@ -41,7 +74,7 @@ const AnimatedButton = ({ children, onPress, style }) => {
 };
 
 const PerfilScreen = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, updateUser } = useAuth();
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAjustesVisible, setModalAjustesVisible] = useState(false);
@@ -51,6 +84,7 @@ const PerfilScreen = () => {
   const userLevel = user?.currentLevel || 'Hormiga';
   const totalPoints = user?.totalPoints || 0;
   const totalRecyclings = user?.totalRecyclings || 0;
+  const approvedRequestsCount = user?.approvedRequestsCount || 0;
 
   const handleLogout = async () => {
     setModalAjustesVisible(false);
@@ -62,42 +96,42 @@ const PerfilScreen = () => {
   const badgesData = [
     {
       id: 1,
-      imageSource: require('../assets/images/logro_vidrioV2.png'),
+      imageSource: require('../assets/images/logro_vidrioV2.webp'),
       title: 'Maestro del Vidrio',
       description: 'Has reciclado más de 50 unidades de vidrio. ¡Eres un experto en darle una segunda vida a este material!',
       backgroundColor: COLORS.badgeBackground,
     },
     {
       id: 2,
-      imageSource: require('../assets/images/logro_caiman.png'),
+      imageSource: require('../assets/images/logro_caiman.webp'),
       title: 'Guardián del Agua',
       description: 'Has completado 10 misiones de reciclaje relacionadas con la conservación del agua. ¡El planeta te lo agradece!',
       backgroundColor: COLORS.badgeBackground,
     },
     {
       id: 3,
-      imageSource: require('../assets/images/logro_capibarav2.png'),
+      imageSource: require('../assets/images/logro_capibarav2.webp'),
       title: 'Protector de la Naturaleza',
       description: 'Has reciclado más de 100 kilos de materiales en total. ¡Eres un verdadero defensor del medio ambiente!',
       backgroundColor: COLORS.badgeBackground,
     },
     {
       id: 4,
-      imageSource: require('../assets/images/logro_perezoso.png'),
+      imageSource: require('../assets/images/logro_perezoso.webp'),
       title: 'Reciclador Consistente',
       description: 'Has reciclado durante 30 días consecutivos. ¡Tu dedicación es admirable!',
       backgroundColor: COLORS.badgeBackground,
     },
     {
       id: 5,
-      imageSource: require('../assets/images/logro_sajinoV2.png'),
+      imageSource: require('../assets/images/logro_sajinoV2.webp'),
       title: 'Líder del Reciclaje',
       description: 'Has alcanzado más de 500 puntos totales. ¡Eres un ejemplo para todos!',
       backgroundColor: COLORS.badgeBackground,
     },
     {
       id: 6,
-      imageSource: require('../assets/images/logro_mono.png'),
+      imageSource: require('../assets/images/logro_mono.webp'),
       title: 'Leyenda del Reciclaje',
       description: 'Has completado todas las misiones disponibles. ¡Eres una verdadera leyenda del reciclaje!',
       backgroundColor: COLORS.badgeBackground,
@@ -116,6 +150,29 @@ const PerfilScreen = () => {
     setModalVisible(false);
     setSelectedBadge(null);
   };
+
+  // Refrescar datos del usuario para obtener puntos y nivel actualizados
+  const refreshUserData = React.useCallback(async () => {
+    if (!user?.id) return;
+    
+    try {
+      const result = await getUserById(user.id);
+      if (result.success && result.user) {
+        updateUser(result.user);
+      }
+    } catch (error) {
+      console.error('Error refrescando datos del usuario:', error);
+    }
+  }, [user?.id, updateUser]);
+
+  // Refrescar cuando la pantalla recibe foco
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user?.id) {
+        refreshUserData();
+      }
+    }, [user?.id])
+  );
 
   // Función para obtener el badge según el nivel
   const getLevelBadge = (level) => {
@@ -174,10 +231,11 @@ const PerfilScreen = () => {
                 level={`Nivel: ${userLevel}`}
                 badge={getLevelBadge(userLevel)}
                 showBadge={true}
-                avatarSize={wp('30%')}
+                avatarSize={wp('26%')}
                 avatarBorderWidth={5}
                 avatarBorderColor={COLORS.textContenido}
                 avatarWrapperBackgroundColor={'#A3DDEE'}
+                infoPaddingTop={hp('1.5%')}
               />
 
               {/* Estadísticas */}
@@ -209,9 +267,11 @@ const PerfilScreen = () => {
                   <View style={styles.statOuter}>
                     <View style={styles.statInner}>
                       <Text style={styles.statLabel}>
-                        Nivel Actual
+                        Misiones{'\n'}Completadas
                       </Text>
-                      <Text style={[styles.statValue, { fontSize: wp('4%') }]}>{userLevel}</Text>
+                      <Text style={[styles.statValue, { fontSize: wp('5.5%') }]}>
+                        {approvedRequestsCount}
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -333,6 +393,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderBottomLeftRadius: wp('2.5%'),
     borderBottomRightRadius: wp('2.5%'),
+    overflow: 'hidden',
   },
   stats: {
     flex: 1,
@@ -380,7 +441,7 @@ const styles = StyleSheet.create({
   statLabel: {
     color: COLORS.textContenido,
     textAlign: 'center',
-    fontSize: wp('3.5%'),
+    fontSize: wp('3%'),
     fontWeight: '800',
     width: '100%',
     includeFontPadding: false,

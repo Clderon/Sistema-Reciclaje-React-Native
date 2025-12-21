@@ -22,7 +22,7 @@ import { CATEGORIES, COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
 import { validateImage, getMimeTypeFromAsset, MAX_IMAGE_SIZE } from '../utils/imageValidation';
 import { getUserImageCount, uploadImage } from '../services/uploadService';
-import { createRecycling } from '../services/recyclingService';
+import { createRequest } from '../services/requestService';
 
 // Componente para texto con contorno (simula múltiples text-shadows)
 const TextWithOutline = ({ children, style, outlineColor = '#fff', outlineWidth = 3 }) => {
@@ -280,10 +280,10 @@ const HomeScreen = () => {
       const imageUrl = uploadResult.imageUrl;
       console.log('✅ URL temporal generada:', imageUrl);
 
-      // 2. Crear registro de reciclaje
+      // 2. Crear petición de revisión (enviar al docente)
       const selectedCategoryData = CATEGORIES.find((cat) => cat.id === selectedCategory);
       
-      const recyclingResult = await createRecycling(
+      const requestResult = await createRequest(
         user.id,
         selectedCategory,
         quantity,
@@ -291,8 +291,10 @@ const HomeScreen = () => {
         imageUrl
       );
 
-      if (!recyclingResult.success) {
-        Toast.show(recyclingResult.error || 'Error al registrar reciclaje', { 
+      if (!requestResult.success) {
+        // Mostrar mensaje de error apropiado
+        const errorMessage = requestResult.error || 'Error al enviar petición';
+        Toast.show(errorMessage, { 
           duration: Toast.durations.LONG, 
           position: Toast.positions.BOTTOM, 
           backgroundColor: '#d9534f' 
@@ -301,26 +303,13 @@ const HomeScreen = () => {
         return;
       }
 
-      // 3. Actualizar usuario con nuevos puntos y estadísticas
-      if (recyclingResult.userStats && user) {
-        updateUser({
-          ...user,
-          totalPoints: recyclingResult.userStats.totalPoints,
-          totalRecyclings: recyclingResult.userStats.totalRecyclings,
-          currentLevel: recyclingResult.userStats.currentLevel,
-        });
-      }
-
-      // 4. Guardar puntos ganados y mostrar modal de éxito
-      const earnedPoints = recyclingResult.recycling?.pointsEarned || 0;
-      setPointsEarned(earnedPoints);
-      setModalVisible(true);
+      // 3. Limpiar formulario y mostrar mensaje de éxito
       setPhotosByCategory(prev => ({ ...prev, [selectedCategory]: null }));
       setAssetsByCategory(prev => ({ ...prev, [selectedCategory]: null }));
       setQuantity(0);
 
-      Toast.show('¡Reciclaje registrado exitosamente!', { 
-        duration: Toast.durations.SHORT, 
+      Toast.show('¡Petición enviada! El docente revisará tu reciclaje.', { 
+        duration: Toast.durations.LONG, 
         position: Toast.positions.BOTTOM, 
         backgroundColor: '#5cb85c' 
       });

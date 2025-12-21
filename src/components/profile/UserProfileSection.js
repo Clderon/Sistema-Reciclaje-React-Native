@@ -16,15 +16,18 @@ const UserProfileSection = ({
   avatarWrapperBackgroundColor = '#A3DDEE',
   showBadge = false,
   badge,
+  sectionPaddingVertical,
 }) => {
   return (
-    <View style={styles.section}>
+    <View style={[styles.section, sectionPaddingVertical && { paddingVertical: sectionPaddingVertical }]}>
       {backgroundImageSource && (
-        <Image
-          source={backgroundImageSource}
-          style={styles.backgroundSection}
-          resizeMode="cover"
-        />
+        <View style={styles.backgroundWrapper}>
+          <Image
+            source={backgroundImageSource}
+            style={styles.backgroundSection}
+            resizeMode="cover"
+          />
+        </View>
       )}
       
       {/* Contenedor de información (avatar y nombre) */}
@@ -63,16 +66,23 @@ const styles = StyleSheet.create({
   section: {
     width: '100%',
     minHeight: hp('32.5%'),
-    borderRadius: wp('2.5%'),
     flexDirection: 'column',
     overflow: 'hidden',
     alignItems: 'center',
     paddingVertical: hp('2%'),
   },
-  backgroundSection: {
-    ...StyleSheet.absoluteFillObject,
+  backgroundWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: 'hidden',
     zIndex: 1,
-    borderRadius: wp('2.5%'),
+  },
+  backgroundSection: {
+    width: '100%',
+    height: '100%',
   },
   stats: {
     flex: 1,

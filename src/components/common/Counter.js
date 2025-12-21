@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: COLORS.targetFondo,
     width: '100%',
-    paddingHorizontal: wp('2%'),
   },
   button: {
     width: wp('12%'),

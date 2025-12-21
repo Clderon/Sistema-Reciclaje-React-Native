@@ -5,11 +5,11 @@
 
 // Lista de avatares disponibles
 const AVAILABLE_AVATARS = [
-  require('../assets/images/elefante.png'),
-  require('../assets/images/sajino.png'),
-  require('../assets/images/serpiente.png'),
-  require('../assets/images/tucan.png'),
-  require('../assets/images/oso-perezoso.png'),
+  require('../assets/images/elefante.webp'),
+  require('../assets/images/sajino.webp'),
+  require('../assets/images/serpiente.webp'),
+  require('../assets/images/tucan.webp'),
+  require('../assets/images/oso-perezoso.webp'),
 ];
 
 /**

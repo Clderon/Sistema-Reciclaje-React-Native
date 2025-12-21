@@ -12,6 +12,37 @@ import { COLORS } from '../../utils/constants';
 import BadgeItem from '../badges/BadgeItem';
 import UserProfileSection from '../profile/UserProfileSection';
 
+// Función para abreviar nombres largos de niveles
+const abbreviateLevelName = (levelName) => {
+  if (!levelName) return '';
+  
+  // Abreviaciones específicas para niveles conocidos
+  const levelLower = levelName.toLowerCase();
+  
+  if (levelLower.includes('oso perezoso') || levelName === 'Oso Perezoso') {
+    return 'Oso P.';
+  }
+  
+  if (levelLower.includes('gallito') && (levelLower.includes('rocas') || levelLower.includes('roca'))) {
+    return 'Gallito R.';
+  }
+  
+  // Si el nombre es muy largo (más de 10 caracteres), abreviar
+  if (levelName.length > 10) {
+    const words = levelName.split(' ');
+    if (words.length > 1) {
+      // Tomar primera palabra + inicial de la segunda palabra con punto
+      const firstWord = words[0];
+      const secondInitial = words[1]?.[0]?.toUpperCase() || '';
+      return secondInitial ? `${firstWord} ${secondInitial}.` : firstWord;
+    }
+    // Si es una sola palabra larga, truncar a 10 caracteres
+    return levelName.substring(0, 10) + '.';
+  }
+  
+  return levelName;
+};
+
 const CardInfo = ({ visible, onClose, userData }) => {
   if (!userData) return null;
 
@@ -38,7 +69,7 @@ const CardInfo = ({ visible, onClose, userData }) => {
             <UserProfileSection
               avatarSource={userData.avatar}
               name={userData.name}
-              level={`Nivel: ${userData.level}`}
+              level={`Nivel: ${abbreviateLevelName(userData.level)}`}
               stats={[
                 { label: 'Puntos Totales', value: userData.points },
                 { label: 'Reciclajes', value: userData.recyclings },
@@ -49,6 +80,7 @@ const CardInfo = ({ visible, onClose, userData }) => {
               avatarBorderWidth={5}
               avatarBorderColor={COLORS.avatarBadgeBackground}
               avatarWrapperBackgroundColor={COLORS.badgeWrapperBackground}
+              sectionPaddingVertical={hp('1%')}
             />
 
             {/* Badges Section */}
@@ -73,19 +105,19 @@ const CardInfo = ({ visible, onClose, userData }) => {
                   // Insignias por defecto si no se proporcionan
                   <>
                     <BadgeItem
-                      imageSource={require('../../assets/images/logro_vidrioV2.png')}
+                      imageSource={require('../../assets/images/logro_vidrioV2.webp')}
                       backgroundColor={COLORS.badgeBackground}
                     />
                     <BadgeItem
-                      imageSource={require('../../assets/images/logro_caiman.png')}
+                      imageSource={require('../../assets/images/logro_caiman.webp')}
                       backgroundColor={COLORS.badgeBackground}
                     />
                     <BadgeItem
-                      imageSource={require('../../assets/images/logro_capibarav2.png')}
+                      imageSource={require('../../assets/images/logro_capibarav2.webp')}
                       backgroundColor={COLORS.badgeBackground}
                     />
                     <BadgeItem
-                      imageSource={require('../../assets/images/serpiente.png')}
+                      imageSource={require('../../assets/images/serpiente.webp')}
                       backgroundColor={COLORS.badgeBackground}
                       isLocked={true}
                     />
@@ -112,8 +144,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   modalContent: {
-    width: wp('90%'),
-    maxWidth: wp('85%'),
+    width: wp('85%'),
+    maxWidth: wp('80%'),
   },
   closeButton: {
     position: 'absolute',
@@ -139,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.target,
     borderWidth: 3,
     borderColor: COLORS.textBorde,
+    borderRadius: wp('3%'),
     overflow: 'hidden',
     shadowColor: COLORS.textBorde,
     shadowOffset: { width: 0, height: 8 },
@@ -153,6 +186,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 3,
     borderBottomColor: COLORS.textBorde,
+    borderTopLeftRadius: wp('3%'),
+    borderTopRightRadius: wp('3%'),
   },
   headerTitle: {
     fontSize: wp('5%'),
@@ -162,9 +197,11 @@ const styles = StyleSheet.create({
   badgesSection: {
     paddingHorizontal: wp('2.5%'),
     paddingVertical: hp('1%'),
-    backgroundColor: COLORS.targetFondo,
+    backgroundColor: COLORS.target,
     borderTopWidth: 3,
     borderTopColor: COLORS.textBorde,
+    borderBottomLeftRadius: wp('3%'),
+    borderBottomRightRadius: wp('3%'),
   },
   badgesTitle: {
     fontSize: wp('4.5%'),
@@ -181,6 +218,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: wp('2.5%'),
     paddingVertical: hp('1%'),
+    backgroundColor: 'red',
+    borderRadius: wp('3%'),
+    backgroundColor: COLORS.targetFondo,
   },
 });
 

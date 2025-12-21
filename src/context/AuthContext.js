@@ -87,6 +87,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login de docente (con email/username y password)
+  const loginTeacher = async (emailOrUsername, password) => {
+    try {
+      const result = await loginService(emailOrUsername, password);
+      
+      if (result.success) {
+        // Verificar que el rol sea 'teacher'
+        if (result.user.role !== 'teacher') {
+          return { success: false, error: 'Estas credenciales no pertenecen a un docente' };
+        }
+        await saveUser(result.user);
+        return { success: true, user: result.user };
+      } else {
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      return { success: false, error: error.message || 'Error al iniciar sesión' };
+    }
+  };
+
   // Logout
   const signOut = async () => {
     try {
@@ -108,6 +128,7 @@ export const AuthProvider = ({ children }) => {
     signIn,
     registerStudent,
     loginStudent,
+    loginTeacher,
     signOut,
     updateUser,
     isAuthenticated: !!user,
