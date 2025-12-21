@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,11 +19,33 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
 
+// Datos de estudiantes de prueba para auto-rellenar
+const TEST_STUDENTS = [
+  {
+    username: 'estudiante1',
+    email: 'estudiante1@unas.edu.pe',
+    password: 'estudiante1'
+  },
+  {
+    username: 'estudiante2',
+    email: 'estudiante2@unas.edu.pe',
+    password: 'estudiante2'
+  }
+];
+
 const StudentLoginScreen = ({ navigation }) => {
   const { loginStudent } = useAuth();
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Auto-rellenar campos con un estudiante de prueba aleatorio al montar el componente
+  useEffect(() => {
+    // Seleccionar aleatoriamente uno de los estudiantes de prueba
+    const randomStudent = TEST_STUDENTS[Math.floor(Math.random() * TEST_STUDENTS.length)];
+    setEmailOrUsername(randomStudent.username);
+    setPassword(randomStudent.password);
+  }, []);
 
   const handleLogin = async () => {
     if (!emailOrUsername.trim() || !password.trim()) {

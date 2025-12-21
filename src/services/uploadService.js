@@ -1,5 +1,5 @@
 import { apiRequest } from '../config/api';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system/next';
 import { validateImage, getFileSize, getMimeTypeFromAsset, MAX_IMAGE_SIZE, validateImageSize } from '../utils/imageValidation';
 
 /**
@@ -13,10 +13,9 @@ import { validateImage, getFileSize, getMimeTypeFromAsset, MAX_IMAGE_SIZE, valid
  */
 async function imageToBase64(imageUri) {
   try {
-    // Leer el archivo como base64
-    const base64 = await FileSystem.readAsStringAsync(imageUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    // Usar la nueva API de expo-file-system con la clase File
+    const file = new File(imageUri);
+    const base64 = await file.base64();
 
     // Determinar el tipo MIME basado en la extensión
     let mimeType = 'image/jpeg'; // Por defecto

@@ -101,17 +101,18 @@ export const validateImage = (uri, mimeType = null, sizeInBytes = null) => {
 
 /**
  * Obtener tamaño de archivo desde URI (para React Native)
- * Necesita expo-file-system
+ * Usa la nueva API de expo-file-system
  * @param {String} uri - URI del archivo
  * @returns {Promise<Number>} Tamaño en bytes
  */
 export const getFileSize = async (uri) => {
   try {
-    const { FileSystem } = require('expo-file-system');
-    const fileInfo = await FileSystem.getInfoAsync(uri);
+    const { File } = require('expo-file-system/next');
+    const file = new File(uri);
+    const info = await file.getInfo();
     
-    if (fileInfo.exists && fileInfo.size !== undefined) {
-      return fileInfo.size;
+    if (info.exists && info.size !== undefined) {
+      return info.size;
     }
     
     return null;
