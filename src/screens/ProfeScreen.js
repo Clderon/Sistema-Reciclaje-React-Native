@@ -201,7 +201,7 @@ const ProfeScreen = ({ navigation }) => {
             <Text style={styles.subtitle}>Guardabosques Educador</Text>
           </View>
           
-          <View style={styles.containerConten}>
+          <View style={styles.containerContent}>
             <MonkeyFrame 
               text={`¡${pagination.total} Peticiones Pendientes!`}
               monkeyImage={require('../assets/images/profesor/monoBino.webp')}
@@ -225,12 +225,12 @@ const ProfeScreen = ({ navigation }) => {
                       <CardRevision
                         key={request.id}
                         requestId={request.id}
-                        agentName={`Agente ${request.studentName}`}
+                        agentName={`${request.studentName}`}
                         category={request.categoryId}
                         quantity={`${request.quantity} ${request.unit === 'Unid.' ? 'Unidades' : request.unit}`}
                         onGivePoints={(points) => handleGivePoints(request.id, points)}
                         onReview={() => handleReview(request.id)}
-                        onCategoryChange={() => {}} // No hacer nada, solo compatibilidad
+                        onCategoryChange={() => {}}
                         evidenceImage={request.evidenceImageUrl}
                         evidenceCount={1}
                       />
@@ -242,6 +242,11 @@ const ProfeScreen = ({ navigation }) => {
                     )}
                   </View>
                 )}
+                <View style={styles.scrollBarContainer}>
+                  <View style={styles.scrollBarTrack}>
+                    <View style={styles.scrollBarThumb} />
+                  </View>
+                </View>
               </View>
             </View>
           </View>
@@ -314,39 +319,63 @@ const styles = StyleSheet.create({
     color: COLORS.textBorde,
   },
   missionsContainer: {
-      backgroundColor: COLORS.targetFondo ,
-      borderWidth: 1,
-      borderColor: COLORS.textBorde,
-      alignItems: 'center',
-      borderRadius: wp('4%'),        // border-radius: 15px convertido
-      gap: hp('2%'),               // gap: 10px convertido
-      padding: wp('1%'),             // padding: 31px convertido
-      overflow: 'hidden',            // overflow: hidden
-      width: '100%',  
+    backgroundColor: COLORS.targetFondo ,
+    borderWidth: 1,
+    borderColor: COLORS.textBorde,
+    alignItems: 'center',
+    borderRadius: wp('4%'),       
+    gap: hp('2%'),               
+    padding: wp('1%'),   
+    paddingHorizontal: wp('0.1%'),
+    overflow: 'hidden',           
+    width: '100%',
   },
-
-
-
   containerBackground: {
     backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.textBorde,
     borderRadius: wp('4%'),
-    padding: wp('3%'),
+    padding: wp('3.5%'),
+    paddingRight: wp('6%'),
+  },
+  scrollBarContainer: {
+    position: 'absolute',
+    right: wp('2%'),
+    top: wp('3.5%'),
+    bottom: wp('3.5%'),
+    width: wp('2.5%'),
+    zIndex: 10,
+    justifyContent: 'center',
+  },
+  scrollBarTrack: {
+    width: '100%',
+    flex: 1,
+    backgroundColor: 'Transparent',
+    borderRadius: wp('1%'),
+    position: 'relative',
+    minHeight: wp('10%'),
+  },
+  scrollBarThumb: {
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: COLORS.scrollBar,
+    borderWidth: 0.5,
+    borderRadius: wp('1%'),
+    height: wp('30%'),
   },
   containerBackgroundDos: {
     backgroundColor: COLORS.madera,
     borderWidth: 1,
     borderColor: COLORS.textBorde,
     borderRadius: wp('4%'),
-    padding: wp('1%'),
+    padding: wp('2%'),
   },
-  containerConten: {
-    flexDirection: 'column',     // Layout vertical
-    alignItems: 'center',        // Centrar horizontalmente
-    gap: hp('0%'),              // Espacio entre MonkeyFrame y containerBackgroundDos
-    width: '100%',              // Ocupar todo el ancho disponible
-    flex: 1,                    // Expandir para usar espacio disponible
+  containerContent: {
+    flexDirection: 'column',     
+    alignItems: 'center',        
+    gap: hp('0%'),              
+    width: '100%',              
+    flex: 1,                    
   },
   loadingContainer: {
     padding: hp('5%'),

@@ -64,7 +64,7 @@ export const CATEGORIES = [
 ];
 
 
-// Colores del tema
+// Colores del tema RGB 202 171 124 / #CAAB7C
 export const COLORS = {
   // Fondos
   targetFondo: '#eedfc0',
@@ -74,6 +74,7 @@ export const COLORS = {
   // Botones
   button: '#46a330',
   buttonDegradado: '#7bc224',
+  scrollBar: '#CAAB7C',
   
   // Textos
   textTitle: '#f3d645',

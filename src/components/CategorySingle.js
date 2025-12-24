@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { CATEGORIES } from '../utils/constants';
 import CategoryItem from './categorySelectorIndividual';
 
@@ -7,7 +8,14 @@ const CategorySingle = ({
   selectedCategory = 'papel', 
   onSelectCategory, 
   size = 'small',  // ← CAMBIAR de 'large' a 'medium'
-  showClickable = false 
+  showClickable = false,
+  showDecoration = true,  // Por defecto muestra la decoración
+  borderRadius = wp('4%'),  // Por defecto usa el valor definido en CategoryItem
+  borderWidth = null,  // Ancho del borde (null = usa valor por defecto: 2 normal, 3 activo)
+  iconMarginBottom = null,  // Separación entre icono y texto (null = usa valor por defecto del tamaño)
+  labelMarginTop = null,  // Margen superior del texto (null = usa valor por defecto del tamaño)
+  paddingBottom = null,  // Padding inferior del contenido (null = usa valor por defecto del tamaño)
+  paddingHorizontal = null  // Padding horizontal del contenido (null = usa valor por defecto del tamaño)
 }) => {
   // Mapeo de strings a IDs (usando los datos existentes)
   const categoryMapping = {
@@ -33,6 +41,13 @@ const CategorySingle = ({
         onSelect={showClickable ? () => onSelectCategory?.(selectedCategory) : undefined}
         color={selectedCategoryData.color}
         size={size}
+        showDecoration={showDecoration}
+        borderRadius={borderRadius}
+        borderWidth={borderWidth}
+        iconMarginBottom={iconMarginBottom}
+        labelMarginTop={labelMarginTop}
+        paddingBottom={paddingBottom}
+        paddingHorizontal={paddingHorizontal}
       />
     </View>
   );

@@ -43,10 +43,10 @@ const CardRevision = ({
   };
 
   return (
-    <View style={styles.rectangle}>
-      {/* Frame-2: Header con nombre del agente */}
-      <View style={styles.frame2}>
-        <Text style={styles.textWrapper4}>{agentName}</Text>
+    <View style={styles.cardContainer}>
+      {/* Header con nombre del agente */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.agentNameText}>{agentName}</Text>
       </View>
       <PointsModal
         visible={showPointsModal}
@@ -61,42 +61,49 @@ const CardRevision = ({
         onClose={() => setShowImageModal(false)}
       />
 
-      {/* HojaDarPuntos: Botón dar puntos (posición absoluta) */}
-
-      <View style={styles.hojaDarPuntos}>
+      {/* Botón dar puntos (posición absoluta) */}
+      <View style={styles.pointsButtonContainer}>
         <GivePointsButton 
            onPress={handleGivePoints} 
         />
       </View>
 
-      {/* Frame-3: Imagen y CategorySingle */}
-      <View style={styles.frame3}>
+      {/* Contenedor de imagen y categoría */}
+      <View style={styles.contentRow}>
         <Evidence 
           imageUri={evidenceImage}
           onPress={handleReview}
           badgeCount={evidenceCount}
-          size="medium"
-          style={styles.image}
+          size="smallMedium"
+          style={styles.evidenceImageContainer}
+          padding={2}
+          backgroundColor={COLORS.targetFondo}
+          borderRadius={wp('2.5%')}
         />
         
         <CategorySingle 
           selectedCategory={category}
-          size="medium"
+          size="smallMedium"
           showClickable={false}
-          style={styles.frame49}
+          style={styles.categoryContainer}
+          showDecoration={false}
+          borderRadius={wp('2.5%')}
+          labelMarginTop={hp('0.1%')}
+          paddingBottom={hp('0.3%')}
+          borderWidth={2}
         />
       </View>
 
-      {/* Frame-4: Cantidad y botón revisar */}
-      <View style={styles.frame4}>
-        <View style={styles.frame5}>
-          <Text style={styles.textWrapper5}>Cantidad: {quantity}</Text>
+      {/* Footer: Cantidad y botón revisar */}
+      <View style={styles.footerContainer}>
+        <View style={styles.quantityContainer}>
+          <Text style={styles.quantityText}>Cantidad: {quantity}</Text>
         </View>
         <ReviewButton 
           onPress={handleReview}
           text="Revisar"
           icon="?"
-          style={styles.botonRevisarInstance}
+          style={styles.reviewButtonContainer}
         />
       </View>
     </View>
@@ -104,20 +111,20 @@ const CardRevision = ({
 };
 
 const styles = StyleSheet.create({
-  // .rectangle
-  rectangle: {
+  // Contenedor principal de la tarjeta
+  cardContainer: {
     alignItems: 'center',
-    backgroundColor: COLORS.background || '#f8f7e3',
+    backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.textBorde || '#513015',
     borderRadius: wp('2.5%'),
     flexDirection: 'column',
     flex: 1,
-    minHeight: hp('15%'), // height: 214px
+    minHeight: hp('15%'),
     overflow: 'hidden',
-    paddingBottom: hp('1.2%'), // padding bottom: 10px
+    paddingBottom: hp('1.2%'),
     position: 'relative',
-    width: wp('75%'), // width: 300px
+    width: wp('75%'),
     marginHorizontal: wp('2.5%'),
     marginVertical: hp('1%'),
     shadowColor: '#000',
@@ -125,100 +132,91 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    gap: hp('0.5%'), // gap: 10px
+    gap: hp('0.5%'),
   },
 
-  // .rectangle .frame-2
-  frame2: {
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    backgroundColor: COLORS.targetFondo || '#eedfc0',
+  // Header con nombre del agente
+  headerContainer: {
+    backgroundColor: COLORS.targetFondo,
     borderTopLeftRadius: wp('2.5%'),
     borderTopRightRadius: wp('2.5%'),
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    height: hp('5.7%'), // height: 45px
-    paddingVertical: hp('0.5%'),
-    paddingHorizontal: wp('2.5%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: hp('1%'),
     width: '100%',
     position: 'relative',
-    paddingRight: wp('20%'),
+    paddingLeft: wp('3%'),
   },
 
-  // .rectangle .text-wrapper-4
-  textWrapper4: {
-    color: COLORS.textContenido || '#4e3217',
-    fontSize: wp('6%'), // font-size: 24px
+  // Texto del nombre del agente
+  agentNameText: {
+    color: COLORS.textContenido,
+    fontSize: wp('6%'),
     fontWeight: '700',
-    textAlign: 'center',
+    textAlign: 'left',
     flex: 1,
   },
 
-  // .rectangle .frame-3
-  frame3: {
-    alignItems: 'flex-start',
+  // Fila de contenido: imagen y categoría
+  contentRow: {
+    alignItems: 'center',
     alignSelf: 'stretch',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    paddingHorizontal: wp('1.5%'),
-    paddingVertical: hp('0%'),
-    gap: wp('2%'), // gap: 6px
-    width: '100%',
-    flex: 1,
+    paddingHorizontal: wp('2.5%'),
+    paddingVertical: hp('1%'),
+    gap: wp('1%'),
   },
 
-  // .rectangle .image
-  image: {
-    height: hp('11%'), // height: 87px
-    width: wp('24%'), // width: 96px
+  // Contenedor de la imagen de evidencia
+  evidenceImageContainer: {
   },
 
-  // .rectangle .frame-49
-  frame49: {
-     height: hp('11%'),            // ← CAMBIAR: de hp('5%') a hp('11%') (igual que image)
-     width: wp('24%'), 
-    },
+  // Contenedor de la categoría
+  categoryContainer: {
+    height: hp('10%'),
+    width: wp('24%'),
+  },
     
-    // .rectangle .frame-4
-    frame4: {
+  // Footer: cantidad y botón revisar
+  footerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
     paddingHorizontal: wp('2.5%'),
     paddingVertical: hp('1%'),
-    borderTopWidth: 1,
-    borderTopColor: COLORS.textBorde + '20', // Semi-transparente
-    gap: wp('2%'), // gap: 20px
+    borderTopColor: COLORS.textBorde + '20',
+    gap: wp('3%'),
   },
 
-  // .rectangle .frame-5
-  frame5: {
+  // Contenedor de la cantidad
+  quantityContainer: {
     flex: 1,
     backgroundColor: COLORS.targetFondo,
-    borderRadius: wp('2%'),
-    padding: wp('1%'),
+    borderRadius: wp('2.5%'),
+    paddingVertical: hp('1%'),
+    paddingHorizontal: wp('2%'),
   },
 
-  // .rectangle .text-wrapper-5
-  textWrapper5: {
-    color: COLORS.textContenido || '#4e3217',
+  // Texto de la cantidad
+  quantityText: {
+    color: COLORS.textContenido,
     fontSize: wp('4%'),
-    fontWeight: '500',
+    fontWeight: '700',
   },
 
-  // HojaDarPuntos posición absoluta
-  hojaDarPuntos: {
-  position: 'absolute',
-  top: hp('-1%'),    // ← Y: top: 20px convertido
-  left: wp('47%'),     // ← X: left: 20px convertido  
-  width: wp('18%'),   // ← width: 74px convertido
-  height: hp('11%'),  // ← height: 86px convertido
-  zIndex: 999,        // ← Para que esté por encima de TODO
-},
+  // Contenedor del botón de puntos (posición absoluta)
+  pointsButtonContainer: {
+    position: 'absolute',
+    top: hp('0.5%'),
+    right: wp('2%'),
+    zIndex: 10,
+  },
 
-  // Botón revisar
-  botonRevisarInstance: {
+  // Contenedor del botón revisar
+  reviewButtonContainer: {
     // ReviewButton manejará su propio tamaño
   },
 });

@@ -9,7 +9,14 @@ const CategoryItem = ({
   isActive = false, 
   onSelect, 
   color = '#3299e3',
-  size = 'medium' // 'small', 'medium', 'large'
+  size = 'medium', // 'small', 'smallMedium', 'medium', 'large'
+  showDecoration = true,  // Por defecto muestra la decoración
+  borderRadius = wp('4%'),  // Por defecto usa el valor definido en los estilos
+  borderWidth = null,  // Ancho del borde (null = usa valor por defecto: 2 normal, 3 activo)
+  iconMarginBottom = null,  // Separación entre icono y texto (null = usa valor por defecto del tamaño)
+  labelMarginTop = null,  // Margen superior del texto (null = usa valor por defecto del tamaño)
+  paddingBottom = null,  // Padding inferior del contenido (null = usa valor por defecto del tamaño)
+  paddingHorizontal = null  // Padding horizontal del contenido (null = usa valor por defecto del tamaño)
 }) => {
   const scale = useRef(new Animated.Value(1)).current;
   const activeScale = useRef(new Animated.Value(isActive ? 1.05 : 1)).current;
@@ -41,6 +48,21 @@ const CategoryItem = ({
           height: wp('15%'),
           iconSize: wp('8%'),
           fontSize: wp('2.5%'),
+          paddingBottom: hp('0.8%'),
+          iconMarginBottom: hp('0.2%'),
+          labelMarginTop: hp('0.3%'),
+          paddingHorizontal: wp('0.8%'),
+        };
+      case 'smallMedium':
+        return {
+          width: wp('18.5%'),
+          height: wp('18.5%'),
+          iconSize: wp('9.5%'),
+          fontSize: wp('2.5%'),
+          paddingBottom: hp('1%'),
+          iconMarginBottom: hp('0.3%'),
+          labelMarginTop: hp('0.4%'),
+          paddingHorizontal: wp('1%'),
         };
       case 'large':
         return {
@@ -48,6 +70,10 @@ const CategoryItem = ({
           height: wp('28%'),
           iconSize: wp('16%'),
           fontSize: wp('3.5%'),
+          paddingBottom: hp('1.5%'),
+          iconMarginBottom: hp('0.5%'),
+          labelMarginTop: hp('0.7%'),
+          paddingHorizontal: wp('1.5%'),
         };
       default: // medium
         return {
@@ -55,6 +81,10 @@ const CategoryItem = ({
           height: wp('22%'),
           iconSize: wp('11%'),
           fontSize: wp('3%'),
+          paddingBottom: hp('1.2%'),
+          iconMarginBottom: hp('0.4%'),
+          labelMarginTop: hp('0.5%'),
+          paddingHorizontal: wp('1.2%'),
         };
     }
   };
@@ -68,24 +98,31 @@ const CategoryItem = ({
           styles.category,
           {
             backgroundColor: color,
-            borderWidth: isActive ? 3 : 2,
+            borderWidth: borderWidth !== null ? borderWidth : (isActive ? 3 : 2),
+            borderRadius: borderRadius,
             transform: [{ scale: Animated.multiply(scale, activeScale) }],
             width: sizeStyles.width,
             height: sizeStyles.height,
           },
           isActive && styles.categoryActive,
         ]}
-      >
-        <ImageBackground
-          source={require('../assets/images/fondo-item-hd.webp')}
-          style={styles.categoryBg}
-          resizeMode="contain"
-        />
+        >
+        {showDecoration && (
+          <ImageBackground
+            source={require('../assets/images/fondo-item-hd.webp')}
+            style={styles.categoryBg}
+            resizeMode="contain"
+          />
+        )}
         
-        <View style={styles.categoryContent}>
+        <View style={[styles.categoryContent, {
+          paddingBottom: paddingBottom !== null ? paddingBottom : sizeStyles.paddingBottom,
+          paddingHorizontal: paddingHorizontal !== null ? paddingHorizontal : sizeStyles.paddingHorizontal,
+        }]}>
           <View style={[styles.categoryIcon, { 
             width: sizeStyles.iconSize, 
-            height: sizeStyles.iconSize 
+            height: sizeStyles.iconSize,
+            marginBottom: iconMarginBottom !== null ? iconMarginBottom : sizeStyles.iconMarginBottom,
           }]}>
             <Image
               source={category.icon}
@@ -96,7 +133,10 @@ const CategoryItem = ({
               resizeMode="contain"
             />
           </View>
-          <Text style={[styles.categoryLabel, { fontSize: sizeStyles.fontSize }]}>
+          <Text style={[styles.categoryLabel, { 
+            fontSize: sizeStyles.fontSize,
+            marginTop: labelMarginTop !== null ? labelMarginTop : sizeStyles.labelMarginTop,
+          }]}>
             {category.name}
           </Text>
         </View>
@@ -132,14 +172,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: hp('1%'),
-    paddingHorizontal: wp('1%'),
+    // paddingBottom y paddingHorizontal se aplican dinámicamente
     zIndex: 1,
   },
   categoryIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: hp('0.3%'),
+    // marginBottom se aplica dinámicamente
   },
   categoryImg: {
     // Tamaño dinámico se aplica inline
@@ -150,7 +189,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: hp('1.4%'),
     includeFontPadding: false,
-    marginTop: hp('0.5%'),
+    // marginTop se aplica dinámicamente
   },
 });
 

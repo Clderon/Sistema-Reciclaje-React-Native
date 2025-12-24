@@ -82,20 +82,15 @@ const ReviewButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    width: wp('27%'),
+    width: wp('22%'),
     maxWidth: wp('30%'),
-    paddingVertical: hp('0.6%'),
+    paddingVertical: hp('1%'),
     paddingHorizontal: wp('1.8%'),
     alignItems: 'center',
     borderRadius: wp('2.5%'),
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.textContenido,
     backgroundColor: '#FAA540',
-    shadowColor: '#885E34',
-    shadowOffset: { width: -1, height: -7 },
-    shadowOpacity: 0.56,
-    shadowRadius: 1.7,
-    elevation: 3,
   },
   buttonDisabled: {
     opacity: 0.5,
