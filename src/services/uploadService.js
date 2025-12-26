@@ -1,5 +1,5 @@
 import { apiRequest } from '../config/api';
-import { File } from 'expo-file-system/next';
+import * as FileSystem from 'expo-file-system';
 import { validateImage, getFileSize, getMimeTypeFromAsset, MAX_IMAGE_SIZE, validateImageSize } from '../utils/imageValidation';
 
 /**
@@ -13,9 +13,33 @@ import { validateImage, getFileSize, getMimeTypeFromAsset, MAX_IMAGE_SIZE, valid
  */
 async function imageToBase64(imageUri) {
   try {
-    // Usar la nueva API de expo-file-system con la clase File
-    const file = new File(imageUri);
-    const base64 = await file.base64();
+    let base64;
+    
+    // Si es una URI local (file://), usar FileSystem
+    if (imageUri.startsWith('file://') || imageUri.startsWith('content://')) {
+      base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+    } 
+    // Si es una URL HTTP/HTTPS, necesitamos descargarla primero
+    else if (imageUri.startsWith('http://') || imageUri.startsWith('https://')) {
+      const downloadResult = await FileSystem.downloadAsync(
+        imageUri,
+        FileSystem.documentDirectory + `temp-image-${Date.now()}.jpg`
+      );
+      base64 = await FileSystem.readAsStringAsync(downloadResult.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      // Limpiar archivo temporal
+      await FileSystem.deleteAsync(downloadResult.uri, { idempotent: true });
+    } 
+    // Si ya es base64, retornarlo directamente
+    else if (imageUri.startsWith('data:image/')) {
+      return imageUri;
+    }
+    else {
+      throw new Error('Formato de URI no soportado');
+    }
 
     // Determinar el tipo MIME basado en la extensión
     let mimeType = 'image/jpeg'; // Por defecto

@@ -3,6 +3,7 @@ import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../../utils/constants';
+import { playPopSound, playAchievementSound } from '../../utils/soundHelper';
 
 const BadgeItem = ({
   imageSource,
@@ -35,10 +36,20 @@ const BadgeItem = ({
     );
   }
 
+  const handlePress = () => {
+    // Si el badge está desbloqueado (no está locked), reproducir sonido de logro
+    if (!isLocked) {
+      playAchievementSound();
+    } else {
+      playPopSound();
+    }
+    onPress?.();
+  };
+
   return (
     <TouchableOpacity
       style={[styles.badgeItemWrapper, { backgroundColor: COLORS.badgeWrapperBackground }]}
-      onPress={onPress}
+      onPress={handlePress}
       activeOpacity={0.7}
     >
       {content}

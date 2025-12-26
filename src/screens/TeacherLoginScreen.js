@@ -18,6 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
+import { playPopSound } from '../utils/soundHelper';
 
 const TeacherLoginScreen = ({ navigation }) => {
   const { loginTeacher } = useAuth();
@@ -31,6 +32,7 @@ const TeacherLoginScreen = ({ navigation }) => {
       return;
     }
 
+    playPopSound({ volume: 0.3 });
     setLoading(true);
     try {
       const result = await loginTeacher(
@@ -87,7 +89,10 @@ const TeacherLoginScreen = ({ navigation }) => {
             {/* Botón Volver */}
             <TouchableOpacity
               style={styles.backButton}
-              onPress={handleGoBack}
+              onPress={() => {
+                playPopSound({ volume: 0.3 });
+                handleGoBack();
+              }}
               disabled={loading}
               activeOpacity={0.7}
             >

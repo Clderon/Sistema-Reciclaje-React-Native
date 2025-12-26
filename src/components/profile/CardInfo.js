@@ -80,7 +80,7 @@ const CardInfo = ({ visible, onClose, userData }) => {
               avatarBorderWidth={5}
               avatarBorderColor={COLORS.avatarBadgeBackground}
               avatarWrapperBackgroundColor={COLORS.badgeWrapperBackground}
-              sectionPaddingVertical={hp('1%')}
+              sectionPaddingVertical={hp('0%')}
             />
 
             {/* Badges Section */}

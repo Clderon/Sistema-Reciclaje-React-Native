@@ -18,6 +18,7 @@ import { COLORS } from '../utils/constants';
 import RoleButtonCard from '../components/common/RoleButtonCard';
 import ModalNombre from '../components/common/ModalNombre';
 import { useAuth } from '../context/AuthContext';
+import { playPopSound } from '../utils/soundHelper';
 
 // Necesario para que funcione correctamente en web
 WebBrowser.maybeCompleteAuthSession();
@@ -27,6 +28,7 @@ const AnimatedButton = ({ children, onPress, style, disabled = false }) => {
 
   const handlePressIn = () => {
     if (!disabled) {
+      playPopSound({ volume: 0.3 });
       Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
     }
   };
@@ -88,6 +90,7 @@ const LoginScreen = ({ onLogin, navigation }) => {
   }, [response, onLogin]);
 
   const handleRoleSelect = (role, navigation) => {
+    playPopSound({ volume: 0.3 });
     if (role === 'student') {
       // Navegar a la pantalla de login de estudiantes
       navigation.navigate('StudentLogin');

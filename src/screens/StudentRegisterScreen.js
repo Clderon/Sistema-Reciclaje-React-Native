@@ -18,6 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
+import { playPopSound } from '../utils/soundHelper';
 
 const StudentRegisterScreen = ({ navigation }) => {
   const { registerStudent } = useAuth();
@@ -47,6 +48,8 @@ const StudentRegisterScreen = ({ navigation }) => {
       Alert.alert('Error', 'Por favor ingresa un email válido');
       return;
     }
+
+    playPopSound({ volume: 0.3 });
 
     setLoading(true);
     try {
@@ -333,7 +336,10 @@ const StudentRegisterScreen = ({ navigation }) => {
             <View style={styles.footer}>
               <Text style={styles.footerText}>¿Ya tienes una cuenta?</Text>
               <TouchableOpacity
-                onPress={handleGoToLogin}
+                onPress={() => {
+                  playPopSound({ volume: 0.3 });
+                  handleGoToLogin();
+                }}
                 disabled={loading}
                 activeOpacity={0.7}
               >

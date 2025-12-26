@@ -3,6 +3,7 @@ import { Text, ImageBackground, View, StyleSheet, Pressable, Animated } from 're
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as Haptics from 'expo-haptics';
 import { COLORS } from '../../utils/constants';
+import { playPopSound } from '../../utils/soundHelper';
 
 const Button = ({ title, onPress, variant = 'primary', style, disabled = false }) => {
   const isPrimary = variant === 'primary';
@@ -12,6 +13,10 @@ const Button = ({ title, onPress, variant = 'primary', style, disabled = false }
   const handlePressIn = () => {
     if (!isDisabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Reproducir sonido de pop (no esperamos, se ejecuta en background)
+      playPopSound({ volume: 0.3 }).catch(err => {
+        console.warn('Error al reproducir sonido:', err);
+      });
       Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
     }
   };

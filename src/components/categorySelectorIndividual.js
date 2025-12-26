@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { View, Text, Pressable, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
+import { playPopSound } from '../utils/soundHelper';
 
 const CategoryItem = ({ 
   category, 
@@ -33,6 +34,7 @@ const CategoryItem = ({
   }, [isActive]);
 
   const handlePressIn = () => {
+    playPopSound({ volume: 0.3 });
     Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 50 }).start();
   };
 

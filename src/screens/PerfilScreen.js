@@ -21,6 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import { getUserAvatar } from '../utils/avatarHelper';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserById } from '../services/userService';
+import { playPopSound, loadSoundPreference } from '../utils/soundHelper';
 
 // Función para abreviar nombres largos de niveles
 const abbreviateLevelName = (levelName) => {
@@ -57,6 +58,7 @@ const AnimatedButton = ({ children, onPress, style }) => {
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
+    playPopSound({ volume: 0.3 });
     Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
   };
 
@@ -78,6 +80,14 @@ const PerfilScreen = () => {
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAjustesVisible, setModalAjustesVisible] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Cargar preferencia de sonido al montar
+  useFocusEffect(
+    useCallback(() => {
+      loadSoundPreference().then(setSoundEnabled);
+    }, [])
+  );
 
   // Obtener datos del usuario o valores por defecto
   const userName = user?.username || 'Usuario';
@@ -327,6 +337,10 @@ const PerfilScreen = () => {
         visible={modalAjustesVisible}
         onClose={() => setModalAjustesVisible(false)}
         onLogout={handleLogout}
+        soundEnabled={soundEnabled}
+        onSoundToggle={(enabled) => {
+          setSoundEnabled(enabled);
+        }}
       />
     </SafeAreaView>
   );
@@ -382,11 +396,13 @@ const styles = StyleSheet.create({
   },
   section: {
     width: '100%',
-    height: hp('32.5%'),
-    borderBottomLeftRadius: wp('2.5%'),
-    borderBottomRightRadius: wp('2.5%'),
+    height: hp('30%'),
     flexDirection: 'column',
     overflow: 'hidden',
+    // Simula clip-path: ellipse(100% 55% at 50% 15%)
+    // BorderRadius muy grande crea curva suave de lado a lado (sonrisa)
+    borderBottomLeftRadius: wp('3%'),
+    borderBottomRightRadius: wp('3%'),
   },
   backgroundSection: {
     ...StyleSheet.absoluteFillObject,

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../utils/constants';
+import { playPopSound } from '../../utils/soundHelper';
 
 const RoleButtonCard = ({
   avatarSource,
@@ -25,9 +26,16 @@ const RoleButtonCard = ({
   // Tamaño de la imagen - FIJADO al tamaño del contenedor interno para consistencia
   const imageSize = innerSize; // Mismo tamaño que el interno para que todas las imágenes sean iguales
   
+  const handlePress = () => {
+    if (!disabled) {
+      playPopSound({ volume: 0.3 });
+      onPress?.();
+    }
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       activeOpacity={disabled ? 1 : 0.7}
       disabled={disabled}
       style={[styles.container, disabled && styles.containerDisabled]}

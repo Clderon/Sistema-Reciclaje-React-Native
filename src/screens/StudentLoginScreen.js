@@ -18,6 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
+import { playPopSound } from '../utils/soundHelper';
 
 // Datos de estudiantes de prueba para auto-rellenar
 const TEST_STUDENTS = [
@@ -53,6 +54,7 @@ const StudentLoginScreen = ({ navigation }) => {
       return;
     }
 
+    playPopSound({ volume: 0.3 });
     setLoading(true);
     try {
       const result = await loginStudent(
@@ -250,7 +252,10 @@ const StudentLoginScreen = ({ navigation }) => {
             <View style={styles.footer}>
               <Text style={styles.footerText}>¿No tienes una cuenta?</Text>
               <TouchableOpacity
-                onPress={handleGoToRegister}
+                onPress={() => {
+                  playPopSound({ volume: 0.3 });
+                  handleGoToRegister();
+                }}
                 disabled={loading}
                 activeOpacity={0.7}
               >

@@ -3,6 +3,7 @@ import { Pressable, View, StyleSheet, Text } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../utils/constants';
 import Svg, { Text as SvgText } from 'react-native-svg';
+import { playPopSound } from '../../utils/soundHelper';
 
 const ReviewButton = ({ 
   onPress, 
@@ -10,10 +11,17 @@ const ReviewButton = ({
   icon = "?",
   disabled = false 
 }) => {
+  const handlePress = () => {
+    if (!disabled) {
+      playPopSound({ volume: 0.3 });
+      onPress?.();
+    }
+  };
+
   return (
     <Pressable
       style={[styles.button, disabled && styles.buttonDisabled]}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
     >
       <View style={styles.content}>

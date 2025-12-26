@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Pressable, View, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { playPopSound, loadSoundPreference, loadMusicPreferences, playBackgroundMusic, stopBackgroundMusic, isMusicEnabled } from './src/utils/soundHelper';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
@@ -27,6 +28,7 @@ const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, s
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
+    playPopSound({ volume: 0.25 }); // Volumen más bajo para navegación
     Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
   };
 
@@ -224,6 +226,55 @@ function MainTabs() {
 function AppNavigator() {
   const { isAuthenticated, loading } = useAuth();
 
+  // Manejar música de fondo cuando el usuario está autenticado
+  useEffect(() => {
+    // Solo ejecutar cuando termine de cargar y el estado de autenticación cambie
+    if (loading) return;
+
+    let isMounted = true; // Flag para evitar actualizaciones después de desmontar
+    let timeoutId = null;
+    let isHandling = false; // Flag para evitar múltiples llamadas simultáneas
+
+    const handleMusic = async () => {
+      if (!isMounted || isHandling) return;
+      
+      isHandling = true;
+      
+      try {
+        if (isAuthenticated && isMusicEnabled()) {
+          // Usuario autenticado: iniciar música de fondo
+          // playBackgroundMusic SIEMPRE detiene música anterior y reinicia desde el principio
+          await playBackgroundMusic('calm_background_loop.wav', { 
+            volume: 0.20, // Volumen
+            loop: true 
+          });
+        } else {
+          // Usuario no autenticado o música deshabilitada: detener música
+          await stopBackgroundMusic();
+        }
+      } finally {
+        isHandling = false;
+      }
+    };
+
+    // Delay para evitar múltiples llamadas durante hot reload
+    timeoutId = setTimeout(() => {
+      handleMusic();
+    }, 300);
+
+    // Cleanup: detener música solo cuando el usuario cierre sesión o el componente se desmonte
+    return () => {
+      isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      // Solo detener si realmente el usuario cerró sesión (no durante hot reload)
+      if (!isAuthenticated) {
+        stopBackgroundMusic();
+      }
+    };
+  }, [isAuthenticated, loading]);
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.target }}>
@@ -265,6 +316,12 @@ function AppNavigator() {
 }
 
 export default function App() {
+  // Cargar preferencias de sonido y música al iniciar la app
+  useEffect(() => {
+    loadSoundPreference();
+    loadMusicPreferences();
+  }, []);
+
   return (
     <RootSiblingParent>
       <AuthProvider>
