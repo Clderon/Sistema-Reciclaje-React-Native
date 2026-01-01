@@ -1,13 +1,13 @@
-import React, { useState } from 'react'; // ← AGREGAR useState
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../../utils/constants';
 import CategorySingle from '../CategorySingle';
 import Evidence from './Evidence';
 import GivePointsButton from './GivePointsButton';
 import ReviewButton from './ReviewButton';
-import PointsModal from './modals/PointsModal';
 import ImageViewerModal from './modals/ImageViewerModal';
+import { playPopSound } from '../../utils/soundHelper';
 
 const CardRevision = ({ 
   agentName, 
@@ -20,8 +20,9 @@ const CardRevision = ({
   evidenceCount = 1,
   requestId = null
 }) => {
-  const [showPointsModal, setShowPointsModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  // Animación del botón "Genial"
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   const handleReview = () => {
     if (evidenceImage) {
@@ -33,12 +34,31 @@ const CardRevision = ({
   };
 
   const handleGivePoints = () => {
+    // Animación del botón al presionar
+    playPopSound({ volume: 0.3 });
+    
+    // Animación de escala del botón
+    Animated.sequence([
+      Animated.spring(buttonScale, {
+        toValue: 0.9,
+        tension: 300,
+        friction: 3,
+        useNativeDriver: true,
+      }),
+      Animated.spring(buttonScale, {
+        toValue: 1,
+        tension: 300,
+        friction: 3,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
     if (onGivePoints && requestId) {
       // Aprobar con puntos calculados automáticamente (null = backend calcula)
-      onGivePoints(null);
-      setShowPointsModal(false);
-    } else {
-      setShowPointsModal(true);
+      // Delay slightly to allow button animation to be visible
+      setTimeout(() => {
+        onGivePoints(null);
+      }, 150);
     }
   };
 
@@ -48,13 +68,6 @@ const CardRevision = ({
       <View style={styles.headerContainer}>
         <Text style={styles.agentNameText}>{agentName}</Text>
       </View>
-      <PointsModal
-        visible={showPointsModal}
-        onClose={() => setShowPointsModal(false)}
-        agentName={agentName}
-        points="10"
-        category={category}
-      />
       <ImageViewerModal
         visible={showImageModal}
         imageUri={evidenceImage}
@@ -63,9 +76,11 @@ const CardRevision = ({
 
       {/* Botón dar puntos (posición absoluta) */}
       <View style={styles.pointsButtonContainer}>
-        <GivePointsButton 
-           onPress={handleGivePoints} 
-        />
+        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+          <GivePointsButton 
+             onPress={handleGivePoints} 
+          />
+        </Animated.View>
       </View>
 
       {/* Contenedor de imagen y categoría */}

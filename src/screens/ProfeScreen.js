@@ -14,6 +14,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { COLORS, CATEGORIES } from '../utils/constants';
 import CardRevision from '../components/Profesor/CardRevision';
 import MonkeyFrame from '../components/Profesor/MonkeyFrame';
+import PointsModal from '../components/Profesor/modals/PointsModal';
 import { useAuth } from '../context/AuthContext';
 import { getPendingRequests, approveRequest, rejectRequest } from '../services/requestService';
 import Toast from 'react-native-root-toast';
@@ -26,6 +27,12 @@ const ProfeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [pagination, setPagination] = useState({ total: 0, limit: 20, offset: 0, hasMore: false });
+  const [pointsModal, setPointsModal] = useState({
+    visible: false,
+    agentName: '',
+    points: '',
+    category: ''
+  });
 
   // Cargar peticiones pendientes
   const loadRequests = async (offset = 0, append = false) => {
@@ -98,16 +105,22 @@ const ProfeScreen = ({ navigation }) => {
       const result = await approveRequest(requestId, user.id, points);
       
       if (result.success) {
+        // Obtener información para el modal
+        const categoryName = getCategoryName(request.categoryId);
+        const pointsAwarded = result.request.pointsAwarded || '10';
+        
+        // Mostrar modal de puntos
+        setPointsModal({
+          visible: true,
+          agentName: request.studentName,
+          points: String(pointsAwarded),
+          category: categoryName
+        });
+        
         // Remover la petición de la lista
         setRequests(prev => prev.filter(req => req.id !== requestId));
         // Actualizar paginación
         setPagination(prev => ({ ...prev, total: prev.total - 1 }));
-        
-        Toast.show(`Petición aprobada. ${result.request.pointsAwarded || 'Puntos'} puntos otorgados`, {
-          duration: Toast.durations.SHORT,
-          position: Toast.positions.BOTTOM,
-          backgroundColor: '#5cb85c'
-        });
       } else {
         Toast.show(result.error || 'Error al aprobar petición', {
           duration: Toast.durations.SHORT,
@@ -252,6 +265,15 @@ const ProfeScreen = ({ navigation }) => {
           </View>
         </ScrollView>
       </ImageBackground>
+      
+      {/* Modal de puntos - se muestra después de dar puntos exitosamente */}
+      <PointsModal
+        visible={pointsModal.visible}
+        onClose={() => setPointsModal(prev => ({ ...prev, visible: false }))}
+        agentName={pointsModal.agentName}
+        points={pointsModal.points}
+        category={pointsModal.category}
+      />
     </SafeAreaView>
   );
 };
@@ -361,7 +383,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.scrollBar,
     borderWidth: 0.5,
     borderRadius: wp('1%'),
-    height: wp('30%'),
+    height: wp('25%'),
   },
   containerBackgroundDos: {
     backgroundColor: COLORS.madera,
