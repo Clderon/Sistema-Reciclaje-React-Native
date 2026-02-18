@@ -3,8 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { Image, Pressable, View, StyleSheet, Animated, ActivityIndicator } from 'react-native';
+import { Image, Pressable, View, Text, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { playPopSound, loadSoundPreference, loadMusicPreferences, playBackgroundMusic, stopBackgroundMusic, isMusicEnabled } from './src/utils/soundHelper';
 
 // Screens
@@ -22,13 +28,113 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Componente personalizado para el botón del tab con animación
+
+// Componente personalizado de TabBar con fondo animado
+const AnimatedTabBar = ({ state, descriptors, navigation }) => {
+  const tabIndex = useSharedValue(0);
+  const tabLayouts = useSharedValue({ width: 0, x: 0 });
+
+  // Sincronizar tabIndex con el estado actual
+  useEffect(() => {
+    tabIndex.value = withTiming(state.index, {
+      duration: 250,
+      easing: Easing.out(Easing.ease),
+    });
+  }, [state.index]);
+
+  // Animación del fondo que se desplaza entre tabs
+  const backgroundStyle = useAnimatedStyle(() => {
+    const tabWidth = tabLayouts.value.width > 0 ? tabLayouts.value.width / state.routes.length : 0;
+    const translateX = tabIndex.value * tabWidth;
+    
+    return {
+      transform: [{ 
+        translateX: withTiming(translateX, {
+          duration: 250,
+          easing: Easing.out(Easing.ease),
+        })
+      }],
+      width: tabWidth || `${100 / state.routes.length}%`,
+    };
+  });
+
+  return (
+    <View 
+      style={styles.tabBarContainer}
+      onLayout={(event) => {
+        const { width, x } = event.nativeEvent.layout;
+        tabLayouts.value = { width, x };
+      }}
+    >
+      {/* Fondo animado que se desplaza */}
+      <AnimatedReanimated.View style={[styles.tabBarBackground, backgroundStyle]} />
+      
+      {/* Botones de tabs */}
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const label = options.tabBarLabel !== undefined
+          ? options.tabBarLabel
+          : options.title !== undefined
+          ? options.title
+          : route.name;
+
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        return (
+          <Pressable
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={[
+              styles.tabBarButton,
+              index < state.routes.length - 1 && styles.tabBarButtonWithBorder,
+            ]}
+          >
+            <View style={styles.tabBarButtonContent}>
+              {options.tabBarIcon && options.tabBarIcon({ focused: isFocused, color: isFocused ? COLORS.textWhite : COLORS.textContenido, size: 50 })}
+              <Text style={[
+                styles.tabBarLabel,
+                { color: isFocused ? COLORS.textWhite : COLORS.textContenido }
+              ]}>
+                {label}
+              </Text>
+            </View>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};
+
+// Componente personalizado para el botón del tab con animación (mantener para compatibilidad)
 const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, style, ...props }) => {
   const focused = accessibilityState?.selected;
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
-    playPopSound({ volume: 0.25 }); // Volumen más bajo para navegación
     Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, speed: 50 }).start();
   };
 
@@ -37,23 +143,17 @@ const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, s
   };
 
   return (
-    <View style={[
-      styles.tabBarButtonContainer, 
-      !isLast && styles.tabBarButtonContainerWithBorder,
-      focused && styles.tabBarButtonContainerFocused,
-    ]}>
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={[styles.tabBarButton, style]}
-        {...props}
-      >
-        <Animated.View style={{ transform: [{ scale }], flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {children}
-        </Animated.View>
-      </Pressable>
-    </View>
+    <Pressable
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={[styles.tabBarButton, style]}
+      {...props}
+    >
+      <Animated.View style={{ transform: [{ scale }], flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        {children}
+      </Animated.View>
+    </Pressable>
   );
 };
 
@@ -61,30 +161,11 @@ const TabBarButton = ({ children, onPress, isLast = false, accessibilityState, s
 function StudentTabs() {
   return (
     <Tab.Navigator
+      tabBar={(props) => <AnimatedTabBar {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.textWhite,
         tabBarInactiveTintColor: COLORS.textContenido,
-        tabBarStyle: {
-          backgroundColor: COLORS.target,
-          borderTopWidth: 3,
-          borderTopColor: COLORS.textBorde,
-          height: 85,
-          paddingBottom: 5,
-          paddingTop: 0,
-          paddingHorizontal: 0,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 12,
-          elevation: 5,
-        },
-        tabBarLabelStyle: {
-          fontSize: 16,
-          marginTop: 10,
-          fontWeight: '700',
-          textAlign: 'center',
-        },
       }}
     >
       <Tab.Screen
@@ -98,7 +179,6 @@ function StudentTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
         }}
       />
       <Tab.Screen
@@ -112,7 +192,6 @@ function StudentTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
         }}
       />
       <Tab.Screen
@@ -126,7 +205,6 @@ function StudentTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={true} />,
         }}
       />
     </Tab.Navigator>
@@ -137,30 +215,11 @@ function StudentTabs() {
 function TeacherTabs() {
   return (
     <Tab.Navigator
+      tabBar={(props) => <AnimatedTabBar {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.textWhite,
         tabBarInactiveTintColor: COLORS.textContenido,
-        tabBarStyle: {
-          backgroundColor: COLORS.target,
-          borderTopWidth: 3,
-          borderTopColor: COLORS.textBorde,
-          height: 85,
-          paddingBottom: 5,
-          paddingTop: 0,
-          paddingHorizontal: 0,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 12,
-          elevation: 5,
-        },
-        tabBarLabelStyle: {
-          fontSize: 16,
-          marginTop: 10,
-          fontWeight: '700',
-          textAlign: 'center',
-        },
       }}
     >
       <Tab.Screen
@@ -174,7 +233,6 @@ function TeacherTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
         }}
       />
       <Tab.Screen
@@ -188,7 +246,6 @@ function TeacherTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={false} />,
         }}
       />
       <Tab.Screen
@@ -202,7 +259,6 @@ function TeacherTabs() {
               resizeMode="cover"
             />
           ),
-          tabBarButton: (props) => <TabBarButton {...props} isLast={true} />,
         }}
       />
     </Tab.Navigator>
@@ -331,24 +387,56 @@ export default function App() {
   );
 }
 
-// ...existing styles...
 const styles = StyleSheet.create({
-  tabBarButtonContainer: {
-    flex: 1,
-    height: '100%',
+  tabBarContainer: {
+    flexDirection: 'row',
     backgroundColor: COLORS.target,
+    borderTopWidth: 3,
+    borderTopColor: COLORS.textBorde,
+    height: 85,
+    paddingBottom: 5,
+    paddingTop: 0,
+    paddingHorizontal: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 0, // Sin border radius
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
-  tabBarButtonContainerWithBorder: {
-    borderRightWidth: 3,
-    borderRightColor: COLORS.textBorde,
-  },
-  tabBarButtonContainerFocused: {
-    backgroundColor: COLORS.buttonDegradado,
+  tabBarBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: COLORS.button,
+    zIndex: 0,
+    borderRadius: 0, // Sin border radius
   },
   tabBarButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+    zIndex: 1,
+    backgroundColor: 'transparent',
+  },
+  tabBarButtonWithBorder: {
+    borderRightWidth: 3,
+    borderRightColor: COLORS.textBorde,
+  },
+  tabBarButtonContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabBarLabel: {
+    fontSize: 16,
+    marginTop: 10,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });

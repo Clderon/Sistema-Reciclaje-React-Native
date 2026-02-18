@@ -12,6 +12,15 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolate,
+  Easing,
+} from 'react-native-reanimated';
 import RankingCard from '../components/ranking/RankingCard';
 import CardInfo from '../components/profile/CardInfo';
 import RankingUserCard from '../components/ranking/RankingUserCard';
@@ -29,6 +38,11 @@ const LogrosScreen = () => {
   const [animationKey, setAnimationKey] = useState(0);
   const [rankingData, setRankingData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Reanimated: Shared values para animaciones
+  const tabIndex = useSharedValue(0); // 0 = estudiantes, 1 = salones
+  const scrollX = useSharedValue(0);
+  const tabLayouts = useSharedValue({ width: 0, x: 0 }); // Layout del contenedor de tabs
 
   // Función para determinar el nivel según puntos (igual que en backend)
   // Niveles: Hormiga (0-199), Oso Perezoso (200-399), Mono (400-599), Elefante (600-799), Gallito de las Rocas (800+)
@@ -111,6 +125,22 @@ const LogrosScreen = () => {
     }
   }, [user?.id, updateUser]);
 
+  // Sincronizar tabIndex con activeTab
+  useEffect(() => {
+    const newIndex = activeTab === 'estudiantes' ? 0 : 1;
+    // Usar withTiming para control preciso de duración (250ms)
+    tabIndex.value = withTiming(newIndex, {
+      duration: 150, // 0.25s - tiempo óptimo para buena UX
+      easing: Easing.out(Easing.ease), // Easing suave: no brusco ni muy lento
+    });
+    // Usar el ancho del rankingCard (95% del ancho de pantalla)
+    const contentWidth = wp('95%');
+    scrollX.value = withTiming(newIndex * contentWidth, {
+      duration: 250, // Misma duración para sincronización
+      easing: Easing.out(Easing.ease), // Mismo easing para consistencia
+    });
+  }, [activeTab]);
+
   // Recargar cuando la pantalla recibe foco o cambia el tab
   useFocusEffect(
     React.useCallback(() => {
@@ -123,6 +153,88 @@ const LogrosScreen = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, user?.id])
   );
+
+  // Función para cambiar de tab con animación
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  // Calcular valores fuera del worklet (no se puede usar wp dentro de worklets)
+  const borderRadiusValue = wp('2.5%');
+
+  // Animación del fondo que se desplaza entre tabs
+  const backgroundStyle = useAnimatedStyle(() => {
+    // ============================================
+    // CONFIGURACIÓN DEL DESPLAZAMIENTO
+    // ============================================
+    // tabWidth: Ancho de cada tab (50% del contenedor)
+    const tabWidth = tabLayouts.value.width > 0 ? tabLayouts.value.width / 2 : 0;
+    
+    // translateX: Cantidad de movimiento horizontal
+    // tabIndex 0 = 0 (sin desplazamiento, primer tab)
+    // tabIndex 1 = tabWidth (desplazado a la derecha, segundo tab)
+    const translateX = tabIndex.value * tabWidth;
+    
+    // ============================================
+    // CONFIGURACIÓN DEL BORDER RADIUS
+    // ============================================
+    // tabIndex 0 (estudiantes) = border radius DERECHA
+    // tabIndex 1 (salones) = border radius IZQUIERDA
+    const topLeftRadius = interpolate(
+      tabIndex.value,
+      [0, 1],
+      [0, borderRadiusValue], // 0 = sin radius izquierda, 1 = con radius izquierda
+      Extrapolate.CLAMP
+    );
+    const bottomLeftRadius = interpolate(
+      tabIndex.value,
+      [0, 1],
+      [0, borderRadiusValue], // 0 = sin radius izquierda, 1 = con radius izquierda
+      Extrapolate.CLAMP
+    );
+    const topRightRadius = interpolate(
+      tabIndex.value,
+      [0, 1],
+      [borderRadiusValue, 0], // 0 = con radius derecha, 1 = sin radius derecha
+      Extrapolate.CLAMP
+    );
+    const bottomRightRadius = interpolate(
+      tabIndex.value,
+      [0, 1],
+      [borderRadiusValue, 0], // 0 = con radius derecha, 1 = sin radius derecha
+      Extrapolate.CLAMP
+    );
+    
+    return {
+      transform: [{ 
+        translateX: withTiming(translateX, {
+          // ============================================
+          // CONFIGURACIÓN DE LA ANIMACIÓN TIMING
+          // ============================================
+          duration: 250, // Duración: 250ms (0.25s) - tiempo óptimo para UX
+          easing: Easing.out(Easing.ease), // Easing suave: empieza rápido, termina suave (no brusco)
+          // Opciones de easing disponibles:
+          // Easing.linear - movimiento constante
+          // Easing.ease - suave inicio y fin
+          // Easing.easeIn - lento inicio, rápido fin
+          // Easing.easeOut - rápido inicio, lento fin (recomendado)
+          // Easing.easeInOut - suave inicio y fin
+        })
+      }],
+      width: tabWidth || '50%',
+      borderTopLeftRadius: topLeftRadius,
+      borderBottomLeftRadius: bottomLeftRadius,
+      borderTopRightRadius: topRightRadius,
+      borderBottomRightRadius: bottomRightRadius,
+    };
+  });
+
+  // Animación del contenido (slide horizontal)
+  const contentStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: -scrollX.value }],
+    };
+  });
 
   // Calcular progreso hacia el siguiente nivel
   const calculateProgress = () => {
@@ -245,10 +357,19 @@ const LogrosScreen = () => {
             </View>
 
             {/* Tabs */}
-            <View style={styles.tabs}>
+            <View 
+              style={styles.tabs}
+              onLayout={(event) => {
+                const { width, x } = event.nativeEvent.layout;
+                tabLayouts.value = { width, x };
+              }}
+            >
+              {/* Fondo animado que se desplaza */}
+              <Animated.View style={[styles.tabBackground, backgroundStyle]} />
+              
               <TouchableOpacity
                 style={[styles.tab, styles.tabFirst, activeTab === 'estudiantes' && styles.tabActive]}
-                onPress={() => setActiveTab('estudiantes')}
+                onPress={() => handleTabChange('estudiantes')}
                 activeOpacity={0.7}
               >
                 <Text
@@ -261,8 +382,13 @@ const LogrosScreen = () => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.tab, styles.tabLast, activeTab === 'salones' && styles.tabActive]}
-                onPress={() => setActiveTab('salones')}
+                style={[
+                  styles.tab, 
+                  styles.tabLast, 
+                  activeTab === 'salones' && styles.tabActive,
+                  activeTab === 'salones' && styles.tabLastActive,
+                ]}
+                onPress={() => handleTabChange('salones')}
                 activeOpacity={0.7}
               >
                 <Text
@@ -273,85 +399,97 @@ const LogrosScreen = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Ranking Content */}
-            <View style={styles.content}>
-              {loading ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color={COLORS.button} />
-                  <Text style={styles.loadingText}>Cargando ranking...</Text>
-                </View>
-              ) : rankingData.length > 0 ? (
-                <RankingCard 
-                  key={`${activeTab}-${animationKey}`}
-                  rankingData={rankingData} 
-                  onPositionPress={handlePositionPress}
-                  progressText={calculateProgress().progressText}
-                  progressValue={calculateProgress().progressValue}
-                  avatarSize={wp('16%')}
-                  avatarWrapperBackgroundColor={COLORS.avatarNameCardBorder}
-                />
-              ) : (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No hay datos de ranking disponibles</Text>
-                </View>
-              )}
+            {/* Ranking Content - Tab Pager con animación de slide */}
+            <View style={styles.contentContainer}>
+              <Animated.View style={[styles.contentPager, contentStyle]}>
+                {/* Tab 1: Ranking Estudiantes */}
+                <View style={[styles.contentPage, { width: wp('95%') }]}>
+                  {loading ? (
+                    <View style={styles.loadingContainer}>
+                      <ActivityIndicator size="large" color={COLORS.button} />
+                      <Text style={styles.loadingText}>Cargando ranking...</Text>
+                    </View>
+                  ) : rankingData.length > 0 ? (
+                    <View style={styles.rankingCardWrapper}>
+                      <RankingCard 
+                        key={`estudiantes-${animationKey}`}
+                        rankingData={rankingData} 
+                        onPositionPress={handlePositionPress}
+                        progressText={calculateProgress().progressText}
+                        progressValue={calculateProgress().progressValue}
+                        avatarSize={wp('16%')}
+                        avatarWrapperBackgroundColor={COLORS.avatarNameCardBorder}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>No hay datos de ranking disponibles</Text>
+                    </View>
+                  )}
 
-              {/* Rivals Section / Top Recicladores */}
-              {!loading && rankingData.length > 0 && (
-                <View style={styles.rivals}>
-                  <Text style={styles.rivalsTitle}>
-                    {user?.role === 'teacher' 
-                      ? 'Top Recicladores' 
-                      : activeTab === 'estudiantes' 
-                        ? 'Rivales Cercanos' 
-                        : 'Salones Cercanos'}
-                  </Text>
-                  <View style={styles.rivalsList}>
-                    {user?.role === 'teacher' ? (
-                      // Podio para docentes: tercero (izq), primero (centro), segundo (der)
-                      getPodiumUsers().map((podiumUser, index) => {
-                        if (!podiumUser) return <View key={`empty-${index}`} style={{ flex: 1 }} />;
-                        return (
-                          <RankingUserCard
-                            key={podiumUser.id}
-                            user={{
-                              id: podiumUser.id,
-                              name: podiumUser.name,
-                              avatar: podiumUser.avatar,
-                            }}
-                            position={podiumUser.position}
-                            isCurrentUser={false}
-                            containerBackgroundColor={COLORS.targetFondo}
-                            containerPadding={wp('1%')}
-                            containerBorderRadius={wp('2%')}
-                            containerBorderWidth={1}
-                            onPress={() => handlePositionPress(podiumUser)}
-                          />
-                        );
-                      })
-                    ) : (
-                      // Lista normal para estudiantes
-                      getNearbyUsers().slice(0, 3).map((nearbyUser) => (
-                        <RankingUserCard
-                          key={nearbyUser.id}
-                          user={{
-                            id: nearbyUser.id,
-                            name: nearbyUser.name,
-                            avatar: nearbyUser.avatar,
-                          }}
-                          position={nearbyUser.position}
-                          isCurrentUser={nearbyUser.id === user?.id}
-                          containerBackgroundColor={COLORS.targetFondo}
-                          containerPadding={wp('1%')}
-                          containerBorderRadius={wp('2%')}
-                          containerBorderWidth={1}
-                          onPress={() => handlePositionPress(nearbyUser)}
-                        />
-                      ))
-                    )}
+                  {/* Rivals Section / Top Recicladores */}
+                  {!loading && rankingData.length > 0 && (
+                    <View style={styles.rivals}>
+                      <Text style={styles.rivalsTitle}>
+                        {user?.role === 'teacher' 
+                          ? 'Top Recicladores' 
+                          : 'Rivales Cercanos'}
+                      </Text>
+                      <View style={styles.rivalsList}>
+                        {user?.role === 'teacher' ? (
+                          // Podio para docentes: tercero (izq), primero (centro), segundo (der)
+                          getPodiumUsers().map((podiumUser, index) => {
+                            if (!podiumUser) return <View key={`empty-${index}`} style={{ flex: 1 }} />;
+                            return (
+                              <RankingUserCard
+                                key={podiumUser.id}
+                                user={{
+                                  id: podiumUser.id,
+                                  name: podiumUser.name,
+                                  avatar: podiumUser.avatar,
+                                }}
+                                position={podiumUser.position}
+                                isCurrentUser={false}
+                                containerBackgroundColor={COLORS.targetFondo}
+                                containerPadding={wp('1%')}
+                                containerBorderRadius={wp('2%')}
+                                containerBorderWidth={1}
+                                onPress={() => handlePositionPress(podiumUser)}
+                              />
+                            );
+                          })
+                        ) : (
+                          // Lista normal para estudiantes
+                          getNearbyUsers().slice(0, 3).map((nearbyUser) => (
+                            <RankingUserCard
+                              key={nearbyUser.id}
+                              user={{
+                                id: nearbyUser.id,
+                                name: nearbyUser.name,
+                                avatar: nearbyUser.avatar,
+                              }}
+                              position={nearbyUser.position}
+                              isCurrentUser={nearbyUser.id === user?.id}
+                              containerBackgroundColor={COLORS.targetFondo}
+                              containerPadding={wp('1%')}
+                              containerBorderRadius={wp('2%')}
+                              containerBorderWidth={1}
+                              onPress={() => handlePositionPress(nearbyUser)}
+                            />
+                          ))
+                        )}
+                      </View>
+                    </View>
+                  )}
+                </View>
+
+                {/* Tab 2: Ranking Salones */}
+                <View style={[styles.contentPage, { width: wp('95%') }]}>
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Ranking de Salones - Próximamente</Text>
                   </View>
                 </View>
-              )}
+              </Animated.View>
             </View>
           </View>
         </ScrollView>
@@ -389,21 +527,21 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: COLORS.textBorde,
     borderRadius: wp('5%'),
-    overflow: 'hidden',
     width: '100%',
-    maxWidth: wp('95%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 24,
     elevation: 5,
     marginTop: hp('5%'),
+    alignItems: 'center', // Centrar contenido dentro del contenedor verde
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   header: {
-    backgroundColor: COLORS.targetFondo,
+    backgroundColor: COLORS.target,
     paddingVertical: hp('1.2%'),
     paddingHorizontal: wp('5%'),
-    alignItems: 'center',
   },
   title: {
     fontSize: wp('6%'),
@@ -413,34 +551,50 @@ const styles = StyleSheet.create({
   tabs: {
     flexDirection: 'row',
     borderTopWidth: 3,
-    borderTopColor: COLORS.textBorde,
+    borderBottomWidth: 3,
+    borderColor: COLORS.textBorde,
+    backgroundColor: COLORS.target,
+    margin: wp('0%'),
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  tabBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: COLORS.button,
+    zIndex: 0,
   },
   tab: {
     flex: 1,
     paddingVertical: hp('1.2%'),
     paddingHorizontal: wp('3%'),
-    backgroundColor: COLORS.target,
-    borderRightWidth: 3,
     borderRightColor: COLORS.textBorde,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
+    backgroundColor: 'transparent',
   },
   tabFirst: {
-    borderRightWidth: 3,
-    borderBottomWidth: 3,
     borderBottomColor: COLORS.textBorde,
     borderBottomRightRadius: wp('2.5%'),
+    borderTopRightRadius: wp('2.5%'),
   },
   tabLast: {
-    borderRightWidth: 0,
-    borderLeftWidth: 3,
     borderLeftColor: COLORS.textBorde,
-    borderBottomWidth: 3,
     borderBottomColor: COLORS.textBorde,
+    borderBottomRightRadius: wp('2.5%'),
+    borderTopRightRadius: wp('2.5%'),
+  },
+  tabLastActive: {
+    borderBottomRightRadius: 0,
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: wp('2.5%'),
     borderBottomLeftRadius: wp('2.5%'),
   },
   tabActive: {
-    backgroundColor: COLORS.button,
+    // El fondo se maneja con el tabBackground animado
   },
   tabText: {
     fontSize: wp('3.5%'),
@@ -454,10 +608,35 @@ const styles = StyleSheet.create({
   content: {
     padding: wp('2.5%'),
   },
+  contentContainer: {
+    overflow: 'hidden',
+    width: '100%',
+  },
+  contentPager: {
+    flexDirection: 'row',
+    width: wp('190%'), // 2 tabs * 95% = 190%
+  },
+  contentPage: {
+    padding: wp('2.5%'),
+    alignItems: 'center', // Centrar contenido dentro del contenedor verde
+    width: '100%',
+  },
+  rankingCardWrapper: {
+    width: '100%',
+    alignItems: 'center', // Centrar el RankingCard (rojo) dentro del contenedor verde
+    justifyContent: 'center',
+  },
   rivals: {
     paddingHorizontal: wp('5%'),
     paddingBottom: hp('2%'),
-    backgroundColor: COLORS.target,
+    backgroundColor: COLORS.targetFondo,
+    width: '95%',
+    alignItems: 'center', // Centrar la sección de Rivales Cercanos
+    alignSelf: 'center', // Centrar dentro del contenedor verde
+    marginTop: hp('1%'), // Espaciado superior
+    marginRight: wp('6.5%'),
+    borderRadius: wp('2.5%'),
+    
   },
   rivalsTitle: {
     fontSize: wp('5%'),

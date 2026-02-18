@@ -33,11 +33,11 @@ const RankingCard = ({
 
   const getPositionStyle = (position) => {
     const positions = {
-      1: { top: '5%', left: '53%', transform: [{ translateX: -avatarSize / 2 }] },
-      2: { top: '25%', left: '23%' },
-      3: { top: '35%', left: '61%' },
-      4: { top: '60%', left: '65%', transform: [{ translateX: -avatarSize / 2 }] },
-      5: { top: '71%', left: '20%' },
+      1: { top: '5%', left: '53%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
+      2: { top: '25%', left: '23%', transform: [{ translateX: -avatarSize / 2 }] }, // Más centrado
+      3: { top: '35%', left: '61%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
+      4: { top: '60%', left: '65%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
+      5: { top: '71%', left: '20%', transform: [{ translateX: -avatarSize / 2 }] }, // Más centrado
     };
     return positions[position] || {};
   };
@@ -112,11 +112,8 @@ const RankingCard = ({
 
 const styles = StyleSheet.create({
   rankingImage: {
-    width: '100%',
     backgroundColor: COLORS.target,
     padding: wp('2.5%'),
-    maxHeight: hp('50%'),
-    minHeight: hp('35%'),
   },
   imageSrc: {
     width: '100%',
@@ -125,13 +122,12 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: COLORS.textBorde,
     borderRadius: wp('2.5%'),
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'red',
+    marginRight: wp('6.5%'),
   },
   imageStyle: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   positionsContainer: {
     position: 'absolute',
