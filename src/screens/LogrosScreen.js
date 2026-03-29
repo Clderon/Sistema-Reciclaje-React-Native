@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ImageBackground,
   SafeAreaView,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -15,7 +14,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withTiming,
   interpolate,
   Extrapolate,
@@ -26,9 +24,7 @@ import CardInfo from '../components/profile/CardInfo';
 import RankingUserCard from '../components/ranking/RankingUserCard';
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
-import { getStudentsRanking } from '../services/rankingService';
-import { getUserAvatar } from '../utils/avatarHelper';
-import { getUserById } from '../services/userService';
+import { useRanking } from '../hooks/useRanking';
 
 const LogrosScreen = () => {
   const { user, updateUser } = useAuth();
@@ -36,94 +32,14 @@ const LogrosScreen = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
-  const [rankingData, setRankingData] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  const { rankingData, loading, loadRanking, refreshUserData, getLevelByPoints } = useRanking(user, updateUser, activeTab);
 
   // Reanimated: Shared values para animaciones
   const tabIndex = useSharedValue(0); // 0 = estudiantes, 1 = salones
   const scrollX = useSharedValue(0);
   const tabLayouts = useSharedValue({ width: 0, x: 0 }); // Layout del contenedor de tabs
 
-  // Función para determinar el nivel según puntos (igual que en backend)
-  // Niveles: Hormiga (0-199), Oso Perezoso (200-399), Mono (400-599), Elefante (600-799), Gallito de las Rocas (800+)
-  const getLevelByPoints = (totalPoints) => {
-    if (totalPoints >= 800) return 'Gallito de las Rocas';
-    if (totalPoints >= 600) return 'Elefante';
-    if (totalPoints >= 400) return 'Mono';
-    if (totalPoints >= 200) return 'Oso Perezoso';
-    return 'Hormiga';
-  };
-
-  // Función para obtener el badge según el nivel
-  const getLevelBadge = (level) => {
-    const levelMap = {
-      'Hormiga': 'ANT',
-      'Oso Perezoso': 'SLOTH',
-      'Mono': 'MONKEY',
-      'Elefante': 'ELEPHANT',
-      'Gallito de las Rocas': 'ROCK',
-    };
-    return levelMap[level] || 'ANT';
-  };
-
-  // Función para formatear datos del ranking del backend al formato esperado
-  const formatRankingData = (backendRankings) => {
-    return backendRankings.map((user) => {
-      const level = user.level || getLevelByPoints(user.points || 0);
-      return {
-        id: user.id,
-        name: user.name || user.username || 'Usuario',
-        level: level,
-        badge: getLevelBadge(level),
-        points: user.points || 0,
-        recyclings: user.recyclings || user.total_recyclings || 0,
-        // Asignar avatar aleatorio pero consistente basado en el ID del usuario
-        avatar: getUserAvatar(user.id, user.avatar_url),
-        position: user.position || 0,
-      };
-    });
-  };
-
-  // Cargar ranking desde el backend
-  const loadRanking = async () => {
-    if (activeTab !== 'estudiantes') {
-      // Por ahora solo implementamos estudiantes, salones después
-      setRankingData([]);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await getStudentsRanking(20); // Obtener top 20
-      if (result.success) {
-        const formattedData = formatRankingData(result.rankings);
-        setRankingData(formattedData);
-      } else {
-        console.error('Error al cargar ranking:', result.error);
-        setRankingData([]);
-      }
-    } catch (error) {
-      console.error('Error al cargar ranking:', error);
-      setRankingData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Refrescar datos del usuario para obtener puntos y nivel actualizados
-  const refreshUserData = React.useCallback(async () => {
-    if (!user?.id) return;
-    
-    try {
-      const result = await getUserById(user.id);
-      if (result.success && result.user) {
-        updateUser(result.user);
-      }
-    } catch (error) {
-      console.error('Error refrescando datos del usuario:', error);
-    }
-  }, [user?.id, updateUser]);
 
   // Sincronizar tabIndex con activeTab
   useEffect(() => {

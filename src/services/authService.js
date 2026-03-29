@@ -10,14 +10,12 @@ export const loginOrRegister = async (username, role) => {
   try {
     const response = await apiRequest('/auth/login-or-register', {
       method: 'POST',
-      body: JSON.stringify({
-        username,
-        role, // 'student', 'parent', 'teacher'
-      }),
+      body: JSON.stringify({ username, role }),
     });
 
     return {
       success: true,
+      token: response.token,
       user: response.user,
       message: response.message,
     };
@@ -45,6 +43,7 @@ export const register = async (username, email, password, role = 'student') => {
 
     return {
       success: true,
+      token: response.token,
       user: response.user,
       message: response.message,
     };
@@ -70,6 +69,7 @@ export const login = async (emailOrUsername, password) => {
 
     return {
       success: true,
+      token: response.token,
       user: response.user,
       message: response.message,
     };

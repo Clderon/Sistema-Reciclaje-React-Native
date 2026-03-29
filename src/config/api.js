@@ -1,5 +1,6 @@
 // Configuración de la API Backend
 import { Platform } from 'react-native';
+import { getToken, triggerTokenExpired } from './tokenStore';
 
 // ═══════════════════════════════════════════════════════════
 // CONFIGURACIÓN DE URL DEL BACKEND
@@ -61,15 +62,17 @@ export const API_CONFIG = {
 // Función helper para hacer requests
 export const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
+  // Construir headers — agrega el token JWT si existe
+  const token = getToken();
   const config = {
     ...API_CONFIG.headers,
     ...options.headers,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  // Log para debugging
   if (__DEV__) {
-    console.log(`📡 API Request: ${options.method || 'GET'} ${url}`);
+    console.log(`📡 API Request: ${options.method || 'GET'} ${url}${token ? ' 🔑' : ' (sin token)'}`);
   }
 
   try {
@@ -77,6 +80,12 @@ export const apiRequest = async (endpoint, options = {}) => {
       ...options,
       headers: config,
     });
+
+    // Token expirado o inválido → desloguear automáticamente
+    if (response.status === 401) {
+      triggerTokenExpired();
+      throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.');
+    }
 
     // Verificar si la respuesta es JSON antes de parsear
     const contentType = response.headers.get('content-type');
