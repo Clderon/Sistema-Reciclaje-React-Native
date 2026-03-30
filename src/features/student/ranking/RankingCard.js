@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Animated } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 import RankingUserCard from './RankingUserCard';
 
-const RankingCard = ({ 
-  rankingData, 
-  onPositionPress, 
-  progressText, 
+const RankingCard = ({
+  rankingData,
+  onPositionPress,
+  progressText,
   progressValue = 50,
   avatarSize = wp('12%'),
 }) => {
@@ -16,44 +16,37 @@ const RankingCard = ({
   const previousValue = useRef(0);
 
   useEffect(() => {
-    // Siempre empezar desde 0 cuando cambia progressText (cambio de tab/usuario)
-    // Esto asegura que siempre se vea la animación al entrar a la sección
     animatedWidth.setValue(0);
-
-    // Animar desde 0 hasta el nuevo progressValue
     Animated.timing(animatedWidth, {
       toValue: progressValue,
       duration: 1500,
       useNativeDriver: false,
     }).start(() => {
-      // Guardar el valor final para referencia
       previousValue.current = progressValue;
     });
   }, [progressValue, progressText]);
 
   const getPositionStyle = (position) => {
     const positions = {
-      1: { top: '5%', left: '53%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
-      2: { top: '25%', left: '23%', transform: [{ translateX: -avatarSize / 2 }] }, // Más centrado
-      3: { top: '35%', left: '61%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
-      4: { top: '60%', left: '65%', transform: [{ translateX: -avatarSize / 2 }] }, // Centrado
-      5: { top: '71%', left: '20%', transform: [{ translateX: -avatarSize / 2 }] }, // Más centrado
+      1: { top: '5%', left: '53%', transform: [{ translateX: -avatarSize / 2 }] },
+      2: { top: '25%', left: '23%', transform: [{ translateX: -avatarSize / 2 }] },
+      3: { top: '35%', left: '61%', transform: [{ translateX: -avatarSize / 2 }] },
+      4: { top: '60%', left: '65%', transform: [{ translateX: -avatarSize / 2 }] },
+      5: { top: '71%', left: '20%', transform: [{ translateX: -avatarSize / 2 }] },
     };
     return positions[position] || {};
   };
 
-
   return (
     <View style={styles.rankingImage}>
       <ImageBackground
-        source={require('../../assets/images/Fondo-Ranking-HD.webp')}
+        source={require('../../../assets/images/Fondo-Ranking-HD.webp')}
         style={styles.imageSrc}
         imageStyle={styles.imageStyle}
       >
         <View style={styles.positionsContainer}>
           {rankingData.slice(0, 5).map((user) => {
             const positionStyle = getPositionStyle(user.position);
-
             return (
               <RankingUserCard
                 key={user.id}
@@ -69,14 +62,11 @@ const RankingCard = ({
             );
           })}
         </View>
-        
-        {/* Barra de progreso dentro de la imagen, en el bottom */}
+
         {progressText && (
           <View style={styles.progressContainer}>
             <View style={styles.progress}>
-              {/* Fondo de la barra */}
               <View style={styles.progressBg} />
-              {/* Degradado verde del progreso - animado desde 0 hasta progressValue */}
               <Animated.View
                 style={[
                   styles.progressFillAnimated,
@@ -96,11 +86,8 @@ const RankingCard = ({
                   style={styles.progressFillGradient}
                 />
               </Animated.View>
-              {/* Texto centrado sobre la barra (z-index alto para estar por encima) */}
               <View style={styles.progressTextContainer}>
-                <Text style={styles.progressText}>
-                  {progressText}
-                </Text>
+                <Text style={styles.progressText}>{progressText}</Text>
               </View>
             </View>
           </View>

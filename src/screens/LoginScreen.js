@@ -248,11 +248,11 @@ const LoginScreen = ({ onLogin, navigation }) => {
             <RoleButtonCard
               avatarSource={require('../assets/images/Padres.webp')}
               name="Soy Padre/ Madre"
-              onPress={() => {}} // No hace nada
+              onPress={() => {}}
               nameCardBorderWidth={0}
               avatarBorderWidth={5}
-              avatarInnerColor="#AFE3B2"
-              disabled={true}
+              avatarInnerColor="#9CDAE7"
+              disabled={false}
             />
 
             {/* Botón Docente - Habilitado */}
@@ -330,11 +330,13 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: hp('5%'),
+    marginBottom: hp('2%'),
+    // backgroundColor: "green",
   },
   mainTitle: {
-    fontSize: wp('7%'),
+    fontSize: wp('7.5%'),
     fontWeight: '900',
+    width: '80%',
     color: COLORS.textTitle,
     textAlign: 'center',
     marginBottom: hp('2%'),
@@ -342,9 +344,10 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
     includeFontPadding: false,
+    // backgroundColor: "red",
   },
   subtitle: {
-    fontSize: wp('4.5%'),
+    fontSize: wp('5%'),
     fontWeight: '700',
     color: COLORS.textBorde,
     textAlign: 'center',
@@ -353,11 +356,13 @@ const styles = StyleSheet.create({
   rolesContainer: {
     width: '100%',
     maxWidth: wp('95%'),
-    marginBottom: hp('4%'),
-    gap: hp('2%'),
     flexDirection: 'column',
-    alignItems: 'stretch',
-    alignSelf: 'center',
+    alignItems: 'center',
+    // backgroundColor: "red",
+    marginBottom: hp('2%'),
+  },
+  roleButton: {
+    width: '100%',
   },
   googleButton: {
     width: wp('80%'), // 430px si el diseño base es 430px
@@ -371,7 +376,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp('5%'),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: hp('3%'),
+    marginBottom: hp('2%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -393,7 +398,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: wp('5%'),
     fontWeight: '700',
-    color: COLORS.textBorde,
+    color: COLORS.target,
     textAlign: 'center',
     textDecorationLine: 'underline',
     includeFontPadding: false,

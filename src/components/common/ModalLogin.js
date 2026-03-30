@@ -62,8 +62,8 @@ const ModalLogin = ({ visible, onClose, onConfirm, loading = false }) => {
             <View style={styles.content}>
               <TextInput
                 style={styles.input}
-                placeholder="Email o Usuario"
-                placeholderTextColor={COLORS.textContenido}
+                placeholder="Usuario / Correo"
+                placeholderTextColor={COLORS.textInputPlaceholder}
                 value={emailOrUsername}
                 onChangeText={setEmailOrUsername}
                 autoCapitalize="none"
@@ -75,7 +75,7 @@ const ModalLogin = ({ visible, onClose, onConfirm, loading = false }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Contraseña"
-                placeholderTextColor={COLORS.textContenido}
+                placeholderTextColor={COLORS.textInputPlaceholder}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry

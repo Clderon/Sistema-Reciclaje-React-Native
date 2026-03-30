@@ -19,9 +19,9 @@ import Animated, {
   Extrapolate,
   Easing,
 } from 'react-native-reanimated';
-import RankingCard from '../components/ranking/RankingCard';
-import CardInfo from '../components/profile/CardInfo';
-import RankingUserCard from '../components/ranking/RankingUserCard';
+import RankingCard from '../features/student/ranking/RankingCard';
+import CardInfo from '../features/student/profile/CardInfo';
+import RankingUserCard from '../features/student/ranking/RankingUserCard';
 import { COLORS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
 import { useRanking } from '../hooks/useRanking';

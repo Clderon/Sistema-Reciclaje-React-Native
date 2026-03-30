@@ -8,38 +8,23 @@ import {
   ScrollView,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 import BadgeItem from '../badges/BadgeItem';
-import UserProfileSection from '../profile/UserProfileSection';
+import UserProfileSection from './UserProfileSection';
 
-// Función para abreviar nombres largos de niveles
 const abbreviateLevelName = (levelName) => {
   if (!levelName) return '';
-  
-  // Abreviaciones específicas para niveles conocidos
   const levelLower = levelName.toLowerCase();
-  
-  if (levelLower.includes('oso perezoso') || levelName === 'Oso Perezoso') {
-    return 'Oso P.';
-  }
-  
-  if (levelLower.includes('gallito') && (levelLower.includes('rocas') || levelLower.includes('roca'))) {
-    return 'Gallito R.';
-  }
-  
-  // Si el nombre es muy largo (más de 10 caracteres), abreviar
+  if (levelLower.includes('oso perezoso') || levelName === 'Oso Perezoso') return 'Oso P.';
+  if (levelLower.includes('gallito') && (levelLower.includes('rocas') || levelLower.includes('roca'))) return 'Gallito R.';
   if (levelName.length > 10) {
     const words = levelName.split(' ');
     if (words.length > 1) {
-      // Tomar primera palabra + inicial de la segunda palabra con punto
-      const firstWord = words[0];
       const secondInitial = words[1]?.[0]?.toUpperCase() || '';
-      return secondInitial ? `${firstWord} ${secondInitial}.` : firstWord;
+      return secondInitial ? `${words[0]} ${secondInitial}.` : words[0];
     }
-    // Si es una sola palabra larga, truncar a 10 caracteres
     return levelName.substring(0, 10) + '.';
   }
-  
   return levelName;
 };
 
@@ -47,12 +32,7 @@ const CardInfo = ({ visible, onClose, userData }) => {
   if (!userData) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.overlayTouch} activeOpacity={1} onPress={onClose} />
         <View style={styles.modalContent}>
@@ -65,7 +45,6 @@ const CardInfo = ({ visible, onClose, userData }) => {
               <Text style={styles.headerTitle}>Mi Mochila de Explorador</Text>
             </View>
 
-            {/* Profile Section */}
             <UserProfileSection
               avatarSource={userData.avatar}
               name={userData.name}
@@ -75,7 +54,7 @@ const CardInfo = ({ visible, onClose, userData }) => {
                 { label: 'Reciclajes', value: userData.recyclings },
                 { label: 'Posición', value: userData.position },
               ]}
-              backgroundImageSource={require('../../assets/images/fondo_.webp')}
+              backgroundImageSource={require('../../../assets/images/fondo_.webp')}
               avatarSize={wp('25%')}
               avatarBorderWidth={5}
               avatarBorderColor={COLORS.avatarBadgeBackground}
@@ -83,7 +62,6 @@ const CardInfo = ({ visible, onClose, userData }) => {
               sectionPaddingVertical={hp('0%')}
             />
 
-            {/* Badges Section */}
             <View style={styles.badgesSection}>
               <Text style={styles.badgesTitle}>Mis insignias</Text>
               <ScrollView
@@ -102,25 +80,11 @@ const CardInfo = ({ visible, onClose, userData }) => {
                     />
                   ))
                 ) : (
-                  // Insignias por defecto si no se proporcionan
                   <>
-                    <BadgeItem
-                      imageSource={require('../../assets/images/logro_vidrioV2.webp')}
-                      backgroundColor={COLORS.badgeBackground}
-                    />
-                    <BadgeItem
-                      imageSource={require('../../assets/images/logro_caiman.webp')}
-                      backgroundColor={COLORS.badgeBackground}
-                    />
-                    <BadgeItem
-                      imageSource={require('../../assets/images/logro_capibarav2.webp')}
-                      backgroundColor={COLORS.badgeBackground}
-                    />
-                    <BadgeItem
-                      imageSource={require('../../assets/images/serpiente.webp')}
-                      backgroundColor={COLORS.badgeBackground}
-                      isLocked={true}
-                    />
+                    <BadgeItem imageSource={require('../../../assets/images/logro_vidrioV2.webp')} backgroundColor={COLORS.badgeBackground} />
+                    <BadgeItem imageSource={require('../../../assets/images/logro_caiman.webp')} backgroundColor={COLORS.badgeBackground} />
+                    <BadgeItem imageSource={require('../../../assets/images/logro_capibarav2.webp')} backgroundColor={COLORS.badgeBackground} />
+                    <BadgeItem imageSource={require('../../../assets/images/serpiente.webp')} backgroundColor={COLORS.badgeBackground} isLocked={true} />
                   </>
                 )}
               </ScrollView>

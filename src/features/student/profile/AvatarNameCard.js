@@ -1,32 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 
-// Función para abreviar badges largos (SLOTH, MONKEY, ELEPHANT, etc.)
 const abbreviateBadge = (badge) => {
   if (!badge) return '';
-  
   const badgeUpper = badge.toUpperCase();
-  
-  // Abreviaciones específicas para badges conocidos (si son muy largos)
-  // SLOTH (5 letras) se mantiene pero se ajustará automáticamente con adjustsFontSizeToFit
   const badgeMap = {
-    'MONKEY': 'MONK', // 6 letras -> 4 letras
-    'ELEPHANT': 'ELEP', // 8 letras -> 4 letras
-    'ROCK': 'ROCK', // 4 letras - mantener
-    'ANT': 'ANT', // 3 letras - mantener
+    'MONKEY': 'MONK',
+    'ELEPHANT': 'ELEP',
+    'ROCK': 'ROCK',
+    'ANT': 'ANT',
   };
-  
-  if (badgeMap[badgeUpper]) {
-    return badgeMap[badgeUpper];
-  }
-  
-  // Si el badge es muy largo (más de 5 caracteres), abreviar
-  if (badge.length > 5) {
-    return badge.substring(0, 5).toUpperCase();
-  }
-  
+  if (badgeMap[badgeUpper]) return badgeMap[badgeUpper];
+  if (badge.length > 5) return badge.substring(0, 5).toUpperCase();
   return badge;
 };
 
@@ -54,24 +41,13 @@ const AvatarNameCard = ({
   nameCardInnerBackgroundColor = COLORS.targetFondo,
   infoPaddingTop,
 }) => {
-  // Ajustar el marginTop del nameCard basado en si hay badge o no
   const nameCardMarginTop = showBadge && badge ? hp('-2%') : 0;
-  
-  // NO abreviar el nivel aquí (debajo del nombre hay espacio suficiente)
   const levelText = level || '';
-  
-  // Calcular el tamaño de la imagen restando el borde del contenedor
   const imageSize = avatarSize - (avatarBorderWidth * 2);
-  
-  // Asegurar que info no se expanda verticalmente más allá del avatarSize
-  const infoStyle = {
-    maxHeight: avatarSize,
-    alignSelf: 'flex-start',
-  };
-  
+  const infoStyle = { maxHeight: avatarSize, alignSelf: 'flex-start' };
+
   return (
     <View style={[styles.info, infoStyle, infoPaddingTop && { paddingTop: infoPaddingTop }]}>
-      {/* Avatar y badge */}
       <View
         style={[
           styles.avatarWrapper,
@@ -99,19 +75,13 @@ const AvatarNameCard = ({
         />
         {showBadge && badge && (
           <View style={[styles.badge, { borderWidth: badgeBorderWidth, borderColor: badgeBorderColor, backgroundColor: badgeBackgroundColor }]}>
-            <Text 
-              style={[styles.badgeText, { fontSize: badgeFontSize }]} 
-              numberOfLines={1} 
-              adjustsFontSizeToFit 
-              minimumFontScale={0.6}
-            >
+            <Text style={[styles.badgeText, { fontSize: badgeFontSize }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
               {abbreviateBadge(badge)}
             </Text>
           </View>
         )}
       </View>
 
-      {/* Tarjeta de nombre y nivel */}
       <View
         style={[
           styles.nameCard,
@@ -204,4 +174,3 @@ const styles = StyleSheet.create({
 });
 
 export default AvatarNameCard;
-

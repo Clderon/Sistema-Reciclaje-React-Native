@@ -145,8 +145,8 @@ const StudentLoginScreen = ({ navigation }) => {
                     />
                     <TextInput
                       style={styles.input}
-                      placeholder="Email o Usuario"
-                      placeholderTextColor={COLORS.textContenido}
+                      placeholder="Usuario / Correo"
+                      placeholderTextColor={COLORS.textInputPlaceholder}
                       value={emailOrUsername}
                       onChangeText={setEmailOrUsername}
                       autoCapitalize="none"
@@ -157,7 +157,7 @@ const StudentLoginScreen = ({ navigation }) => {
                     <View style={styles.iconContainer}>
                       <MaterialIcons
                         name="person"
-                        size={wp('8%')}
+                        size={wp('7.5%')}
                         color={COLORS.textContenido}
                       />
                     </View>
@@ -193,7 +193,7 @@ const StudentLoginScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Contraseña"
-                      placeholderTextColor={COLORS.textContenido}
+                      placeholderTextColor={COLORS.textInputPlaceholder}
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
@@ -205,7 +205,7 @@ const StudentLoginScreen = ({ navigation }) => {
                     <View style={styles.iconContainer}>
                       <MaterialIcons
                         name="lock"
-                        size={wp('7%')}
+                        size={wp('7.5%')}
                         color={COLORS.textContenido}
                       />
                     </View>
@@ -241,7 +241,7 @@ const StudentLoginScreen = ({ navigation }) => {
                     {loading ? (
                       <ActivityIndicator color={COLORS.textWhite} size="large" />
                     ) : (
-                      <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+                      <Text style={styles.loginButtonText}>¡Ingresar!</Text>
                     )}
                   </ImageBackground>
                 </TouchableOpacity>
@@ -288,7 +288,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp('8%'),
     paddingBottom: hp('5%'),
     justifyContent: 'center',
-    marginTop: hp('10%'),
+  },
+  header: {
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: wp('9%'),
+    width: '80%',
+    fontWeight: '900',
+    color: COLORS.textBorde,
+    textAlign: 'center',
+    marginBottom: hp('5%'),
+    textShadowColor: COLORS.textTitle,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   monoContainer: {
     width: '100%',
@@ -297,19 +310,7 @@ const styles = StyleSheet.create({
   monoImage: {
     width: wp('40%'),
     height: hp('15%'),
-  },
-  header: {
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: wp('8%'),
-    fontWeight: '900',
-    color: COLORS.textBorde,
-    textAlign: 'center',
-    marginBottom: hp('1%'),
-    textShadowColor: COLORS.textTitle,
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    marginBottom: hp('-1%'),
   },
   formWrapper: {
     width: '100%',
@@ -320,6 +321,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.formBorderColor,
     backgroundColor: COLORS.badgeWrapperBackground,
+    // backgroundColor: "red",
   },
   formContainer: {
     width: '100%',
@@ -359,22 +361,23 @@ const styles = StyleSheet.create({
   },
   bambuBorderLeft: {
     width: wp('3%'),
-    height: hp('10%'),
-    marginRight: wp('-1%'),
+    height: hp('8%'),
+    marginRight: wp('0.2%'),
     zIndex: 2,
   },
   bambuBorderRight: {
     width: wp('3%'),
-    height: hp('10%'),
+    height: hp('8%'),
     zIndex: 2,
-    marginLeft: wp('-1%'),
+    marginLeft: wp('0.2%'),
   },
   input: {
-    flex: 1,
     height: '100%',
+    width: '80%',
     backgroundColor: COLORS.targetFondo,
-    paddingHorizontal: wp('5%'),
-    fontSize: wp('4.5%'),
+    paddingHorizontal: wp('3%'),
+    paddingVertical: hp('0.5%'),
+    fontSize: wp('4%'),
     color: COLORS.textContenido,
     fontWeight: '600',
     includeFontPadding: false,
@@ -406,11 +409,12 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: COLORS.textWhite,
-    fontSize: wp('5%'),
+    fontSize: wp('7%'),
     fontWeight: '900',
     textAlign: 'center',
+    marginTop: hp('-1%'),
     textShadowColor: 'rgba(29, 66, 15, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: { width: 3, height: 3 },
     textShadowRadius: 2,
     includeFontPadding: false,
   },
@@ -419,14 +423,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    fontSize: wp('4%'),
+    fontSize: wp('4.5%'),
     color: COLORS.textContenido,
     marginBottom: hp('1%'),
   },
   registerLink: {
     fontSize: wp('4.5%'),
     fontWeight: '700',
-    color: COLORS.button,
+    color: COLORS.target,
     textDecorationLine: 'underline',
   },
 });

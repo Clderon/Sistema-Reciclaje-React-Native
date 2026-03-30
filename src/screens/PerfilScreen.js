@@ -13,9 +13,9 @@ import {
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../utils/constants';
-import AvatarNameCard from '../components/profile/AvatarNameCard';
-import BadgeItem from '../components/badges/BadgeItem';
-import ModalBadge from '../components/badges/ModalBadge';
+import AvatarNameCard from '../features/student/profile/AvatarNameCard';
+import BadgeItem from '../features/student/badges/BadgeItem';
+import ModalBadge from '../features/student/badges/ModalBadge';
 import ModalAjustes from '../components/common/ModalAjustes';
 import { useAuth } from '../context/AuthContext';
 import { getUserAvatar } from '../utils/avatarHelper';

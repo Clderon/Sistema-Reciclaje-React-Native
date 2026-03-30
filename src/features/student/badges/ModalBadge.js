@@ -8,13 +8,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../../utils/constants';
-import { playAchievementSound, playPopSound } from '../../utils/soundHelper';
+import { COLORS } from '../../../utils/constants';
+import { playAchievementSound, playPopSound } from '../../../utils/soundHelper';
 
 const ModalBadge = ({ visible, onClose, badge }) => {
   if (!badge) return null;
 
-  // Reproducir sonido de logro cuando se abre el modal (si el badge está desbloqueado)
   useEffect(() => {
     if (visible && badge && !badge.isLocked) {
       playAchievementSound();
@@ -35,14 +34,11 @@ const ModalBadge = ({ visible, onClose, badge }) => {
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Detalle de Insignia</Text>
           </View>
 
-          {/* Contenido */}
           <View style={styles.content}>
-            {/* Badge */}
             <View style={styles.badgeContainer}>
               <View style={[styles.badgeWrapper, { backgroundColor: COLORS.badgeWrapperBackground }]}>
                 <View style={[styles.badgeInner, { backgroundColor: badge.backgroundColor || COLORS.badgeBackground }]}>
@@ -55,11 +51,9 @@ const ModalBadge = ({ visible, onClose, badge }) => {
               </View>
             </View>
 
-            {/* Título y descripción */}
             <Text style={styles.title}>{badge.title}</Text>
             <Text style={styles.description}>{badge.description}</Text>
 
-            {/* Botón */}
             <TouchableOpacity style={styles.button} onPress={handleClose} activeOpacity={0.7}>
               <Text style={styles.buttonText}>Cerrar</Text>
             </TouchableOpacity>
@@ -172,4 +166,3 @@ const styles = StyleSheet.create({
 });
 
 export default ModalBadge;
-

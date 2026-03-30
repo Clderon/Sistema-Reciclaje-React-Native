@@ -8,24 +8,10 @@ const RoleButtonCard = ({
   avatarSource,
   name,
   onPress,
-  avatarSize = wp('30%'),
-  nameCardMaxWidth = wp('60%'),
-  nameCardHeight = hp('10%'),
-  nameFontSize = wp('5%'),
-  avatarBorderWidth = 5,
   nameCardBorderWidth = 5,
-  avatarOuterSize = null, // Si no se especifica, será avatarSize + padding
-  avatarOuterColor = COLORS.avatarBrown, // Color del contenedor externo
-  avatarInnerColor = '#9BDDE4', // Color del contenedor interno
+  avatarInnerColor = '#9BDDE4',
   disabled = false,
 }) => {
-  // Tamaño del contenedor externo (marco/fondo) - el más grande
-  const outerSize = avatarOuterSize || avatarSize;
-  // Tamaño del contenedor interno (para la imagen) - un poco más pequeño que el externo
-  const innerSize = outerSize - wp('2%'); // 2% más pequeño que el externo
-  // Tamaño de la imagen - FIJADO al tamaño del contenedor interno para consistencia
-  const imageSize = innerSize; // Mismo tamaño que el interno para que todas las imágenes sean iguales
-  
   const handlePress = () => {
     if (!disabled) {
       playPopSound({ volume: 0.3 });
@@ -41,56 +27,22 @@ const RoleButtonCard = ({
       style={[styles.container, disabled && styles.containerDisabled]}
     >
       <View style={styles.info}>
-        {/* Contenedor externo del avatar (marco/fondo) */}
-        <View
-          style={[
-            styles.avatarOuterContainer,
-            {
-              width: outerSize,
-              height: outerSize,
-              backgroundColor: avatarOuterColor,
-            },
-          ]}
-        >
-          {/* Contenedor interno del avatar (para la imagen) */}
-          <View
-            style={[
-              styles.avatarInnerContainer,
-              {
-                width: innerSize,
-                height: innerSize,
-                borderRadius: innerSize / 2,
-                backgroundColor: avatarInnerColor,
-              },
-            ]}
-          >
+        {/* Contenedor externo del avatar */}
+        <View style={styles.avatarOuterContainer}>
+          {/* Contenedor interno del avatar */}
+          <View style={styles.avatarInnerContainer}>
             <Image
               source={avatarSource}
-              style={[
-                styles.avatar,
-                {
-                  width: imageSize,
-                  height: imageSize,
-                  borderRadius: imageSize / 2,
-                },
-              ]}
+              style={[styles.avatar, { backgroundColor: avatarInnerColor }]}
               resizeMode="cover"
             />
           </View>
         </View>
 
         {/* Tarjeta de nombre */}
-        <View
-          style={[
-            styles.nameCard,
-            {
-              maxWidth: nameCardMaxWidth,
-              height: nameCardHeight,
-            },
-          ]}
-        >
-          <View style={[styles.nameCardInner, { borderWidth: nameCardBorderWidth }]}>
-            <Text style={[styles.name, { fontSize: nameFontSize }]}>{name}</Text>
+        <View style={styles.nameCard}>
+          <View style={[styles.nameCardInner]}>
+            <Text style={styles.name}>{name}</Text>
           </View>
         </View>
       </View>
@@ -101,65 +53,82 @@ const RoleButtonCard = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    padding: wp('2%'),
+    // backgroundColor: "orange",
   },
   info: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
-    paddingHorizontal: wp('4%'),
-    flexShrink: 0,
+    paddingHorizontal: wp('2%'),
+    // backgroundColor: 'red',
   },
   avatarOuterContainer: {
+    width: wp('35%'),
+    height: wp('35%'),
+    borderRadius: wp('20%'),
+    backgroundColor: "yellow",
+    zIndex: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
-    flexShrink: 0,
-    borderRadius: wp('15%'),
-    // width, height y backgroundColor se pasan como props dinámicamente
+    borderWidth: 3,
+    borderColor: "#603316",
+    backgroundColor: "#995d35",
+    // backgroundColor: "yellow",
   },
   avatarInnerContainer: {
+    width: wp('30%'),
+    height: wp('30%'),
+    borderRadius: wp('15%'),
+    backgroundColor: "blue",
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    flexShrink: 0,
-    borderWidth: 10,
-    borderColor: '#A06942',
-    // width, height, borderRadius y backgroundColor se pasan como props dinámicamente
+    backgroundColor: "#995d35",
+    backgroundColor: "green",
+    borderWidth: 3,
+    borderColor: "#603316",
   },
   avatar: {
-    // width, height y borderRadius se pasan dinámicamente basado en innerSize
+    backgroundColor: "green",
+    borderRadius: wp('20%'),
+    objectFit: 'contain',
+    objectPosition: 'end',
+    width: 180,
+    height: 180,
   },
   nameCard: {
     flex: 1,
-    borderRadius: wp('2.5%'),
-    borderWidth: 0,
-    borderColor: COLORS.textContenido,
+    height: hp('10%'),
+    borderRadius: wp('4%'),
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
-    marginLeft: wp('-10%'),
+    marginLeft: wp('-8%'),
     backgroundColor: '#A06942',
-    padding: wp('2%'),
-
+    padding: wp('1%'),
+    borderWidth: 3,
+    borderColor: "#603316",
   },
   nameCardInner: {
     backgroundColor: COLORS.targetFondo,
-    borderRadius: wp('2.5%'),
-    borderColor: COLORS.textContenido,
+    borderRadius: wp('3%'),
     paddingVertical: hp('1%'),
-    paddingHorizontal: wp('3%'),
-    width: '95%',
-    height: '90%',
+    paddingLeft: wp('8%'),
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    borderWidth: 3,
+    borderColor: "#603316",
   },
   name: {
     fontWeight: '700',
+    fontSize: wp('4.5%'),
     color: COLORS.textContenido,
-    textAlign: 'center',
-    width: '100%',
+    textAlign: 'start',
+    width: '90%',
     includeFontPadding: false,
   },
   containerDisabled: {
@@ -168,4 +137,3 @@ const styles = StyleSheet.create({
 });
 
 export default RoleButtonCard;
-

@@ -109,7 +109,7 @@ const HomeScreen = () => {
               <TextWithOutline
                 style={styles.headerSubtitle}
                 outlineColor={COLORS.textBorde}
-                outlineWidth={2}
+                outlineWidth={2.2}
               >
                 A reciclar por la selva!
               </TextWithOutline>
@@ -226,10 +226,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: hp('1%'),
+    // backgroundColor: "red",
   },
   headerContent: {
+    width: '100%',
+    flexDirection: 'column',
+    gap: hp('1%'),
     alignItems: 'center',
-    paddingHorizontal: wp('15%'),
+    paddingHorizontal: wp('5%'),
+    marginBottom: hp('2%'),
+    // backgroundColor: "green",
   },
   headerTitle: {
     fontSize: wp('9%'),
@@ -239,12 +245,15 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   headerSubtitle: {
-    fontSize: wp('5%'),
-    fontWeight: '700',
-    fontStyle: 'italic',
+    textAlign: 'center',
+    fontSize: wp('7%'),
+    fontWeight: '800',
     color: COLORS.textTitle,
     lineHeight: hp('4%'),
     includeFontPadding: false,
+    textShadowColor: 'rgba(29, 66, 15, 0.8)',
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 5,
   },
   registroCard: {
     backgroundColor: COLORS.target,

@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS } from '../utils/constants';
-import CardRevision from '../components/Profesor/CardRevision';
-import MonkeyFrame from '../components/Profesor/MonkeyFrame';
-import PointsModal from '../components/Profesor/modals/PointsModal';
+import CardRevision from '../features/teacher/CardRevision';
+import MonkeyFrame from '../features/teacher/MonkeyFrame';
+import PointsModal from '../features/teacher/modals/PointsModal';
 import { useAuth } from '../context/AuthContext';
 import { useTeacherReview } from '../hooks/useTeacherReview';
 

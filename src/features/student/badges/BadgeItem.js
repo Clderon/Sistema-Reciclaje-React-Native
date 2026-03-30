@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { MaterialIcons } from '@expo/vector-icons';
-import { COLORS } from '../../utils/constants';
-import { playPopSound, playAchievementSound } from '../../utils/soundHelper';
+import { COLORS } from '../../../utils/constants';
+import { playPopSound, playAchievementSound } from '../../../utils/soundHelper';
 
 const BadgeItem = ({
   imageSource,
@@ -37,7 +37,6 @@ const BadgeItem = ({
   }
 
   const handlePress = () => {
-    // Si el badge está desbloqueado (no está locked), reproducir sonido de logro
     if (!isLocked) {
       playAchievementSound();
     } else {
@@ -97,4 +96,3 @@ const styles = StyleSheet.create({
 });
 
 export default BadgeItem;
-

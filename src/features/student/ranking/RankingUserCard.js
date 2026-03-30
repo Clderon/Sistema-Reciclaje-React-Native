@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 
 const RankingUserCard = ({
   user,
@@ -22,10 +22,10 @@ const RankingUserCard = ({
 }) => {
   const content = (
     <>
-      <View style={[styles.avatarWrapper, { 
-        width: avatarSize, 
+      <View style={[styles.avatarWrapper, {
+        width: avatarSize,
         height: avatarSize,
-        backgroundColor: avatarWrapperBackgroundColor 
+        backgroundColor: avatarWrapperBackgroundColor
       }, isCurrentUser && styles.avatarWrapperCurrent]}>
         <View style={[styles.avatarInner, { backgroundColor: avatarInnerBackgroundColor }]}>
           <Image
@@ -135,4 +135,3 @@ const styles = StyleSheet.create({
 });
 
 export default RankingUserCard;
-

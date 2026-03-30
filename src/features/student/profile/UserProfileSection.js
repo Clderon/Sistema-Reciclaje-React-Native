@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 import AvatarNameCard from './AvatarNameCard';
 
 const UserProfileSection = ({
@@ -22,15 +22,10 @@ const UserProfileSection = ({
     <View style={[styles.section, sectionPaddingVertical && { paddingVertical: sectionPaddingVertical }]}>
       {backgroundImageSource && (
         <View style={styles.backgroundWrapper}>
-          <Image
-            source={backgroundImageSource}
-            style={styles.backgroundSection}
-            resizeMode="cover"
-          />
+          <Image source={backgroundImageSource} style={styles.backgroundSection} resizeMode="cover" />
         </View>
       )}
-      
-      {/* Contenedor de información (avatar y nombre) */}
+
       <AvatarNameCard
         avatarSource={avatarSource}
         name={name}
@@ -43,7 +38,6 @@ const UserProfileSection = ({
         avatarWrapperBackgroundColor={avatarWrapperBackgroundColor}
       />
 
-      {/* Estadísticas */}
       {stats.length > 0 && (
         <View style={styles.stats}>
           {stats.map((stat, index) => (
@@ -147,4 +141,3 @@ const styles = StyleSheet.create({
 });
 
 export default UserProfileSection;
-
